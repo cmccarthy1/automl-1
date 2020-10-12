@@ -49,9 +49,11 @@ passingTest:{[function;data;applyType;expectedReturn]
 
 // Datasets
 n:100
+n2:200
 freshData    :([]n?til 10;n?1f;n?1f;n?1f)
-nlpData      :([](n;2)#200?.Q.a;n?n;n?1f)
-nlpMultiData :([](n;2)#200?.Q.a;(n;2)#200?.Q.a;n?n;n?1f)
+nlpData      :([]string each n2?`2;n2?n;n2?1f)
+nlpMultiData :([]string each n2?`2;string each n2?`2;n2?n;n2?1f)
+nlpErrData   :([]string each n?`5;n?n;n?1f)
 normData     :([]n?100;n?1f;n?10;n?10f)
 normBulkData :.automl.featureCreation.normal.bulktransform normData
 normTruncData:.automl.featureCreation.normal.truncSingleDecomp normData
@@ -72,7 +74,7 @@ featCreate:{[cfg;feat;returnType]
   $[returnType~`key;
       asc key feats;
     returnType~`count;
-      count feats`features;
+      count cols feats`features;
       ]
   }
 
@@ -80,25 +82,33 @@ featCreate:{[cfg;feat;returnType]
 
 // Expected Returns
 returnCols :`creationTime`featModel`features
+
+-1"\nTesting appropriate FRESH feature creation";
+passingTest[featCreate;(freshCfg;freshData;`key  );0b;returnCols]
+passingTest[featCreate;(freshCfg;freshData;`count);0b;698       ]
+
+-1"\nTesting appropriate NLP feature creation";
+passingTest[featCreate;(nlpCfg;nlpData     ;`key  );0b;returnCols]
+passingTest[featCreate;(nlpCfg;nlpData     ;`count);0b;151       ]
+passingTest[featCreate;(nlpCfg;nlpMultiData;`key  );0b;returnCols]
+passingTest[featCreate;(nlpCfg;nlpMultiData;`count);0b;336       ]
+
+-1"\nTesting inappropriate NLP feature creation";
+
+nlpErr:"\nGensim returned the following error\ncall: you must first build vocabulary before training the model\nPlease review your input NLP data\n"
+
+failingTest[featCreate;(nlpCfg;nlpErrData;`count);0b;nlpErr]
+
+-1"\nTesting appropriate normal feature creation";
+passingTest[featCreate;(normCfg     ;normData     ;`key  );0b;returnCols]
+passingTest[featCreate;(normCfg     ;normData     ;`count);0b;4         ]
+passingTest[featCreate;(normBulkCfg ;normBulkData ;`key  );0b;returnCols]
+passingTest[featCreate;(normBulkCfg ;normBulkData ;`count);0b;44        ]
+passingTest[featCreate;(normTruncCfg;normTruncData;`key  );0b;returnCols]
+passingTest[featCreate;(normTruncCfg;normTruncData;`count);0b;7         ]
+
+-1"\nTesting inappropriate feature creation";
+
 featTypeErr:"Feature extraction type is not currently supported"
 
--1"Testing FRESH feature creation";
-passingTest[featCreate;(freshCfg;freshData;`key  );0b;returnCols]
-passingTest[featCreate;(freshCfg;freshData;`count);0b;10        ]
-
--1"Testing NLP feature creation";
-passingTest[featCreate;(nlpCfg;nlpData     ;`key  );0b;returnCols]
-passingTest[featCreate;(nlpCfg;nlpData     ;`count);0b;100       ]
-passingTest[featCreate;(nlpCfg;nlpMultiData;`key  );0b;returnCols]
-passingTest[featCreate;(nlpCfg;nlpMultiData;`count);0b;100       ]
-
--1"Testing normal feature creation";
-passingTest[featCreate;(normCfg     ;normData     ;`key  );0b;returnCols]
-passingTest[featCreate;(normCfg     ;normData     ;`count);0b;104       ]
-passingTest[featCreate;(normBulkCfg ;normBulkData ;`key  );0b;returnCols]
-passingTest[featCreate;(normBulkCfg ;normBulkData ;`count);0b;104       ]
-passingTest[featCreate;(normTruncCfg;normTruncData;`key  );0b;returnCols]
-passingTest[featCreate;(normTruncCfg;normTruncData;`count);0b;104       ]
-
--1"Testing failing cases";
 failingTest[featCreate;(inappropCfg;freshData;());0b;featTypeErr]

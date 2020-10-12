@@ -167,7 +167,8 @@ featureCreation.nlp.word2vec:{[tokens;cfg;savedModel;filePath]
   args:`size`window`sg`seed`workers!(size;window;cfg`w2v;cfg`seed;1);
   model:$[savedModel;
     gensimModel[`:load]i.ssrwin filePath,"/w2v.model";
-    gensimModel[`:Word2Vec][tokens;pykwargs args]
+    @[gensimModel[`:Word2Vec] .;(tokens;pykwargs args);{'"\nGensim returned the following error\n",x,
+      "\nPlease review your input NLP data\n"}]
     ];
   w2vIndex:where each tokens in model[`:wv.index2word]`;
   sentenceVector:featureCreation.nlp.i.w2vTokens[tokens]'[til count w2vIndex;w2vIndex]; 
