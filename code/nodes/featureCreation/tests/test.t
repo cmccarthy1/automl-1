@@ -43,59 +43,62 @@ passingTest:{[function;data;applyType;expectedReturn]
   expectedReturn~functionReturn
   }
   
+// Initialize datasets
 
-// Feature creation function tabular return
-featureCreationTable:{[cfg;feat].automl.featureCreation.node.function[cfg;feat]`features}
+\S 42
 
+// Datasets
+n:100
+freshData    :([]n?til 10;n?1f;n?1f;n?1f)
+nlpData      :([](n;2)#200?.Q.a;n?n;n?1f)
+nlpMultiData :([](n;2)#200?.Q.a;(n;2)#200?.Q.a;n?n;n?1f)
+normData     :([]n?100;n?1f;n?10;n?10f)
+normBulkData :.automl.featureCreation.normal.bulktransform normData
+normTruncData:.automl.featureCreation.normal.truncSingleDecomp normData
 
--1"\nTesting appropriate inputs for normal feature creation";
+// Configuration Dictionaries
+cfgKey:`featExtractType`funcs
+freshCfg    :(cfgKey,`aggcols)!`fresh`.ml.fresh.params`x
+nlpCfg      :(cfgKey,`w2v`seed)!`nlp`.automl.featureCreation.normal.default,0,1234
+normCfg     :cfgKey!`normal`.automl.featureCreation.normal.default
+normBulkCfg :cfgKey!`normal`.automl.featureCreation.normal.bulktransform
+normTruncCfg:cfgKey!`normal`.automl.featureCreation.normal.truncSingleDecomp
+inappropCfg :cfgKey!`newFeatType`.automl.extractNewFeats
 
-// Load in appropriate data for ech feature extraction type
-normalFileList:`normalTable`normalBulkTable`normalTruncTable
-{load hsym`$":code/nodes/featureCreation/tests/data/normal/",string x}each normalFileList;
+// Utilities
 
-// Create suitable normal config and feature table
-normalConfig    :`featExtractType`funcs!`normal`.automl.featureCreation.normal.default
-normalConfigBulk:`featExtractType`funcs!`normal`.automl.featureCreation.normal.bulktransform
-normalConfigTrunc:`featExtractType`funcs!`normal`.automl.featureCreation.normal.truncSingleDecomp
+featCreate:{[cfg;feat;returnType]
+  feats:.automl.featureCreation.node.function[cfg;feat];
+  $[returnType~`key;
+      asc key feats;
+    returnType~`count;
+      count feats`features;
+      ]
+  }
 
+// Tests
 
-// Test all appropriate normal feature creation inputs
-passingTest[featureCreationTable;(normalConfig     ;normalTable);0b;"f"$normalTable]
-passingTest[featureCreationTable;(normalConfigBulk ;normalTable);0b;normalBulkTable]
-passingTest[featureCreationTable;(normalConfigTrunc;normalTable);0b;normalTruncTable]
+// Expected Returns
+returnCols :`creationTime`featModel`features
+featTypeErr:"Feature extraction type is not currently supported"
 
+-1"Testing FRESH feature creation";
+passingTest[featCreate;(freshCfg;freshData;`key  );0b;returnCols]
+passingTest[featCreate;(freshCfg;freshData;`count);0b;10        ]
 
--1"\nTesting appropriate inputs for FRESH feature creation";
+-1"Testing NLP feature creation";
+passingTest[featCreate;(nlpCfg;nlpData     ;`key  );0b;returnCols]
+passingTest[featCreate;(nlpCfg;nlpData     ;`count);0b;100       ]
+passingTest[featCreate;(nlpCfg;nlpMultiData;`key  );0b;returnCols]
+passingTest[featCreate;(nlpCfg;nlpMultiData;`count);0b;100       ]
 
-// Load in appropriate data for fresh feature extraction type
-freshFileList:`freshTable`freshReturnTable
-{load hsym`$":code/nodes/featureCreation/tests/data/fresh/",string x}each freshFileList;
+-1"Testing normal feature creation";
+passingTest[featCreate;(normCfg     ;normData     ;`key  );0b;returnCols]
+passingTest[featCreate;(normCfg     ;normData     ;`count);0b;104       ]
+passingTest[featCreate;(normBulkCfg ;normBulkData ;`key  );0b;returnCols]
+passingTest[featCreate;(normBulkCfg ;normBulkData ;`count);0b;104       ]
+passingTest[featCreate;(normTruncCfg;normTruncData;`key  );0b;returnCols]
+passingTest[featCreate;(normTruncCfg;normTruncData;`count);0b;104       ]
 
-// Create suitable fresh config and feature table
-freshConfig :`featExtractType`aggcols`funcs!`fresh`idx`.ml.fresh.params
-
-// Test all appropriate fresh feature creation inputs
-passingTest[featureCreationTable;(freshConfig     ;freshTable);0b;freshReturnTable]
-
-
--1"\nTesting appropriate inputs for NLP feature creation";
-
-// Load in appropriate data for nlp feature extraction type
-nlpFileList:`nlpTable`nlpMultiTable`nlpReturnTable`nlpMultiReturnTable
-{load hsym`$":code/nodes/featureCreation/tests/data/nlp/",string x}each nlpFileList;
-
-// Create suitable normal config and feature table
-nlpConfig   :`featExtractType`funcs`w2v`seed!`nlp`.automl.featureCreation.normal.default,0,1234
-
-// Test all appropriate nlp feature creation inputs
-passingTest[featureCreationTable;(nlpConfig     ;nlpTable     );0b;nlpReturnTable]
-passingTest[featureCreationTable;(nlpConfig     ;nlpMultiTable);0b;nlpMultiReturnTable]
-
-// Testing inappropriate input type for Feature creation function
-inapprConfig:`featExtractType`funcs!`test`.automl.featureCreation.normal.default
-
-// Return for inappropriate creation type
-inapprReturn:"Feature extraction type is not currently supported";
-
-failingTest[featureCreationTable;(inapprConfig;normalTable);0b;inapprReturn]
+-1"Testing failing cases";
+failingTest[featCreate;(inappropCfg;freshData;());0b;featTypeErr]

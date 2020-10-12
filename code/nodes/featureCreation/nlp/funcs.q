@@ -17,27 +17,26 @@ featureCreation.nlp.proc:{[feat;cfg;savedModel;filePath]
   spacyLoad:.p.import[`spacy;`:load]"en_core_web_sm";
   args:(spacyLoad;feat stringCols);
   sentences:$[1<count stringCols;
-              {x@''flip y};
-              {x each y 0}
-              ]. args;
-  regexTab:featureCreation.nlp.regexTab[feat;stringCols;featureCreation.nlp.i.regexList];
+    {x@''flip y};
+    {x each y 0}
+    ]. args;
+  regexTab      :featureCreation.nlp.regexTab[feat;stringCols;featureCreation.nlp.i.regexList];
   namedEntityTab:featureCreation.nlp.getNamedEntity[sentences;stringCols];
-  sentimentTab:featureCreation.nlp.sentimentCreate[feat;stringCols;`compound`pos`neg`neu];
-  corpus:featureCreation.nlp.corpus[feat;stringCols;`isStop`tokens`uniPOS`likeNumber];
-  colsCheck:featureCreation.nlp.i.colCheck[cols corpus;];
-  uniposTab:featureCreation.nlp.uniposTagging[corpus;stringCols]colsCheck"uniPOS*";
-  stopTab:featureCreation.nlp.boolTab[corpus]colsCheck"isStop*";
-  numTab:featureCreation.nlp.boolTab[corpus]colsCheck"likeNumber*";
-  countTokens:flip enlist[`countTokens]!enlist count each corpus`tokens;
-  tokens:string(,'/)corpus colsCheck"tokens*";
-  w2vTab:featureCreation.nlp.word2vec[tokens;cfg;savedModel;filePath];
-  nlpTabList:(uniposTab;sentimentTab;w2vTab 0;namedEntityTab;regexTab;stopTab;numTab;countTokens);
-  nlpTab:(,'/)nlpTabList;
-  nlpKeys:`feat`stringCols`model;
-  nlpValues:(nlpTab;stringCols;w2vTab 1);
+  sentimentTab  :featureCreation.nlp.sentimentCreate[feat;stringCols;`compound`pos`neg`neu];
+  corpus        :featureCreation.nlp.corpus[feat;stringCols;`isStop`tokens`uniPOS`likeNumber];
+  colsCheck     :featureCreation.nlp.i.colCheck[cols corpus;];
+  uniposTab     :featureCreation.nlp.uniposTagging[corpus;stringCols]colsCheck"uniPOS*";
+  stopTab       :featureCreation.nlp.boolTab[corpus]colsCheck"isStop*";
+  numTab        :featureCreation.nlp.boolTab[corpus]colsCheck"likeNumber*";
+  countTokens   :flip enlist[`countTokens]!enlist count each corpus`tokens;
+  tokens        :string(,'/)corpus colsCheck"tokens*";
+  w2vTab        :featureCreation.nlp.word2vec[tokens;cfg;savedModel;filePath];
+  nlpTabList    :(uniposTab;sentimentTab;w2vTab 0;namedEntityTab;regexTab;stopTab;numTab;countTokens);
+  nlpTab        :(,'/)nlpTabList;
+  nlpKeys       :`feat`stringCols`model;
+  nlpValues     :(nlpTab;stringCols;w2vTab 1);
   nlpKeys!nlpValues
   }
-
 
 // @kind function
 // @category featureCreation
@@ -62,7 +61,7 @@ featureCreation.nlp.corpus:{[feat;stringCols;fields]
   newParser:.nlp.newParser[`en;fields];
   // apply new parser to table data
   $[1<count stringCols;
-    featureCreation.nlp.i.nameRaze[parseCols]newParser@'feat[stringCols];
+    featureCreation.nlp.i.nameRaze[parseCols]newParser@'feat stringCols;
     newParser@feat[stringCols]0
     ]
   }
@@ -84,13 +83,12 @@ featureCreation.nlp.uniposTagging:{[feat;stringCols;fields]
   percentageFunc:featureCreation.nlp.i.percentDict[;uniposTypes];
   $[1<count stringCols;
     [colNames:featureCreation.nlp.i.colNaming[uniposTypes;fields];
-    percentageTable:percentageFunc@''group@''table;
-    featureCreation.nlp.i.nameRaze[colNames;percentageTable]
-    ];
+     percentageTable:percentageFunc@''group@''table;
+     featureCreation.nlp.i.nameRaze[colNames;percentageTable]
+     ];
     percentageFunc each group each table 0
     ]
   }
-
 
 // @kind function
 // @category featureCreation
@@ -107,13 +105,13 @@ featureCreation.nlp.getNamedEntity:{[sentences;stringCols]
   data:$[countCols:1<count stringCols;flip;::]sentences;
   labelFunc:{`${(.p.wrap x)[`:label_]`}each x[`:ents]`};
   nerData:$[countCols;
-            {x@''count@'''group@''z@''y}[;;labelFunc];
-            {x@'count@''group@'z@'y}[;;labelFunc]
-            ].(percentageFunc;data);
+    {x@''count@'''group@''z@''y}[;;labelFunc];
+    {x@'count@''group@'z@'y}[;;labelFunc]
+    ].(percentageFunc;data);
   $[countCols;
     [colNames:featureCreation.nlp.i.colNaming[namedEntity;stringCols];
-    featureCreation.nlp.i.nameRaze[colNames]
-    ];
+     featureCreation.nlp.i.nameRaze colNames
+     ];
     ]nerData
   }
 
@@ -128,11 +126,10 @@ featureCreation.nlp.sentimentCreate:{[feat;stringCols;fields]
   sentimentCols:featureCreation.nlp.i.colNaming[fields;stringCols];
   // get sentiment values
   $[1<count stringCols;
-    featureCreation.nlp.i.nameRaze[sentimentCols].nlp.sentiment@''feat[stringCols];
-    .nlp.sentiment each feat[stringCols][0]
+    featureCreation.nlp.i.nameRaze[sentimentCols].nlp.sentiment@''feat stringCols;
+    .nlp.sentiment each feat[stringCols]0
     ]
   }
-
 
 // @kind function
 // @category featureCreation
@@ -145,10 +142,10 @@ featureCreation.nlp.regexTab:{[feat;stringCols;fields]
   regexCols:featureCreation.nlp.i.colNaming[fields;stringCols];
   // get regex values
   $[1<count stringCols;
-    [regexCount:featureCreation.nlp.i.regexCheck@''feat[stringCols];
-    featureCreation.nlp.i.nameRaze[regexCols;regexCount]
-    ];
-    featureCreation.nlp.i.regexCheck each feat[stringCols] 0
+    [regexCount:featureCreation.nlp.i.regexCheck@''feat stringCols;
+     featureCreation.nlp.i.nameRaze[regexCols;regexCount]
+     ];
+    featureCreation.nlp.i.regexCheck each feat[stringCols]0
     ]
   }
 
@@ -169,9 +166,9 @@ featureCreation.nlp.word2vec:{[tokens;cfg;savedModel;filePath]
   gensimModel:.p.import`gensim.models;
   args:`size`window`sg`seed`workers!(size;window;cfg`w2v;cfg`seed;1);
   model:$[savedModel;
-          gensimModel[`:load]i.ssrwin filePath,"/w2v.model";
-          gensimModel[`:Word2Vec][tokens;pykwargs args]
-          ];
+    gensimModel[`:load]i.ssrwin filePath,"/w2v.model";
+    gensimModel[`:Word2Vec][tokens;pykwargs args]
+    ];
   w2vIndex:where each tokens in model[`:wv.index2word]`;
   sentenceVector:featureCreation.nlp.i.w2vTokens[tokens]'[til count w2vIndex;w2vIndex]; 
   avgVector:avg each featureCreation.nlp.i.w2vItem[model]each sentenceVector;

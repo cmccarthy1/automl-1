@@ -29,7 +29,8 @@ featureCreation.nlp.i.w2vTokens:{[tokens;index1;index2]
 // @param text {str} textual data
 // @return {dict} count of each expression found
 featureCreation.nlp.i.regexCheck:{[text]
-  count each .nlp.findRegex[text;featureCreation.nlp.i.regexList]}
+  count each .nlp.findRegex[text;featureCreation.nlp.i.regexList]
+  }
 
 // @kind function
 // @category featureCreationUtility
@@ -70,7 +71,9 @@ featureCreation.nlp.i.nameRaze:{[colNames;feat]
 // @param  col       {sym[]} column names
 // @param  attrCheck {sym[]} attributes to check 
 // @return {sym[]} all names according to a regex search
-featureCreation.nlp.i.colCheck:{[col;attrCheck]col where col like attrCheck}
+featureCreation.nlp.i.colCheck:{[col;attrCheck]
+  col where col like attrCheck
+  }
 
 // @kind list
 // @category featureCreationUtility

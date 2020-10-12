@@ -10,7 +10,7 @@ featureCreation.fresh.create:{[feat;cfg]
   aggCols:cfg`aggcols;
   params:get cfg`funcs;
   // Feature extraction should be performed on all columns that are non aggregate
-  cols2use:cols[feat] except aggCols;
+  cols2use:cols[feat]except aggCols;
   featExtractStart:.z.T;
   // Apply feature creation and encode nulls with the median value of the column
   feat:value .ml.fresh.createfeatures[feat;aggCols;cols2use;params];

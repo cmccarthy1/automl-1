@@ -12,11 +12,13 @@
 // @return {dict} table with appropriate feature creation along with time taken and any saved models 
 featureCreation.node.function:{[cfg;feat]
   typ:cfg`featExtractType;
-  $[typ=`fresh;featureCreation.fresh.create[feat;cfg];
-    typ=`normal;featureCreation.normal.create[feat;cfg];
+  $[typ=`fresh;
+      featureCreation.fresh.create[feat;cfg];
+    typ=`normal;
+      featureCreation.normal.create[feat;cfg];
     typ=`nlp;
-    featureCreation.nlp.create[feat;cfg];
-    '`$"Feature extraction type is not currently supported"
+      featureCreation.nlp.create[feat;cfg];
+    '"Feature extraction type is not currently supported"
     ]
   }
 

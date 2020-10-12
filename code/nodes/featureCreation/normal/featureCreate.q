@@ -21,7 +21,9 @@ featureCreation.normal.create:{[feat;cfg]
   featTable:dataPreprocessing.nullEncode[featTable;med];
   featTable:.ml.dropconstant featTable;
   // Apply the transform of time specific columns as appropriate
-  if[0<count timeCols;featTable^:.ml.timesplit[timeCols#feat;::]];
+  if[0<count timeCols;
+    featTable^:.ml.timesplit[timeCols#feat;::]
+    ];
   featureExtractEnd:.z.T-featureExtractStart;
   `creationTime`features`featModel!(featureExtractEnd;featTable;())
   }

@@ -11,12 +11,8 @@
 // return {table} with the desired transforms applied recursively
 featureCreation.normal.applyFunc:{[feat;func]
   typ:type func;
-  @[;feat]$[-11h=typ;
-            get[func];
-            100h=typ;
-            func;
-            .automl.featureCreation.normal.default
-            ]
+  func:$[-11h=typ;get func;100h=typ;func;.automl.featureCreation.normal.default];
+  func feat
   }
 
 // @kind function
@@ -26,8 +22,9 @@ featureCreation.normal.applyFunc:{[feat;func]
 //  of the system and may be augmented with a more intelligent system moving forward
 // @param feat {tab} The feature data as a table
 // return {tab} the original table
-featureCreation.normal.default:{[feat]feat}
-
+featureCreation.normal.default:{[feat]
+  feat
+  }
 
 // Optional functionality:
 // The functions beyond this point form the basis for demonstrations and operate as
@@ -50,7 +47,6 @@ featureCreation.normal.bulktransform:{[feat]
   funcList:(prd;sum;{first(%)x};{last deltas x});
   flip flip[feat],joinCols!(,/)funcList@/:\:feat bulkCols
   }
-
 
 // @kind function
 // @category featureCreation
