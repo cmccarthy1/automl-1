@@ -33,7 +33,7 @@ runModels.i.readFile:{[filePath]
 // @return {dict} The fitted model along with the predictions
 runModels.i.customModel:{[bestModel;tts;mdls;scoreFunc;cfg]
   if[bestModel~`multikeras;
-    tts[`ytrain`ytest]:runModels.i.prepTarget tts
+    tts[`ytrain`ytest]:runModels.i.prepMultiTarget tts
     ];
   modelDef:runModels.i.bestModelDef[mdls;bestModel]each`lib`fnc;
   customStr:".automl.models.",sv[".";string modelDef],".";
@@ -49,7 +49,7 @@ runModels.i.customModel:{[bestModel;tts;mdls;scoreFunc;cfg]
 // @fileoverview One hot encodes target values and converts to Numpy array
 // @param tts       {dict} Feature and target data split into training and testing set
 // @return {dict} Preprocessed target values
-runModels.i.prepTarget:{[tts]
+runModels.i.prepMultiTarget:{[tts]
   models.i.npArray flip@'value@'.ml.i.onehot1 each tts`ytrain`ytest
   }
 
@@ -57,7 +57,7 @@ runModels.i.prepTarget:{[tts]
 // @category runModelsUtility
 // @fileoverview Return column value based on best model
 // @param mdls      {tab}  Models to be applied to feature data
-// @param bestModel {sym} The best scorinng model from xval
+// @param bestModel {sym} The best scoring model from xval
 // @param col       {sym} Column to search
 // @return {sym} Column value
 runModels.i.bestModelDef:{[mdls;bestModel;col]
