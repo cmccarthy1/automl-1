@@ -13,7 +13,6 @@ runModels.i.txtParse:{[nameMap;filePath]
   runModels.i.readFile each(!).("S*";"|")0:hsym fileName
   }
 
-
 // @kind function
 // @category runModelsUtility
 // @fileoverview Extraction of data from a file
@@ -22,7 +21,6 @@ runModels.i.txtParse:{[nameMap;filePath]
 runModels.i.readFile:{[filePath]
   key(!).("S=;")0:filePath
   }
-
 
 // @kind function
 // @category runModelsUtility
@@ -35,15 +33,35 @@ runModels.i.readFile:{[filePath]
 // @return {dict} The fitted model along with the predictions
 runModels.i.customModel:{[bestModel;tts;mdls;scoreFunc;cfg]
   if[bestModel~`multikeras;
-    tts[`ytrain`ytest]:models.i.npArray flip@'value@'.ml.i.onehot1 each tts`ytrain`ytest];
-  funcName:string first exec fnc from mdls where model=bestModel;
-  libName:string first exec lib from mdls where model=bestModel;
-  customStr:".automl.models.",libName,".",funcName,".";
+    tts[`ytrain`ytest]:runModels.i.prepTarget tts
+    ];
+  modelDef:runModels.i.bestModelDef[mdls;bestModel]each`lib`fnc;
+  customStr:".automl.models.",sv[".";string modelDef],".";
   model:get[customStr,"model"][tts;cfg`seed];
-  fitModel:get[customStr,"fit"][tts;model];
-  predicts:get[customStr,"predict"][tts;fitModel];
-  score:scoreFunc[;tts`ytest]predicts;
-  `model`score!(fitModel;score)
+  modelFit:get[customStr,"fit"][tts;model];
+  modelPred:get[customStr,"predict"][tts;fitModel];
+  score:scoreFunc[modelPred;tts`ytest];
+  `model`score!(modelFit;score)
+  }
+
+// @kind function
+// @category runModelsUtility
+// @fileoverview One hot encodes target values and converts to Numpy array
+// @param tts       {dict} Feature and target data split into training and testing set
+// @return {dict} Preprocessed target values
+runModels.i.prepTarget:{[tts]
+  models.i.npArray flip@'value@'.ml.i.onehot1 each tts`ytrain`ytest
+  }
+
+// @kind function
+// @category runModelsUtility
+// @fileoverview Return column value based on best model
+// @param mdls      {tab}  Models to be applied to feature data
+// @param bestModel {sym} The best scorinng model from xval
+// @param col       {sym} Column to search
+// @return {sym} Column value
+runModels.i.bestModelDef:{[mdls;bestModel;col]
+  first?[mdls;enlist(=;`model;enlist bestModel);();col]
   }
 
 // @kind function
@@ -55,10 +73,10 @@ runModels.i.customModel:{[bestModel;tts;mdls;scoreFunc;cfg]
 // @param scoreFunc {<} Scoring metric applied to evaluate the model
 // @return {dict} The fitted model along with the predictions
 runModels.i.sklModel:{[bestModel;tts;mdls;scoreFunc]
-  model:(first exec minit from mdls where model=bestModel)[][];
-  model[`:fit][;]. tts`xtrain`ytrain;
-  predicts:model[`:predict][tts`xtest]`;
-  score:scoreFunc[;tts`ytest]predicts;
+  model:runModels.i.bestModelDef[mdls;bestModel;`minit][][];
+  model[`:fit]. tts`xtrain`ytrain;
+  modelPred:model[`:predict][tts`xtest]`;
+  score:scoreFunc[modelPred;tts`ytest];
   `model`score!(model;score)
   }
 

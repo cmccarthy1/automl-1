@@ -11,7 +11,6 @@ runModels.setSeed:{[cfg]
   system"S ",string cfg`seed;
   }
 
-
 // @kind function
 // @category runModels
 // @fileoverview Apply train test split to keep holdout for feature impact plot and testing of vanilla best model
@@ -19,10 +18,9 @@ runModels.setSeed:{[cfg]
 // @param tts  {dict} Feature and target data split into training and testing set
 // @return {dict} Training and holdout split of data
 runModels.holdoutSplit:{[cfg;tts]
-  ttsFunc:get cfg[`tts];
+  ttsFunc:get cfg`tts;
   ttsFunc[tts`xtrain;tts`ytrain;cfg`hld]
   }
-
 
 // @kind function
 // @category runModels
@@ -35,34 +33,31 @@ runModels.holdoutSplit:{[cfg;tts]
 runModels.xValSeed:{[tts;cfg;mdl]
   xTrain:tts`xtrain;
   yTrain:tts`ytrain;
-  skLib:mdl[`lib]~`sklearn;
-  // Add a random state to a model if denoted by the flat file definition of the models
-  // this needs to be handled differently for sklearn and keras models
-  modelSeed:mdl[`seed]~`seed;
-  seed:$[not modelSeed;
-         ::;
-         skLib;
-         enlist[`random_state]!enlist cfg`seed;
-         (cfg[`seed];mdl[`typ])
-         ];
-  $[modelSeed&skLib;
-    // Grid search version of the cross-validation is completed if a random seed
-    // and the model is from sklearn, this is in order to incorporate the random state definition.
-    // Final parameter upd was required as dict for grid search to be as flexible as possible
-    [gsFunc:get[cfg[`gs]0];
-    numFolds:cfg[`gs]1;
-    scoreFunc:cfg[`prf]mdl`minit;
-    first value gsFunc[numFolds;1;xTrain;yTrain;scoreFunc;seed;0]
-    ];
+  scoreFunc:cfg[`prf]mdl`minit;
+  seedModel:`seed~mdl`seed;
+  isSklearn:`sklearn~mdl`lib;
+  // Seed handled differently for sklearn and keras  
+  seed:$[not seedModel;
+      ::;
+    isSklearn;
+      enlist[`random_state]!enlist cfg`seed;
+      (cfg`seed;mdl`typ)
+      ];
+  $[seedModel&isSklearn;
+    // Grid search required to incorporate the random state definition
+    [gsFunc:get cfg[`gs]0;
+     numFolds:cfg[`gs]1;
+     numReps:1;
+     first value gsFunc[numFolds;numReps;xTrain;yTrain;scoreFunc;seed;0]
+     ];
     // Otherwise a vanilla cross validation is performed
-    [xvFunc:get[cfg[`xv]0];
-    numFolds:cfg[`xv]1;
-    scoreFunc:cfg[`prf][mdl`minit;seed];
-    xvFunc[numFolds;1;xTrain;yTrain;scoreFunc]
-    ]
+    [xvFunc:get cfg[`xv]0;
+     numFolds:cfg[`xv]1;
+     numReps:1;
+     xvFunc[numFolds;numReps;xTrain;yTrain;scoreFunc seed]
+     ]
     ]
   }
-
    
 // @kind function
 // @category runModels
@@ -71,7 +66,8 @@ runModels.xValSeed:{[tts;cfg;mdl]
 // @param mdls  {tab}  Models to be applied to feature data
 // @return {<} Scoring function appropriate to the problem being solved
 runModels.scoringFunc:{[cfg;mdls]
-  scoreFunc:cfg[`scf]$[`reg in distinct mdls`typ;`reg;`class];
+  problemType:$[`reg in distinct mdls`typ;`reg;`class];
+  scoreFunc:cfg[`scf]problemType;
   -1"\nScores for all models, using ",string scoreFunc;
   scoreFunc
   }
@@ -90,7 +86,6 @@ runModels.orderModels:{[mdls;scoreFunc;predicts]
   orderFunc scoreDict
   }
 
-
 // @kind function
 // @category runModels
 // @fileoverview Fit best model on holdout set and score predictions
@@ -107,14 +102,13 @@ runModels.bestModelFit:{[scores;tts;mdls;scoreFunc;cfg]
   modelFitStart:.z.T;
   modelLib:first exec lib from mdls where model=bestModel;
   fitScore:$[modelLib in key models;
-             runModels.i.customModel[bestModel;tts;mdls;scoreFunc;cfg];
-             runModels.i.sklModel[bestModel;tts;mdls;scoreFunc]
-             ];
+    runModels.i.customModel[bestModel;tts;mdls;scoreFunc;cfg];
+    runModels.i.sklModel[bestModel;tts;mdls;scoreFunc]
+    ];
   holdoutTime:.z.T-holdoutTimeStart;
   returnDict:`holdoutTime`bestModel!holdoutTime,bestModel;
   fitScore,returnDict
   }
-
 
 // @kind function
 // @category runModels
@@ -131,7 +125,6 @@ runModels.createMeta:{[holdoutRun;scores;scoreFunc;xValTime]
   metaKeys!metaVals
   }
 
-
 // @kind function
 // @category runModels
 // @fileoverview Defaulted fitting and prediction functions for automl cross-validation 
@@ -143,8 +136,8 @@ runModels.createMeta:{[holdoutRun;scores;scoreFunc;xValTime]
 // @return {(bool[];float[])} Value predicted on the validation set and the true value 
 runModels.fitPredict:{[func;hyperParam;data]
   predicts:$[0h~type hyperParam;
-            [func[data;hyperParam[0];hyperParam[1]]];
-            @[.[func[][hyperParam]`:fit;data 0]`:predict;data[1]0]`
-            ];
+    func[data;hyperParam 0;hyperParam 1];
+    @[.[func[][hyperParam]`:fit;data 0]`:predict;data[1]0]`
+    ];
   (predicts;data[1]1)
   }

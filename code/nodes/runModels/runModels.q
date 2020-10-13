@@ -11,15 +11,15 @@
 // @param mdl  {tab}  Potential models to be applied to feature data
 // @return {dict} Best model returned along with name of model
 runModels.node.function:{[cfg;tts;mdls]
-  runModels.setSeed[cfg];
+  runModels.setSeed cfg;
   holdoutSet:runModels.holdoutSplit[cfg;tts];
-  xValStart:.z.T;
-  predicts:runModels.xValSeed[holdoutSet;cfg]'[mdls];
-  scoreFunc:runModels.scoringFunc[cfg;mdls];
-  show scores:runModels.orderModels[mdls;scoreFunc;predicts];
-  xValTime:.z.T-xValStart;
-  holdoutRun:runModels.bestModelFit[scores;holdoutSet;mdls;scoreFunc;cfg];
-  metaData:runModels.createMeta[holdoutRun;scores;scoreFunc;xValTime];
+  startTime:.z.T;
+  predictions:runModels.xValSeed[holdoutSet;cfg]each mdls;
+  scoringFunc:runModels.scoringFunc[cfg;mdls];
+  show scores:runModels.orderModels[mdls;scoringFunc;predictions];
+  totalTime:.z.T-startTime;
+  holdoutRun:runModels.bestModelFit[scores;holdoutSet;mdls;scoringFunc;cfg];
+  metaData:runModels.createMeta[holdoutRun;scores;scoringFunc;totalTime];
   returnKeys:`bestModel`bestScoringName`metaData;
   returnVals:(holdoutRun`model;holdoutRun`bestModel;metaData);
   returnKeys!returnVals
