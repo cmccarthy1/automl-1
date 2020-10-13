@@ -27,7 +27,7 @@ passingTest:{[function;data;applyType;expectedReturn]
 
 -1"\nTesting that keras models are removed when not appropriate to use";
 
--!"\nThe below tests assume that keras is not installed in the given environment"
+-1"\nThe below tests assume that keras is not installed in the given environment";
 
 // Suitable configuration for testing of configuration update
 configReg     :enlist[`problemType]!enlist`reg

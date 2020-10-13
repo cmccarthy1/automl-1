@@ -11,7 +11,7 @@
 // @return {tab} Keras model removed if needed and removal highlighted
 selectModels.targetKeras:{[mdls;tts;tgt]
   if[1~checkimport[0];
-    :mdls?[params`mdls;enlist(<>;`lib;enlist `keras);0b;()]
+    :?[mdls;enlist(<>;`lib;enlist `keras);0b;()]
     ];
   multiCheck:`multikeras in mdls`model;
   tgtCount:min count@'distinct each tts`ytrain`ytest;

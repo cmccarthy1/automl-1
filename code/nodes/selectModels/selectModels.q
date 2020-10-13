@@ -13,7 +13,7 @@
 // @return {tab} Appropriate models to be applied to feature data
 selectModels.node.function:{[tts;target;mdls]
   models:selectModels.targetKeras[mdls;tts;target];
-  selectModels.targetLimit[models;target];
+  selectModels.targetLimit[models;target]
   }
 
 // Input information
