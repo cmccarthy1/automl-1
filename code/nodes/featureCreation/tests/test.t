@@ -49,10 +49,10 @@ passingTest:{[function;data;applyType;expectedReturn]
 
 // Datasets
 n:100
-n2:200
+nlpList:("generate";"random";"data";"for";"tests")
 freshData    :([]n?til 10;n?1f;n?1f;n?1f)
-nlpData      :([]string each n2?`2;n2?n;n2?1f)
-nlpMultiData :([]string each n2?`2;string each n2?`2;n2?n;n2?1f)
+nlpData      :([]n?nlpList;n?n;n?1f)
+nlpMultiData :([]n?nlpList;n?nlpList;n?n;n?1f)
 nlpErrData   :([]string each n?`5;n?n;n?1f)
 normData     :([]n?100;n?1f;n?10;n?10f)
 normBulkData :.automl.featureCreation.normal.bulktransform normData
@@ -89,9 +89,9 @@ passingTest[featCreate;(freshCfg;freshData;`count);0b;698       ]
 
 -1"\nTesting appropriate NLP feature creation";
 passingTest[featCreate;(nlpCfg;nlpData     ;`key  );0b;returnCols]
-passingTest[featCreate;(nlpCfg;nlpData     ;`count);0b;151       ]
+passingTest[featCreate;(nlpCfg;nlpData     ;`count);0b;11        ]
 passingTest[featCreate;(nlpCfg;nlpMultiData;`key  );0b;returnCols]
-passingTest[featCreate;(nlpCfg;nlpMultiData;`count);0b;336       ]
+passingTest[featCreate;(nlpCfg;nlpMultiData;`count);0b;60        ]
 
 -1"\nTesting inappropriate NLP feature creation";
 
