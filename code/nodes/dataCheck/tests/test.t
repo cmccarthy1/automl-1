@@ -104,7 +104,7 @@ failingTest[.automl.dataCheck.functions;inapprFuncPrf;1b;inapprFuncPrfPrint]
 
 // appropriate function inputs
 apprFunc :normalConfig,enlist[`xv]!enlist (`.ml.xv.pcsplit;0.2)
-apprFuncs:normalConfig,`xv`gs!((`.ml.xv.pcsplit;0.2);(`.ml.gs.mcsplit;0.2))
+apprFuncs:normalConfig,`xv`gs!((`.ml.xv.pcsplit;0.2;2);(`.ml.gs.mcsplit;0.2;1))
 .automl.newSigfeat:{.ml.fresh.significantfeatures[x;y;.ml.fresh.ksigfeat 2]}
 apprSigFeat:enlist[`sigfeats]!enlist `.automl.newsigfeat
 
