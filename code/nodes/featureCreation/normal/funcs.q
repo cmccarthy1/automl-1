@@ -11,8 +11,15 @@
 // return {table} with the desired transforms applied recursively
 featureCreation.normal.applyFunc:{[feat;func]
   typ:type func;
+  // util.qpyFuncSearch to be used here when tts addition made 
   func:$[-11h=typ;get func;100h=typ;func;.automl.featureCreation.normal.default];
-  func feat
+  returnTab:func feat;
+  $[98h~type returnTab;
+   returnTab;
+   98h~type dfTab:@[.ml.df2tab;returnTab;returnTab];
+    dfTab;
+   '"Normal feature creation function did not return a simple table"
+   ]
   }
 
 // @kind function

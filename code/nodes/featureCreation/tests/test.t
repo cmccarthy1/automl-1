@@ -60,12 +60,21 @@ normTruncData:.automl.featureCreation.normal.truncSingleDecomp normData
 
 // Configuration Dictionaries
 cfgKey:`featExtractType`funcs
-freshCfg    :(cfgKey,`aggcols)!`fresh`.ml.fresh.params`x
-nlpCfg      :(cfgKey,`w2v`seed)!`nlp`.automl.featureCreation.normal.default,0,1234
-normCfg     :cfgKey!`normal`.automl.featureCreation.normal.default
-normBulkCfg :cfgKey!`normal`.automl.featureCreation.normal.bulktransform
-normTruncCfg:cfgKey!`normal`.automl.featureCreation.normal.truncSingleDecomp
-inappropCfg :cfgKey!`newFeatType`.automl.extractNewFeats
+freshCfg       :(cfgKey,`aggcols)!`fresh`.ml.fresh.params`x
+nlpCfg         :(cfgKey,`w2v`seed)!`nlp`.automl.featureCreation.normal.default,0,1234
+normCfg        :cfgKey!`normal`.automl.featureCreation.normal.default
+normBulkCfg    :cfgKey!`normal`.automl.featureCreation.normal.bulktransform
+normTruncCfg   :cfgKey!`normal`.automl.featureCreation.normal.truncSingleDecomp
+normPandasCfg  :cfgKey!`normal`.automl.pandasFeat
+inappropCfgTyp :cfgKey!`newFeatType`.automl.extractNewFeats
+inappropCfgFunc:cfgKey!`normal`.automl.inappropFunc
+
+// Generate pandas table
+.automl.pandasFeat:{.p.import[`pandas][`:DataFrame]x}
+
+// Generate inappropriate Func
+.automl.inappropFunc:{flip x}
+
 
 // Utilities
 
@@ -103,15 +112,19 @@ nlpErr:"\nGensim returned the following error\ncall: you must first build vocabu
 failingTest[featCreate;(nlpCfg;nlpErrData;`count);0b;nlpErr]
 
 -1"\nTesting appropriate normal feature creation";
-passingTest[featCreate;(normCfg     ;normData     ;`key  );0b;returnCols]
-passingTest[featCreate;(normCfg     ;normData     ;`count);0b;4         ]
-passingTest[featCreate;(normBulkCfg ;normBulkData ;`key  );0b;returnCols]
-passingTest[featCreate;(normBulkCfg ;normBulkData ;`count);0b;44        ]
-passingTest[featCreate;(normTruncCfg;normTruncData;`key  );0b;returnCols]
-passingTest[featCreate;(normTruncCfg;normTruncData;`count);0b;7         ]
+passingTest[featCreate;(normCfg      ;normData     ;`key  );0b;returnCols]
+passingTest[featCreate;(normCfg      ;normData     ;`count);0b;4         ]
+passingTest[featCreate;(normBulkCfg  ;normBulkData ;`key  );0b;returnCols]
+passingTest[featCreate;(normBulkCfg  ;normBulkData ;`count);0b;44        ]
+passingTest[featCreate;(normTruncCfg ;normTruncData;`key  );0b;returnCols]
+passingTest[featCreate;(normTruncCfg ;normTruncData;`count);0b;7         ]
+passingTest[featCreate;(normPandasCfg;normData     ;`key  );0b;returnCols]
+passingTest[featCreate;(normPandasCfg;normData     ;`count);0b;4         ]
 
 -1"\nTesting inappropriate feature creation";
 
 featTypeErr:"Feature extraction type is not currently supported"
+featFuncErr:"Normal feature creation function did not return a simple table"
 
-failingTest[featCreate;(inappropCfg;freshData;());0b;featTypeErr]
+failingTest[featCreate;(inappropCfgTyp ;normData;());0b;featTypeErr]
+failingTest[featCreate;(inappropCfgFunc;normData;());0b;featFuncErr]
