@@ -33,12 +33,13 @@ runModels.holdoutSplit:{[cfg;tts]
 runModels.xValSeed:{[tts;cfg;mdl]
   xTrain:tts`xtrain;
   yTrain:tts`ytrain;
+  numReps:1;
   scoreFunc:cfg[`prf]mdl`minit;
   seedModel:`seed~mdl`seed;
   isSklearn:`sklearn~mdl`lib;
   // Seed handled differently for sklearn and keras  
   seed:$[not seedModel;
-      ::;
+    ::;
     isSklearn;
       enlist[`random_state]!enlist cfg`seed;
       (cfg`seed;mdl`typ)
@@ -47,13 +48,11 @@ runModels.xValSeed:{[tts;cfg;mdl]
     // Grid search required to incorporate the random state definition
     [gsFunc:get cfg[`gs]0;
      numFolds:cfg[`gs]1;
-     numReps:cfg[`gs]2;
      first value gsFunc[numFolds;numReps;xTrain;yTrain;scoreFunc;seed;0]
      ];
     // Otherwise a vanilla cross validation is performed
     [xvFunc:get cfg[`xv]0;
      numFolds:cfg[`xv]1;
-     numReps:cfg[`xv]2;
      xvFunc[numFolds;numReps;xTrain;yTrain;scoreFunc seed]
      ]
     ]

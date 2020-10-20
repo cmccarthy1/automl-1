@@ -94,12 +94,12 @@ graph:.ml.connectEdge[graph;`featureDescription ;`symEncode      ;`preprocParams
 graph:.ml.connectEdge[graph;`featureCreation    ;`creationTime   ;`preprocParams;`creationTime]
 graph:.ml.connectEdge[graph;`featureSignificance;`sigFeats       ;`preprocParams;`sigFeats]
 graph:.ml.connectEdge[graph;`labelEncode        ;`symMap         ;`preprocParams;`symMap]
-graph:.ml.connectEdge[graph;`runModels          ;`metaData       ;`preprocParams;`metaData]
 
 // Predict_Params
 graph:.ml.connectEdge[graph;`optimizeModels;`bestModel  ;`predictParams;`bestModel]
 graph:.ml.connectEdge[graph;`optimizeModels;`testScore  ;`predictParams;`testScore]
 graph:.ml.connectEdge[graph;`optimizeModels;`predictions;`predictParams;`predictions]
+graph:.ml.connectEdge[graph;`runModels     ;`modelMetaData   ;`predictParams;`modelMetaData]
 
 // Param_Consolidate
 graph:.ml.connectEdge[graph;`predictParams;`output;`paramConsolidate;`predictionStore]

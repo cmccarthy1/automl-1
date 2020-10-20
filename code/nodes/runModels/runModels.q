@@ -20,7 +20,7 @@ runModels.node.function:{[cfg;tts;mdls]
   totalTime:.z.T-startTime;
   holdoutRun:runModels.bestModelFit[scores;holdoutSet;mdls;scoringFunc;cfg];
   metaData:runModels.createMeta[holdoutRun;scores;scoringFunc;totalTime];
-  returnKeys:`bestModel`bestScoringName`metaData;
+  returnKeys:`bestModel`bestScoringName`modelMetaData;
   returnVals:(holdoutRun`model;holdoutRun`bestModel;metaData);
   returnKeys!returnVals
   }
@@ -29,4 +29,4 @@ runModels.node.function:{[cfg;tts;mdls]
 runModels.node.inputs  :`config`ttsObject`models!"!!+"
 
 // Output information
-runModels.node.outputs :`bestModel`bestScoringName`metaData!"<s!"
+runModels.node.outputs :`bestModel`bestScoringName`modelMetaData!"<s!"
