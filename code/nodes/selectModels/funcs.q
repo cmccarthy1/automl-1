@@ -13,12 +13,12 @@ selectModels.targetKeras:{[mdls;tts;tgt]
   if[1~checkimport[0];
     :?[mdls;enlist(<>;`lib;enlist `keras);0b;()]
     ];
-  multiCheck:`multikeras in mdls`model;
+  multiCheck:`multi in mdls`typ;
   tgtCount:min count@'distinct each tts`ytrain`ytest;
   tgtCheck:count[distinct tgt]>tgtCount;
   if[multiCheck&tgtCheck;
-    -1"\n Test set does not contain examples of each class. Removed multikeras from models";
-    :delete from mdls where model=`multikeras
+    -1"\n Test set does not contain examples of each class. Removed any multi keras models";
+    :delete from mdls where lib=`keras,typ=`multi
     ];
   mdls
   }
