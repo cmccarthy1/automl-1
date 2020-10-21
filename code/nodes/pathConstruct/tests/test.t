@@ -24,10 +24,23 @@ passingTest:{[function;data;applyType;expectedReturn]
   expectedReturn~functionReturn
   }
 
+\S 42
+
+// Generate data for preProc params 
+
+// Generate Configuration dictionaries
+configSave0:`saveopt`startTime`startDate!(0;first 1?1t;"d"$1)
+configSave1:`saveopt`startTime`startDate!(1;first 1?1t;"d"$1)
+configSave2:`saveopt`startTime`startDate!(2;first 1?1t;"d"$1)
+
 // Generate preProcParams dictionary
-preProcParamsKeys:`config`dataDescription`symMap`creationTime`sigFeats`featModel
-preProcParamsVals:(()!();([]col1:10?10;col2:10?1f);`freq`ohe!`col1`col2;1?1t;`feat1`feat2;.p.import`gensim)
-preProcParamDict :preProcParamsKeys!preProcParamsVals
+preProcKeys:`dataDescription`symMap`creationTime`sigFeats`featModel
+preProcVals:(([]col1:10?10;col2:10?1f);`freq`ohe!`col1`col2;1?1t;`feat1`feat2;.p.import`gensim)
+preProcDict :preProcKeys!preProcVals
+
+preProcDict0:preProcDict,enlist[`config]!enlist configSave0
+preProcDict1:preProcDict,enlist[`config]!enlist configSave1
+preProcDict2:preProcDict,enlist[`config]!enlist configSave2
 
 // Generate data for prediction params
 
@@ -55,10 +68,38 @@ predictionStoreKeys:`bestModel`hyperParams`testScore`predictions`modelMetaData
 predictionStoreVals:(randomForestMdl;`feat1`feat2!1 2;100;100?0b;modelMetaData)
 predictionStoreDict:predictionStoreKeys!predictionStoreVals
 
+
+-1"\nTesting appropriate inputs for pathConstruct";
+
+// Create function to extract keys of return dictionary
+pathConstructFunc:{[preProcParams;predictionStore]
+  returnDict:.automl.pathConstruct.node.function[preProcParams;predictionStore];
+  key returnDict
+  }
+
 // Expected return dictionary
-paramReturn:preProcParamDict,predictionStoreDict
+paramReturn:key[preProcDict],`config,key[predictionStoreDict],`pathDict
 
--1"\nTesting appropriate inputs for paramConsolidate";
-passingTest[.automl.paramConsolidate.node.function;(preProcParamDict;predictionStoreDict);0b;paramReturn]
+// Testing appropriate inputs for pathConstruct
+passingTest[pathConstructFunc;(preProcDict0;predictionStoreDict);0b;paramReturn]
+passingTest[pathConstructFunc;(preProcDict1;predictionStoreDict);0b;paramReturn]
+passingTest[pathConstructFunc;(preProcDict2;predictionStoreDict);0b;paramReturn]
 
 
+-1"\nTesting appropriate paths are constructed for each saveOpt";
+
+// Generate function to check what paths were created
+pathConstructChk:{[preProcParams;predictionStore]
+  returnDict:.automl.pathConstruct.node.function[preProcParams;predictionStore];
+  key returnDict[`pathDict]
+  }
+
+// Expected return values
+paramReturn0:()
+paramReturn1:`config`models
+paramReturn2:paramReturn1,`images`report
+
+// Test that appropriate paths are created for saveOpt
+passingTest[pathConstructChk;(preProcDict0;predictionStoreDict);0b;paramReturn0]
+passingTest[pathConstructChk;(preProcDict1;predictionStoreDict);0b;paramReturn1]
+passingTest[pathConstructChk;(preProcDict2;predictionStoreDict);0b;paramReturn2]

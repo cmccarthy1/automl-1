@@ -25,7 +25,7 @@ graph:.ml.addNode[graph;`runModels          ;runModels.node]
 graph:.ml.addNode[graph;`optimizeModels     ;optimizeModels.node]
 graph:.ml.addNode[graph;`preprocParams      ;preprocParams.node]
 graph:.ml.addNode[graph;`predictParams      ;predictParams.node]
-graph:.ml.addNode[graph;`paramConsolidate   ;paramConsolidate.node]
+graph:.ml.addNode[graph;`pathConstruct      ;pathConstruct.node]
 graph:.ml.addNode[graph;`saveGraph          ;saveGraph.node]
 graph:.ml.addNode[graph;`saveMeta           ;saveMeta.node]
 graph:.ml.addNode[graph;`saveReport         ;saveReport.node]
@@ -94,23 +94,23 @@ graph:.ml.connectEdge[graph;`featureDescription ;`symEncode      ;`preprocParams
 graph:.ml.connectEdge[graph;`featureCreation    ;`creationTime   ;`preprocParams;`creationTime]
 graph:.ml.connectEdge[graph;`featureSignificance;`sigFeats       ;`preprocParams;`sigFeats]
 graph:.ml.connectEdge[graph;`labelEncode        ;`symMap         ;`preprocParams;`symMap]
-graph:.ml.connectEdge[graph;`featureCreation    ;`featModel          ;`preprocParams;`featModel]
+graph:.ml.connectEdge[graph;`featureCreation    ;`featModel      ;`preprocParams;`featModel]
 
 // Predict_Params
 graph:.ml.connectEdge[graph;`optimizeModels;`bestModel  ;`predictParams;`bestModel]
 graph:.ml.connectEdge[graph;`optimizeModels;`testScore  ;`predictParams;`testScore]
 graph:.ml.connectEdge[graph;`optimizeModels;`predictions;`predictParams;`predictions]
 
-// Param_Consolidate
-graph:.ml.connectEdge[graph;`predictParams;`output;`paramConsolidate;`predictionStore]
-graph:.ml.connectEdge[graph;`preprocParams;`output;`paramConsolidate;`preprocParams]
+// path_Construct
+graph:.ml.connectEdge[graph;`predictParams;`output;`pathConstruct;`predictionStore]
+graph:.ml.connectEdge[graph;`preprocParams;`output;`pathConstruct;`preprocParams]
 
 // Save_Graph
-graph:.ml.connectEdge[graph;`paramConsolidate;`output;`saveGraph;`input]
+graph:.ml.connectEdge[graph;`pathConstruct;`output;`saveGraph;`input]
 
 // Save_Meta
-graph:.ml.connectEdge[graph;`paramConsolidate;`output;`saveMeta;`input]
+graph:.ml.connectEdge[graph;`pathConstruct;`output;`saveMeta;`input]
 
 // Save_Report
-graph:.ml.connectEdge[graph;`paramConsolidate;`output;`saveReport;`input]
+graph:.ml.connectEdge[graph;`pathConstruct;`output;`saveReport;`input]
 
