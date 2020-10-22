@@ -16,5 +16,5 @@ loadfile`:code/aml.q
 loadfile`:code/utils.q
 
 \d .nlp
-.automl.i.loadNLP[]
+.automl.utils.loadNLP[]
 \d .automl
