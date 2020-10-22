@@ -7,7 +7,7 @@
 // @fileoverview Save all graphs needed for reports 
 // @param params {dict} All data generated during the preprocessing and
 //  prediction stages
-// @return {dict} ??
+// @return {null} All graphs needed for reports are saved to appropriate location
 saveGraph.node.function:{[params]
   savePath:params[`pathDict;`images];
   saveGraph.confusionMatrix[params;savePath];

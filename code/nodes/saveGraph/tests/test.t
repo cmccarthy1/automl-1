@@ -41,11 +41,14 @@ yTest:10?0b
 confMatrix:.ml.confmat[preds;yTest]
 
 // Generate impact dictionary
-colNames  :`col1`col2`col3
+colIndex  :0 2 1
 impactVals:asc 3?100f
-impactDict:colNames:colNames!impactVals
+impactDict:colIndex!impactVals
 
 analyzeModel:`confMatrix`impact!(confMatrix;impactDict)
+
+// Significant features
+sigFeats:`col1`col2`col3
 
 // Generate config dictionaries
 configClass0:`problemType`saveopt!(`class;0)
@@ -53,8 +56,8 @@ configClass1:`problemType`saveopt!(`class;1)
 configClass2:`problemType`saveopt!(`class;2)
 configReg2  :`problemType`saveopt!(`reg  ;2)
 
-paramDictKeys:`modelName`pathDict`analyzeModel
-paramDictVals:(modelName;pathDict;analyzeModel)
+paramDictKeys:`modelName`pathDict`analyzeModel`sigFeats
+paramDictVals:(modelName;pathDict;analyzeModel;sigFeats)
 paramDict    :paramDictKeys!paramDictVals
 
 paramDictConfig0   :paramDict,enlist[`config]!enlist configClass0
