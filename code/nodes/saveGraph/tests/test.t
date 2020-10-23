@@ -92,3 +92,7 @@ passingTest[.automl.saveGraph.node.function;paramDictConfigReg0;1b;paramDictConf
 passingTest[.automl.saveGraph.node.function;paramDictConfigReg1;1b;paramDictConfigReg1]
 passingTest[.automl.saveGraph.node.function;paramDictConfigReg2;1b;paramDictConfigReg2]
 
+
+// Remove any directories made
+rmPath:.automl.utils.ssrwin .automl.path,"/outputs/testing/";
+system $[.z.o like "w*";"rmdir ",rmPath," /s";"rm -r ",rmPath];
