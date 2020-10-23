@@ -4,6 +4,22 @@
 
 // @kind function
 // @category saveGraph
+// @fileoverview Save down target distribution plot
+// @param params   {dict} All data generated during the process
+// @param savePath {str} Path where images are to be saved
+// return {null} Save target distribution plot to appropriate location
+saveGraph.targetPlot:{[params;savePath]
+  tts:params[`tts];
+  problemTyp:string params[`config;`problemType];
+  target:raze tts`ytrain`ytest;
+  plotFunc:".automl.saveGraph.i.",problemTyp,"TargetPlot";
+  get[plotFunc][target;savePath];
+  }
+
+
+
+// @kind function
+// @category saveGraph
 // @fileoverview Save down confusion matrix
 // @param params   {dict} All data generated during the process
 // @param savePath {str} Path where images are to be saved
@@ -37,5 +53,21 @@ saveGraph.impactPlot:{[params;savePath]
   updKeys:sigFeats key impact;
   updImpact:updKeys!value impact;
   saveGraph.i.plotImpact[updImpact;modelName;savePath];
-  -1"\nFeature impact calculated for features associated with ",string[modelName]," model";
+  }
+
+
+// @kind function
+// @category saveGraph
+// @fileoverview Save down residual plot
+// @param params   {dict} All data generated during the process
+// @param savePath {str} Path where images are to be saved
+// return {null} Save residual plot to appropriate location
+saveGraph.residualPlot:{[params;savePath]
+  residuals:params[`analyzeModel;`residuals];
+  modelName:params`modelName;
+  saveOpt:params[`config;`saveopt];
+  problemTyp:params[`config;`problemType];
+  if[(`reg~problemTyp)~ saveOpt in 1 2;
+    saveGraph.i.plotResiduals[residuals;modelName;savePath]
+    ];
   }

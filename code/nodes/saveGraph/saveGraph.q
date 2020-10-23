@@ -10,8 +10,11 @@
 // @return {null} All graphs needed for reports are saved to appropriate location
 saveGraph.node.function:{[params]
   savePath:params[`pathDict;`images];
+  saveGraph.targetPlot[params;savePath];
   saveGraph.confusionMatrix[params;savePath];
   saveGraph.impactPlot[params;savePath];
+  saveGraph.residualPlot[params;savePath];
+  params
   }
 
 // Input information

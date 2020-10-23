@@ -31,7 +31,7 @@ passingTest:{[function;data;applyType;expectedReturn]
 modelName:`randomForestRegressor
 
 // Generate a path to save images to
-savePath:.automl.utils.ssrwin .automl.path,"/outputs/testing/images"
+savePath:.automl.utils.ssrwin .automl.path,"/outputs/testing/images/"
 system"mkdir",$[.z.o like "w*";" ";" -p "],savePath;
 pathDict:enlist[`images]!enlist savePath
 
@@ -45,30 +45,50 @@ colIndex  :0 2 1
 impactVals:asc 3?100f
 impactDict:colIndex!impactVals
 
-analyzeModel:`confMatrix`impact!(confMatrix;impactDict)
+// Generate residuals for regression models
+true:asc 1000?100f
+preds:asc 1000?100f
+resids:true-preds
+residDict:`true`resids!(true;resids)
+
+// Generate analyzeModel dictionary
+analyzeModel:`confMatrix`impact`residuals!(confMatrix;impactDict;residDict)
 
 // Significant features
 sigFeats:`col1`col2`col3
+
+// Train test split
+ttsClass:`ytrain`ytest!(80?0b;20?0b)
+ttsReg  :`ytrain`ytest!(80?100f;20?100f)
 
 // Generate config dictionaries
 configClass0:`problemType`saveopt!(`class;0)
 configClass1:`problemType`saveopt!(`class;1)
 configClass2:`problemType`saveopt!(`class;2)
+configReg0  :`problemType`saveopt!(`reg  ;0)
+configReg1  :`problemType`saveopt!(`reg  ;1)
 configReg2  :`problemType`saveopt!(`reg  ;2)
 
 paramDictKeys:`modelName`pathDict`analyzeModel`sigFeats
 paramDictVals:(modelName;pathDict;analyzeModel;sigFeats)
 paramDict    :paramDictKeys!paramDictVals
 
-paramDictConfig0   :paramDict,enlist[`config]!enlist configClass0
-paramDictConfig1   :paramDict,enlist[`config]!enlist configClass1
-paramDictConfig2   :paramDict,enlist[`config]!enlist configClass2
-paramDictConfigReg2:paramDict,enlist[`config]!enlist configReg2
+paramDictConfig0   :paramDict,`config`tts!(configClass0;ttsClass)
+paramDictConfig1   :paramDict,`config`tts!(configClass1;ttsClass)
+paramDictConfig2   :paramDict,`config`tts!(configClass2;ttsClass)
+paramDictConfigReg0:paramDict,`config`tts!(configReg1  ;ttsReg)
+paramDictConfigReg1:paramDict,`config`tts!(configReg0  ;ttsReg)
+paramDictConfigReg2:paramDict,`config`tts!(configReg2  ;ttsReg)
 
--1"\nTesting appropriate inputs for saveGraph";
+-1"\nTesting appropriate classification inputs for saveGraph";
 
-passingTest[.automl.saveGraph.node.function;paramDictConfig0   ;1b;(::)]
-passingTest[.automl.saveGraph.node.function;paramDictConfig1   ;1b;(::)]
-passingTest[.automl.saveGraph.node.function;paramDictConfig2   ;1b;(::)]
-passingTest[.automl.saveGraph.node.function;paramDictConfigReg2;1b;(::)]
+passingTest[.automl.saveGraph.node.function;paramDictConfig0   ;1b;paramDictConfig0]
+passingTest[.automl.saveGraph.node.function;paramDictConfig1   ;1b;paramDictConfig1]
+passingTest[.automl.saveGraph.node.function;paramDictConfig2   ;1b;paramDictConfig2]
+
+-1"\nTesting appropriate regression inputs for saveGraph";
+
+passingTest[.automl.saveGraph.node.function;paramDictConfigReg0;1b;paramDictConfigReg0]
+passingTest[.automl.saveGraph.node.function;paramDictConfigReg1;1b;paramDictConfigReg1]
+passingTest[.automl.saveGraph.node.function;paramDictConfigReg2;1b;paramDictConfigReg2]
 
