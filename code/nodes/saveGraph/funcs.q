@@ -63,7 +63,6 @@ saveGraph.impactPlot:{[params;savePath]
 // @param savePath {str} Path where images are to be saved
 // return {null} Save residual plot to appropriate location
 saveGraph.residualPlot:{[params;savePath]
-  // This is to be added to optimizeParams output
   residuals:params[`analyzeModel;`residuals];
   modelName:params`modelName;
   saveOpt:params[`config;`saveopt];
