@@ -97,9 +97,11 @@ graph:.ml.connectEdge[graph;`labelEncode        ;`symMap         ;`preprocParams
 graph:.ml.connectEdge[graph;`featureCreation    ;`featModel      ;`preprocParams;`featModel]
 
 // Predict_Params
-graph:.ml.connectEdge[graph;`optimizeModels;`bestModel  ;`predictParams;`bestModel]
-graph:.ml.connectEdge[graph;`optimizeModels;`testScore  ;`predictParams;`testScore]
-graph:.ml.connectEdge[graph;`optimizeModels;`predictions;`predictParams;`predictions]
+graph:.ml.connectEdge[graph;`optimizeModels;`bestModel    ;`predictParams;`bestModel]
+graph:.ml.connectEdge[graph;`optimizeModels;`hyperParams  ;`predictParams;`hyperParams]
+graph:.ml.connectEdge[graph;`optimizeModels;`testScore    ;`predictParams;`testScore]
+graph:.ml.connectEdge[graph;`optimizeModels;`predictions  ;`predictParams;`predictions]
+graph:.ml.connectEdge[graph;`runModels     ;`modelMetaData;`predictParams;`modelMetaData]
 
 // path_Construct
 graph:.ml.connectEdge[graph;`predictParams;`output;`pathConstruct;`predictionStore]
