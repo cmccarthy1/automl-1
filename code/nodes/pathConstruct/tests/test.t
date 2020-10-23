@@ -29,9 +29,9 @@ passingTest:{[function;data;applyType;expectedReturn]
 // Generate data for preProc params 
 
 // Generate Configuration dictionaries
-configSave0:`saveopt`startTime`startDate!(0;first 1?1t;"d"$1)
-configSave1:`saveopt`startTime`startDate!(1;first 1?1t;"d"$1)
-configSave2:`saveopt`startTime`startDate!(2;first 1?1t;"d"$1)
+configSave0:`saveopt`startTime`startDate!(0;"t"$1;"d"$1)
+configSave1:`saveopt`startTime`startDate!(1;"t"$1;"d"$1)
+configSave2:`saveopt`startTime`startDate!(2;"t"$1;"d"$1)
 
 // Generate preProcParams dictionary
 preProcKeys:`dataDescription`symMap`creationTime`sigFeats`featModel
@@ -103,3 +103,7 @@ paramReturn2:paramReturn1,`images`report
 passingTest[pathConstructChk;(preProcDict0;predictionStoreDict);0b;paramReturn0]
 passingTest[pathConstructChk;(preProcDict1;predictionStoreDict);0b;paramReturn1]
 passingTest[pathConstructChk;(preProcDict2;predictionStoreDict);0b;paramReturn2]
+
+// Remove any folders created
+rmPath:.automl.utils.ssrwin .automl.path,"/outputs/2000.01.02/";
+system $[.z.o like "w*";"rmdir ",rmPath," /s";"rm -r ",rmPath];
