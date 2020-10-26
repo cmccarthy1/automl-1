@@ -14,9 +14,8 @@ dataCheck.i.errColumns:{[clist;slist;cfg]
   if[count[clist]<>count slist;
     -1 "\n Removed the following columns due to type restrictions for ",string cfg;
     0N!clist where not clist in slist
-  ]
+    ]
   }
-
 
 // Parameter retrieval functionality
 
@@ -100,10 +99,10 @@ dataCheck.i.normalDefault:{`xv`gs`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats
 // @category dataCheckUtility
 // @fileoverview default parameters used in the application of 'NLP' AutoML
 // @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.nlpDefault:{`xv`gs`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats!
+dataCheck.i.nlpDefault:{`xv`gs`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`w2v!
   ((`.ml.xv.kfshuff;5);(`.ml.gs.kfshuff;5);`.automl.prep.i.default;
    `.automl.runModels.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);
-   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance)
+   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;0)
   }
 
 // @kind function
@@ -115,7 +114,6 @@ dataCheck.i.nlpDefault:{`xv`gs`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats!
 dataCheck.i.paramParse:{[fileName;filePath]
   key[k]!(value@){(!).("S=;")0:x}each k:(!).("S*";"|")0:hsym`$.automl.path,filePath,fileName
   }
-
 
 // Save path generation functionality
 

@@ -5,16 +5,15 @@
 // @kind function
 // @category node
 // @fileoverview Split data into training and testing sets
-// @param cfg      {dict}          Location and method by which to retrieve the data
-// @param feat     {tab}           The feature data as a table 
-// @param tgt      {(num[];sym[])} Numerical or symbol vector containing the target dataset
-// @param sigFeats {sym[]}         Significant features
-// @return         {dict}          Data separated into training and testing sets
+// @param cfg      {dict}  Location and method by which to retrieve the data
+// @param feat     {tab}   The feature data as a table 
+// @param tgt      {num[]} Numerical vector containing target data
+// @param sigFeats {sym[]} Significant features
+// @return         {dict}  Data separated into training and testing sets
 trainTestSplit.node.function:{[cfg;feats;tgt;sigFeats]
-  data:sigFeats#feats;
-  ttsFunc:@[get;cfg`tts;{'"Train Test Split function ",x," not defined"}];
-  tts:ttsFunc[data;tgt;cfg`sz];
-  @[tts;`xtrain`xtest;flip value flip::]
+  tts:trainTestSplit.applyTTS[cfg;feats;tgt;sigFeats];
+  trainTestSplit.ttsReturnType[tts];
+  tts
   }
 
 // Input information

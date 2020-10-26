@@ -37,9 +37,9 @@ runModels.i.customModel:{[bestModel;tts;mdls;scoreFunc;cfg]
     ];
   modelDef:runModels.i.bestModelDef[mdls;bestModel]each`lib`fnc;
   customStr:".automl.models.",sv[".";string modelDef],".";
-  model:get[customStr,"model"][tts;cfg`seed];
-  modelFit:get[customStr,"fit"][tts;model];
-  modelPred:get[customStr,"predict"][tts;fitModel];
+  model:utils.qpyFuncSearch[customStr,"model"][tts;cfg`seed];
+  modelFit:utils.qpyFuncSearch[customStr,"fit"][tts;model];
+  modelPred:utils.qpyFuncSearch[customStr,"predict"][tts;fitModel];
   score:scoreFunc[modelPred;tts`ytest];
   `model`score!(modelFit;score)
   }

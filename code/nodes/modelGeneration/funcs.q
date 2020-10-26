@@ -11,7 +11,6 @@ modelGeneration.filesCheck:{[cfg]
   if[not cfg[`problemType]in key modelGeneration.files;'`$"text file not found"]
   }
 
-
 // @kind function
 // @category modelGeneration
 // @fileoverview Extraction of an appropriately valued dictionary from a non complex flat file
@@ -28,7 +27,6 @@ modelGeneration.txtParse:{[cfg;fp]
    ];
   modelDict
   }
-
 
 // @kind function
 // @category modelGeneration
@@ -54,7 +52,6 @@ modelGeneration.modelPrep:{[cfg;mdlDict;tgt]
   mdlTab
   }
 
-
 // @kind function
 // @category modelGeneration
 // @fileoverview Build up the model to be applied based on naming convention
@@ -65,30 +62,11 @@ modelGeneration.modelPrep:{[cfg;mdlDict;tgt]
 // @return     {<} the appropriate function or projection in the case of sklearn
 modelGeneration.mdlFunc:{[lib;fnc;mdl]
   $[lib in key models;
-    get[".automl.models.",string[lib],".fitScore"];
+    utils.qpyFuncSearch".automl.models.",string[lib],".fitScore";
     // construct the projection used for sklearn models eg '.p.import[`sklearn.svm][`:SVC]'
     {[x;y;z].p.import[x]y}[` sv lib,fnc;hsym mdl]
     ]
   }
 
-
-// @kind function
-// @category modelGeneration
-// @fileoverview Update models available for use based on the number of rows in the target set
-// @param tgt   {(num[];sym[])} numerical or symbol vector containing the target dataset
-// @param mdls  {tab} table defining models which are to be applied to the dataset
-// @return      {tab} model table with appropriate models removed if needed and 
-//  model removal highlighted
-modelGeneration.updModels:{[mdls;tgt]
- $[10000<count tgt;
-   [-1"\nLimiting the models being applied due to number targets>10,000";
-    -1"No longer running neural nets or svms\n";
-    select from mdls where lib<>`keras,not fnc in`neural_network`svm
-   ];
-   mdls
-   ]
-  }
-
 // Text files that can be parsed from within the models folder
 modelGeneration.files:`class`reg!("classmodels.txt";"regmodels.txt")
-

@@ -18,7 +18,7 @@ runModels.setSeed:{[cfg]
 // @param tts  {dict} Feature and target data split into training and testing set
 // @return {dict} Training and holdout split of data
 runModels.holdoutSplit:{[cfg;tts]
-  ttsFunc:get cfg`tts;
+  ttsFunc:utils.qpyFuncSearch cfg`tts;
   ttsFunc[tts`xtrain;tts`ytrain;cfg`hld]
   }
 
@@ -46,12 +46,12 @@ runModels.xValSeed:{[tts;cfg;mdl]
       ];
   $[seedModel&isSklearn;
     // Grid search required to incorporate the random state definition
-    [gsFunc:get cfg[`gs]0;
+    [gsFunc:utils.qpyFuncSearch cfg[`gs]0;
      numFolds:cfg[`gs]1;
      first value gsFunc[numFolds;numReps;xTrain;yTrain;scoreFunc;seed;0]
      ];
     // Otherwise a vanilla cross validation is performed
-    [xvFunc:get cfg[`xv]0;
+    [xvFunc:utils.qpyFuncSearch cfg[`xv]0;
      numFolds:cfg[`xv]1;
      xvFunc[numFolds;numReps;xTrain;yTrain;scoreFunc seed]
      ]
@@ -79,7 +79,7 @@ runModels.scoringFunc:{[cfg;mdls]
 // @param predictions {(bool[];float[])} Predictions made by model
 // @return {dict} Scores returned by each model in appropriate order 
 runModels.orderModels:{[mdls;scoreFunc;predicts]
-  orderFunc:get string first runModels.i.txtParse[`score;"/code/customization/"]scoreFunc;
+  orderFunc:utils.qpyFuncSearch string first runModels.i.txtParse[`score;"/code/customization/"]scoreFunc;
   avgScore:avg each scoreFunc .''predicts;
   scoreDict:mdls[`model]!avgScore;
   orderFunc scoreDict
