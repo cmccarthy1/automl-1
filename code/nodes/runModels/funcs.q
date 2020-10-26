@@ -90,7 +90,7 @@ runModels.orderModels:{[mdls;scoreFunc;predicts]
 // @fileoverview Fit best model on holdout set and score predictions
 // @param scores    {dict} Scores returned by each model
 // @param tts       {dict} Feature and target data split into training and testing set
-// @param mdls      {tab}  Models to be applied to feature data
+// @param mdls      {tab} Models to be applied to feature data
 // @param scoreFunc {<} Scoring function applied to predictions
 // @param cfg       {dict} Configuration information assigned by the user and related to the current run
 // @return {dict} Fitted model and scores along with time taken 
@@ -117,10 +117,14 @@ runModels.bestModelFit:{[scores;tts;mdls;scoreFunc;cfg]
 // @param scores    {dict} Scores returned by each model
 // @param scoreFunc {<} Scoring function applied to predictions
 // @param xValTime  {T} Time taken to apply xval functions to data
+// @param mdls      {tab} Models to be applied to feature data
+// @param modelName {str} Name of best model
 // @return {dict} Metadata to be contained within the end reports
-runModels.createMeta:{[holdoutRun;scores;scoreFunc;xValTime]
-  metaKeys:`holdoutScore`modelScores`metric`xValTime`holdoutTime;
-  metaVals:(holdoutRun`score;scores;scoreFunc;xValTime;holdoutRun`holdoutTime);
+runModels.createMeta:{[holdoutRun;scores;scoreFunc;xValTime;mdls;modelName]
+  pythonLib:?[mdls;enlist(=;`model;enlist modelName);();`lib]0;
+  mdlType  :?[mdls;enlist(=;`model;enlist modelName);();`typ]0;
+  metaKeys:`holdoutScore`modelScores`metric`xValTime`holdoutTime`pythonLib`mdlType;
+  metaVals:(holdoutRun`score;scores;scoreFunc;xValTime;holdoutRun`holdoutTime;pythonLib;mdlType);
   metaKeys!metaVals
   }
 

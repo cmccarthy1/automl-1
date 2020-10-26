@@ -157,14 +157,14 @@ passingTest[fitModel;(regModelDict   ;ttsReg       ;regModelTab   ;`.ml.mse     
 holdoutRun:`holdoutTime`score!("t"$1;1f)
 
 // Generate function to get type of each item returned in the meta data
-createMeta:{[holdout;modelDict;score;time]
-  type each .automl.runModels.createMeta[holdout;modelDict;score;time]
+createMeta:{[holdout;modelDict;score;time;mdls;modelName]
+  type each .automl.runModels.createMeta[holdout;modelDict;score;time;mdls;modelName]
   }
   
 // Generate return dictionary 
-metaReturn:`holdoutScore`modelScores`metric`xValTime`holdoutTime!-9 99 -11 -19 -19h
+metaReturn:`holdoutScore`modelScores`metric`xValTime`holdoutTime`pythonLib`mdlType!-9 99 -11 -19 -19 -11 -11h
 
 // Test appropriate input values to createMeta
-passingTest[createMeta;(holdoutRun;binaryModelDict;`.ml.accuracy;"t"$1);0b;metaReturn]
-passingTest[createMeta;(holdoutRun;multiModelDict ;`.ml.accuracy;"t"$1);0b;metaReturn]
-passingTest[createMeta;(holdoutRun;regModelDict   ;`.ml.mse;"t"$1);0b;metaReturn]
+passingTest[createMeta;(holdoutRun;binaryModelDict;`.ml.accuracy;"t"$1;binaryModelTab;`LinearSVC)            ;0b;metaReturn]
+passingTest[createMeta;(holdoutRun;multiModelDict ;`.ml.accuracy;"t"$1;multiModelTab;`RandomForestClassifier);0b;metaReturn]
+passingTest[createMeta;(holdoutRun;regModelDict   ;`.ml.mse     ;"t"$1;regModelTab  ;`RandomForestRegressor) ;0b;metaReturn]

@@ -19,7 +19,7 @@ runModels.node.function:{[cfg;tts;mdls]
   show scores:runModels.orderModels[mdls;scoringFunc;predictions];
   totalTime:.z.T-startTime;
   holdoutRun:runModels.bestModelFit[scores;holdoutSet;mdls;scoringFunc;cfg];
-  metaData:runModels.createMeta[holdoutRun;scores;scoringFunc;totalTime];
+  metaData:runModels.createMeta[holdoutRun;scores;scoringFunc;totalTime;mdls;holdoutRun`bestModel];
   returnKeys:`bestModel`bestScoringName`modelMetaData;
   returnVals:(holdoutRun`model;holdoutRun`bestModel;metaData);
   returnKeys!returnVals
