@@ -8,35 +8,48 @@ plt:.p.import`matplotlib.pyplot;
 // @kind function
 // @category saveGraphUtility
 // @fileoverview Create regression target distribution plot and save down locally
-// @param target    {float[]} All target values
+// @param params    {dict} All data generated during the process
 // @param savePath  {int} Path to where plots are to be saved
 // @return {null} Target distribution plot saved to appropriate location
-saveGraph.i.regTargetPlot:{[target;savePath]
+saveGraph.i.regTargetPlot:{[params;savePath]
+  target:raze params[`tts;`ytrain`ytest];
+  plt[`:figure][];
   plt[`:hist][target;`bins pykw 10;`ec pykw"black"];
-  plt[`:title]["Target Distribution";`fontsize pykw 12];
-  plt[`:xlabel]["Target"];
-  plt[`:ylabel]["Count"];
-  filePath:savePath,"Target_Distribution.png";
-  plt[`:savefig][filePath;`bbox_inches pykw"tight"];
-  plt[`:close][];
+  saveGraph.i.targetPlot[plt;savePath]
   }
+
 
 // @kind function
 // @category saveGraphUtility
 // @fileoverview Create binary target distribution plot and save down locally
-// @param target    {float[]} All target values
+// @param params    {dict} All data generated during the process
 // @param savePath  {int} Path to where plots are to be saved
 // @return {null} Target distribution plot saved to appropriate location
-saveGraph.i.classTargetPlot:{[target;savePath]
-  classes:asc target;
-  classDict:count each group classes;
-  plt[`:bar][string key classDict;value classDict];
-  plt[`:title]["Target Classes Binned"];
-  plt[`:xlabel]["Target Classes"];
-  plt[`:ylabel]["Count"];
+saveGraph.i.classTargetPlot:{[params;savePath]
+  target:raze params[`tts;`ytrain`ytest];
+  symMap:params[`symMap];
+  countGroup:count each group "i"$target;
+  reorderGroup:countGroup til count countGroup;
+  tgtName:$[count symMap;key[symMap];]til count countGroup;
+  plt[`:figure][];
+  plt[`:bar][string tgtName;reorderGroup];
+  saveGraph.i.targetPlot[plt;savePath]
+  }
+
+
+// @kind function
+// @category saveGraphUtility
+// @fileoverview Save target plot locally
+// @param pltObj    {<} EmpedPy matplotlib object
+// @param savePath  {int} Path to where plots are to be saved
+// @return {null} Target distribution plot saved to appropriate location
+saveGraph.i.targetPlot:{[pltObj;savePath]
+  pltObj[`:title]["Target Distribution";`fontsize pykw 12];
+  pltObj[`:xlabel]["Target"];
+  pltObj[`:ylabel]["Count"];
   filePath:savePath,"Target_Distribution.png";
-  plt[`:savefig][filePath;`bbox_inches pykw"tight"];
-  plt[`:close][];
+  pltObj[`:savefig][filePath;`bbox_inches pykw"tight"];
+  pltObj[`:close][];
   }
 
 
@@ -121,18 +134,30 @@ saveGraph.i.plotImpact:{[impact;modelName;savePath]
 // @param modelName {modelName} Name of best model
 // @param savePath  {int} Path to where plots are to be saved
 // @return {null} Residual plot saved to appropriate location
-saveGraph.i.plotResiduals:{[residDict;modelName;savePath]
-  resid:residDict[`resids];
-  true :residDict[`true];
-  plt[`:figure][`figsize pykw 10 10];
-  marker:$[1000>count true;"o";"."];
-  plt[`:scatter][true;resid;`marker pykw marker];
-  xVals:.ml.arange[min true;max true;1];
-  plt[`:plot][xVals;count[xVals]#0;"--"];
-  plt[`:title]["Residual plot for ",string modelName];
-  plt[`:xlabel]["True Values";`fontsize pykw 12];
-  plt[`:ylabel]["Residuals";`fontsize pykw 12];
-  filePath:savePath,sv["_";string(`Residual_Plot;modelName)],".png";
-  plt[`:savefig][filePath;`bbox_inches pykw"tight"];
-  plt[`:close][];  
+saveGraph.i.plotResiduals:{[residDict;tts;modelName;savePath]
+  resids:residDict[`resids];
+  preds :residDict[`preds];
+  true  :tts`ytest;
+  plt[`:style.use]["seaborn-darkgrid"];
+  subplots:plt[`:subplots][2];
+  fig:subplots[@;0];
+  ax :subplots[@;1];
+  // Padding here ensures that plots don't "step over" each other
+  fig[`:tight_layout][`pad pykw 4.0];
+  // Actual vs predicted plotting logic
+  actual:ax[@;0];
+  actual[`:scatter][true;preds;`s pykw 20];
+  actual[`:set_title]"Plot of actual vs predicted values";
+  actual[`:set_xlabel]"Actual values";
+  actual[`:set_ylabel]"Predicted values";
+  // Residuals plotting logic
+  resid:ax[@;1];
+  resid[`:scatter][true;resids;`color pykw "r"];
+  resid[`:set_title]"Plot of residuals";
+  resid[`:set_xlabel]"Actual values";
+  resid[`:set_ylabel]"Residuals";
+  spacing:.ml.linspace[min true;max true;count true];
+  resid[`:plot][spacing;count[true]#0f;"k--"];
+  filePath:savePath,sv["_";string(`Regression_Analysis;modelName)],".png";
+  plt[`:savefig][filePath;`bbox_inches pykw "tight"];
   }

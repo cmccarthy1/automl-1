@@ -46,10 +46,10 @@ impactVals:asc 3?100f
 impactDict:colIndex!impactVals
 
 // Generate residuals for regression models
-true:asc 1000?100f
-preds:asc 1000?100f
+true:asc 20?10f
+preds:asc 20?10f
 resids:true-preds
-residDict:`true`resids!(true;resids)
+residDict:`preds`resids!(preds;resids)
 
 // Generate analyzeModel dictionary
 analyzeModel:`confMatrix`impact`residuals!(confMatrix;impactDict;residDict)
@@ -60,6 +60,10 @@ sigFeats:`col1`col2`col3
 // Train test split
 ttsClass:`ytrain`ytest!(80?0b;20?0b)
 ttsReg  :`ytrain`ytest!(80?100f;20?100f)
+
+// Generate symMapping
+symMapNull:()!()
+symMap    :`a`b!0 1
 
 // Generate config dictionaries
 configClass0:`problemType`saveopt!(`class;0)
@@ -73,12 +77,12 @@ paramDictKeys:`modelName`pathDict`analyzeModel`sigFeats
 paramDictVals:(modelName;pathDict;analyzeModel;sigFeats)
 paramDict    :paramDictKeys!paramDictVals
 
-paramDictConfig0   :paramDict,`config`tts!(configClass0;ttsClass)
-paramDictConfig1   :paramDict,`config`tts!(configClass1;ttsClass)
-paramDictConfig2   :paramDict,`config`tts!(configClass2;ttsClass)
-paramDictConfigReg0:paramDict,`config`tts!(configReg1  ;ttsReg)
-paramDictConfigReg1:paramDict,`config`tts!(configReg0  ;ttsReg)
-paramDictConfigReg2:paramDict,`config`tts!(configReg2  ;ttsReg)
+paramDictConfig0   :paramDict,`config`tts`symMap!(configClass0;ttsClass;symMapNull)
+paramDictConfig1   :paramDict,`config`tts`symMap!(configClass1;ttsClass;symMap)
+paramDictConfig2   :paramDict,`config`tts`symMap!(configClass2;ttsClass;symMapNull)
+paramDictConfigReg0:paramDict,`config`tts`symMap!(configReg1  ;ttsReg;symMapNull)
+paramDictConfigReg1:paramDict,`config`tts`symMap!(configReg0  ;ttsReg;symMapNull)
+paramDictConfigReg2:paramDict,`config`tts`symMap!(configReg2  ;ttsReg;symMapNull)
 
 -1"\nTesting appropriate classification inputs for saveGraph";
 

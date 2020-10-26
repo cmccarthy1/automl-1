@@ -9,11 +9,11 @@
 //  prediction stages
 // @return {null} All graphs needed for reports are saved to appropriate location
 saveGraph.node.function:{[params]
+  if[0~params[`config;`saveopt];:params];
   savePath:params[`pathDict;`images];
   saveGraph.targetPlot[params;savePath];
-  saveGraph.confusionMatrix[params;savePath];
+  saveGraph.resultPlot[params;savePath]
   saveGraph.impactPlot[params;savePath];
-  saveGraph.residualPlot[params;savePath];
   params
   }
 
