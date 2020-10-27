@@ -9,9 +9,9 @@
 // return {dict} Appropriate model meta data extracted
 saveMeta.extractMdlMeta:{[params]
   mdlMeta:params`modelMetaData;
-  pyLib  :mdlMeta`modelLib;
-  mdlType:mdlMeta`mdlType;
-  `pythonLib`mdlType!(pyLib;mdlType)
+  modelLib:mdlMeta`modelLib;
+  mdlType :mdlMeta`mdlType;
+  `modelLib`mdlType!(modelLib;mdlType)
    }
 
 // @kind function

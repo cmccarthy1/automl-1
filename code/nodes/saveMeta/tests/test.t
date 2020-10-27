@@ -33,7 +33,7 @@ savePath:.automl.utils.ssrwin .automl.path,filePath
 system"mkdir",$[.z.o like"w*";" ";" -p "],savePath;
 
 // Generate model meta data
-mdlMetaData:`pythonLib`mdlType!`sklearn`class
+mdlMetaData:`modelLib`mdlType!`sklearn`class
 
 // Generate config data
 configSave :enlist[`configSavePath]!enlist savePath
@@ -47,9 +47,15 @@ paramDict2:`modelMetaData`config!(mdlMetaData;configDict2)
 
 -1"\nTesting appropriate inputs to saveMeta";
 
-passingTest[.automl.saveMeta.node.function;paramDict0;1b;(::)]
-passingTest[.automl.saveMeta.node.function;paramDict1;1b;(::)]
-passingTest[.automl.saveMeta.node.function;paramDict2;1b;(::)]
+// Generate function to check if metadata is saved
+metaCheck:{[params;savePath]
+  .automl.saveMeta.node.function[params];
+  @[{get hsym x};`$savePath,"/metadata";{"No metadata"}]
+  }
+
+passingTest[metaCheck;(paramDict0;savePath);0b;"No metadata"]
+passingTest[metaCheck;(paramDict1;savePath);0b;raze paramDict1]
+passingTest[metaCheck;(paramDict2;savePath);0b;raze paramDict2]
 
 -1"\nRemoving any directories created";
 

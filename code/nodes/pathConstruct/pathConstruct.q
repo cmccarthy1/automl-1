@@ -13,7 +13,7 @@
 // @return {dict} All data collected along the entire process along with
 //  paths to where graphs/reports will be generated
 pathConstruct.node.function:{[preProcParams;predictionStore]
-  paths:pathConstruct.constructPath[preProcParams];
+  pathConstruct.constructPath[preProcParams];
   preProcParams,predictionStore
   }
 

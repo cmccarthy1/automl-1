@@ -29,9 +29,9 @@ passingTest:{[function;data;applyType;expectedReturn]
 // Generate data for preProc params 
 
 // Generate Configuration dictionaries
-configSave0:`saveopt`startTime`startDate!(0;"t"$1;"d"$1)
+configSave0:`saveopt`startTime`startDate!(0;"t"$0;"d"$1)
 configSave1:`saveopt`startTime`startDate!(1;"t"$1;"d"$1)
-configSave2:`saveopt`startTime`startDate!(2;"t"$1;"d"$1)
+configSave2:`saveopt`startTime`startDate!(2;"t"$2;"d"$1)
 
 // Generate preProcParams dictionary
 preProcKeys:`dataDescription`symMap`creationTime`sigFeats`featModel
@@ -68,6 +68,24 @@ predictionStoreKeys:`bestModel`hyperParams`testScore`predictions`modelMetaData
 predictionStoreVals:(randomForestMdl;`feat1`feat2!1 2;100;100?0b;modelMetaData)
 predictionStoreDict:predictionStoreKeys!predictionStoreVals
 
+-1"\nTesting all appropriate directories are created";
+
+// Generate function to check that all directories are created 
+dirCheck:{[preProcParams;predictionStore;saveOpt]
+  .automl.pathConstruct.node.function[preProcParams;predictionStore];
+  outputDir:.automl.path,"/outputs/2000.01.02/run_00.00.00.00",saveOpt;
+  outputDir:.automl.utils.ssrwin outputDir;
+  @[{`$system $[.z.o like "w*";"dir ";"ls "],x};outputDir;{`}]
+  }
+
+returnDir0:`
+returnDir1:`config`models
+returnDir2:`config`images`models`report
+
+// Testing all appropriate directories were created
+passingTest[dirCheck;(preProcDict0;predictionStoreDict;"0");0b;`]
+passingTest[dirCheck;(preProcDict1;predictionStoreDict;"1");0b;returnDir1]
+passingTest[dirCheck;(preProcDict2;predictionStoreDict;"2");0b;returnDir2]
 
 -1"\nTesting appropriate inputs for pathConstruct";
 
