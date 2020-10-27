@@ -62,7 +62,7 @@ modelGeneration.modelPrep:{[cfg;mdlDict;tgt]
 // @return     {<} the appropriate function or projection in the case of sklearn
 modelGeneration.mdlFunc:{[lib;fnc;mdl]
   $[lib in key models;
-    utils.qpyFuncSearch".automl.models.",string[lib],".fitScore";
+    get".automl.models.",string[lib],".fitScore";
     // construct the projection used for sklearn models eg '.p.import[`sklearn.svm][`:SVC]'
     {[x;y;z].p.import[x]y}[` sv lib,fnc;hsym mdl]
     ]

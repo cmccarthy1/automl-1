@@ -79,7 +79,7 @@ runModels.scoringFunc:{[cfg;mdls]
 // @param predictions {(bool[];float[])} Predictions made by model
 // @return {dict} Scores returned by each model in appropriate order 
 runModels.orderModels:{[mdls;scoreFunc;predicts]
-  orderFunc:utils.qpyFuncSearch string first runModels.i.txtParse[`score;"/code/customization/"]scoreFunc;
+  orderFunc:get string first runModels.i.txtParse[`score;"/code/customization/"]scoreFunc;
   avgScore:avg each scoreFunc .''predicts;
   scoreDict:mdls[`model]!avgScore;
   orderFunc scoreDict
@@ -98,7 +98,6 @@ runModels.bestModelFit:{[scores;tts;mdls;scoreFunc;cfg]
   holdoutTimeStart:.z.T;
   bestModel:first key scores;
   -1"\nBest scoring model = ",string bestModel;
-  modelFitStart:.z.T;
   modelLib:first exec lib from mdls where model=bestModel;
   fitScore:$[modelLib in key models;
     runModels.i.customModel[bestModel;tts;mdls;scoreFunc;cfg];
@@ -121,10 +120,10 @@ runModels.bestModelFit:{[scores;tts;mdls;scoreFunc;cfg]
 // @param modelName {str} Name of best model
 // @return {dict} Metadata to be contained within the end reports
 runModels.createMeta:{[holdoutRun;scores;scoreFunc;xValTime;mdls;modelName]
-  pythonLib:?[mdls;enlist(=;`model;enlist modelName);();`lib]0;
-  mdlType  :?[mdls;enlist(=;`model;enlist modelName);();`typ]0;
-  metaKeys:`holdoutScore`modelScores`metric`xValTime`holdoutTime`pythonLib`mdlType;
-  metaVals:(holdoutRun`score;scores;scoreFunc;xValTime;holdoutRun`holdoutTime;pythonLib;mdlType);
+  modelLib:first exec lib from mdls where model=modelName;
+  mdlType  :first exec typ from mdls where model=modelName;
+  metaKeys:`holdoutScore`modelScores`metric`xValTime`holdoutTime`modelLib`mdlType;
+  metaVals:(holdoutRun`score;scores;scoreFunc;xValTime;holdoutRun`holdoutTime;modelLib;mdlType);
   metaKeys!metaVals
   }
 

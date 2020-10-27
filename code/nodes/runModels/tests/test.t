@@ -162,7 +162,7 @@ createMeta:{[holdout;modelDict;score;time;mdls;modelName]
   }
   
 // Generate return dictionary 
-metaReturn:`holdoutScore`modelScores`metric`xValTime`holdoutTime`pythonLib`mdlType!-9 99 -11 -19 -19 -11 -11h
+metaReturn:`holdoutScore`modelScores`metric`xValTime`holdoutTime`modelLib`mdlType!-9 99 -11 -19 -19 -11 -11h
 
 // Test appropriate input values to createMeta
 passingTest[createMeta;(holdoutRun;binaryModelDict;`.ml.accuracy;"t"$1;binaryModelTab;`LinearSVC)            ;0b;metaReturn]

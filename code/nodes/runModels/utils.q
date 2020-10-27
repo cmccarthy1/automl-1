@@ -32,14 +32,16 @@ runModels.i.readFile:{[filePath]
 // @param cfg       {dict} Configuration information assigned by the user and related to the current run
 // @return {dict} The fitted model along with the predictions
 runModels.i.customModel:{[bestModel;tts;mdls;scoreFunc;cfg]
-  if[bestModel~`multikeras;
+  modelLib:first exec lib from mdls where model=bestModel;
+  mdlType  :first exec typ from mdls where model=bestModel;
+  if[(`keras~modelLib)&`multi~mdlType;
     tts[`ytrain`ytest]:runModels.i.prepMultiTarget tts
     ];
   modelDef:runModels.i.bestModelDef[mdls;bestModel]each`lib`fnc;
   customStr:".automl.models.",sv[".";string modelDef],".";
-  model:utils.qpyFuncSearch[customStr,"model"][tts;cfg`seed];
-  modelFit:utils.qpyFuncSearch[customStr,"fit"][tts;model];
-  modelPred:utils.qpyFuncSearch[customStr,"predict"][tts;fitModel];
+  model:get[customStr,"model"][tts;cfg`seed];
+  modelFit:get[customStr,"fit"][tts;model];
+  modelPred:get[customStr,"predict"][tts;fitModel];
   score:scoreFunc[modelPred;tts`ytest];
   `model`score!(modelFit;score)
   }

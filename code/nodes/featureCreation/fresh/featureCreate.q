@@ -8,7 +8,7 @@
 // @return {tab} features created in accordance with the FRESH feature creation procedure.
 featureCreation.fresh.create:{[feat;cfg]
   aggCols:cfg`aggcols;
-  params:utils.qpyFuncSearch cfg`funcs;
+  params:get cfg`funcs;
   // Feature extraction should be performed on all columns that are non aggregate
   cols2use:cols[feat]except aggCols;
   featExtractStart:.z.T;
