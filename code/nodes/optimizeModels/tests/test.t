@@ -51,7 +51,6 @@ configGrid  :configDefault,`gs`hp!((`.automl.gs.kfshuff;2);`grid)
 configRandom:configDefault,`rs`hp!((`.automl.rs.kfshuff;2);`random)
 configSobol :configDefault,`rs`hp!((`.automl.rs.kfshuff;5);`sobol)
 
-
 // Suitable configuration for testing of configuration update
 configReg     :enlist[`problemType]!enlist`reg
 configClass   :enlist[`problemType]!enlist`class
@@ -126,7 +125,6 @@ passingTest[optimizeFunc;(configClass,configSobol ;classModelTab;knnClassMdl;knn
 inappConfig:configDefault,enlist[`hp]!enlist `inappType
 
 // Expected return error
-errReturn:"unsupported hyperparameter generation method";
+errReturn:"Unsupported hyperparameter generation method";
 
 failingTest[optimizeFunc;(configReg,inappConfig;regModelTab;randomForestRegMdl;randomForestRegName;ttsReg);0b;errReturn]
-

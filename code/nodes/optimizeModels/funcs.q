@@ -5,58 +5,52 @@
 // @kind function
 // @category optimizeModels
 // @fileoverview Optimize models using hyperparmeter search procedures if appropriate, 
-//  otherwise predict on test data
+//   otherwise predict on test data
+// @param mdlLib    {sym}  Python library model belongs to
 // @param mdls      {tab} Information about models applied to the data
 // @param bestModel {<} Fitted best model
 // @param modelName {sym} Name of best model
 // @param tts       {dict} Feature and target data split into training and testing set 
 // @param scoreFunc {func} Scoring function
+// @param cfg       {dict} Configuration information relating to the current run of AutoML
 // @return {dict} Score, prediction and best model
-optimizeModels.hyperSearch:{[mdls;bestModel;modelName;tts;scoreFunc;cfg]
-  mdlLib:first exec lib from mdls where model=modelName;
-  customBool:mdlLib in key models;
-  excludeLst:modelName in utils.excludeList; 
-  predDict:$[customBool|excludeLst;
-    optimizeModels.scorePred[mdls;bestModel;modelName;tts;customBool];
+optimizeModels.hyperSearch:{[mdlLib;mdls;bestModel;modelName;tts;scoreFunc;cfg]
+  custom :mdlLib in key models;
+  exclude:modelName in utils.excludeList; 
+  predDict:$[custom|exclude;
+    optimizeModels.scorePred[custom;mdlLib;bestModel;tts];
     optimizeModels.paramSearch[mdls;modelName;tts;scoreFunc;cfg]
     ];
   score:get[scoreFunc][predDict`predictions;tts`ytest];
   predDict,enlist[`testScore]!enlist score
   }
 
-
 // @kind function
 // @category optimizeModels
 // @fileoverview Predict sklearn and custom models on test data
-// @param mdls       {tab} Information about models applied to the data
+// @param custom     {bool} Whether it is a custom model or not
+// @param mdlLib     {sym}  Python library model belongs to
 // @param bestModel  {<} Fitted best model
-// @param modelName  {sym} Name of best model
 // @param tts        {dict} Feature and target data split into training and testing set
-// @param customBool {bool} Whether it is a custom model or not
 // @return {(float[];bool[];int[])} Predicted values  
-optimizeModels.scorePred:{[mdls;bestModel;modelName;tts;customBool]
-  preds:$[customBool;
-    optimize.scoreCustom[mdls;bestModels;modelName;tts];
-    optimize.scoreSklearn[bestModel;tts];
-    ];
-  returnKeys:`bestModel`hyperParams`predictions;
-  returnKeys!(bestModel;()!();preds)
+optimizeModels.scorePred:{[custom;mdlLib;bestModel;tts]
+  pred:$[custom;
+    optimize.scoreCustom[mdlLib];
+    optimize.scoreSklearn
+    ][bestModel;tts];
+  `bestModel`hyperParams`predictions!(bestModel;()!();pred)
   }
-
 
 // @kind function
 // @category optimizeModels
 // @fileoverview Predict custom models on test data
-// @param mdls       {tab} Information about models applied to the data
+// @param mdlLib     {sym}  Python library model belongs to
 // @param bestModel  {<} Fitted best model
-// @param modelName  {sym} Name of best model
 // @param tts        {dict} Feature and target data split into training and testing set
 // @return {(float[];bool[];int[])} Predicted values  
-optimizeModels.scoreCustom:{[mdls;bestModel;modelName;tts]
-   modelLib:first exec lib from mdls where model=modelName;
-   get[".automl.models",modelLib,".predict"][tts;bestModel]
+optimizeModels.scoreCustom:{[mdlLib;bestModel;tts]
+   get[".automl.models",mdlLib,".predict"][tts;bestModel]
    }
-
 
 // @kind function
 // @category optimizeModels
@@ -68,67 +62,71 @@ optimizeModels.scoreSklearn:{[bestModel;tts]
   bestModel[`:predict][tts`xtest]`
   }
 
-
 // @kind function
 // @category optimizeModels
 // @fileoverview Predict custom models on test data
 // @param mdls       {tab} Information about models applied to the data
 // @param modelName  {sym} Name of best model
 // @param tts        {dict} Feature and target data split into training and testing set
-// @param scoreFunc  {} Scoring function
+// @param scoreFunc  {func} Scoring function
+// @param cfg        {dict} Configuration information relating to the current run of AutoML
 // @return {(float[];bool[];int[])} Predicted values 
 optimizeModels.paramSearch:{[mdls;modelName;tts;scoreFunc;cfg]
+  // Hyperparameter (HP) search inputs
   hyperParams:optimizeModels.i.extractdict[modelName;cfg];
   hyperTyp:hyperParams`hyperTyp;
-  hyperDict:hyperParams`hyperDict;
-  txtPath:utils.txtParse[;"/code/customization/"];
-  module:` sv 2#txtPath[cfg`problemType]modelName;
-  embedPyMdl:.p.import[module][hsym modelName];
-  numFolds:cfg[hyperTyp;1];
-  hyperFunc:cfg[hyperTyp;0];
-  splitCnt:optimizeModels.i.splitCount[hyperFunc;hyperTyp;numFolds;tts;cfg];
-  hyperDict:optimizeModels.i.updDict[modelName;hyperTyp;splitCnt;hyperDict;cfg];
-  mdlFunc:first exec minit from mdls where model=modelName;
+  numFolds:cfg[hyperTyp]1;
   numReps:1;
   xTrain:tts`xtrain;
   yTrain:tts`ytrain;
+  mdlFunc:first exec minit from mdls where model=modelName;
   scoreCalc:cfg[`prf]mdlFunc;
-  // modification of final grid search parameter required to allow modified
-  // results ordering and function definition to take place
-  ordFunc:get string first txtPath[`score]scoreFunc;
-  params:`val`ord`scf!(cfg`hld;ordFunc;scoreFunc);
-  hyperSearch:get[hyperFunc][numFolds;numReps;xTrain;yTrain;scoreCalc;hyperDict;params];
-  // Extract the best hyperparameter set based on scoring function
-  bestParams:first key first hyperSearch;
-  bestMdl:embedPyMdl[pykwargs bestParams][`:fit][xTrain;yTrain];
+
+  // Extract HP dictionary
+  hyperDict:hyperParams`hyperDict;
+  txtPath:utils.txtParse[;"/code/customization/"];
+  module:` sv 2#txtPath[cfg`problemType]modelName;
+  embedPyMdl:.p.import[module]hsym modelName;
+  hyperFunc:cfg[hyperTyp]0;
+  splitCnt:optimizeModels.i.splitCount[hyperFunc;numFolds;tts;cfg];
+  hyperDict:optimizeModels.i.updDict[modelName;hyperTyp;splitCnt;hyperDict;cfg];
+  
+  // Final parameter required for result ordering and function definition
+  orderFunc:get string first txtPath[`score]scoreFunc;
+  params:`val`ord`scf!(cfg`hld;orderFunc;scoreFunc);
+
+  // Perform HP search and extract best HP set based on scoring function
+  results:get[hyperFunc][numFolds;numReps;xTrain;yTrain;scoreCalc;hyperDict;params];
+  bestHPs:first key first results;
+  bestMdl:embedPyMdl[pykwargs bestHPs][`:fit][xTrain;yTrain];
   preds:bestMdl[`:predict][tts`xtest]`;
-  returnKeys:`bestModel`hyperParams`predictions;
-  returnKeys!(bestMdl;bestParams;preds)
+  `bestModel`hyperParams`predictions!(bestMdl;bestHPs;preds)
   }
 
 // @kind function
 // @category optimizeModels
 // @fileoverview Create confusion matrix
-// @param preds     {dict} All data generated during the process
+// @param pred     {dict} All data generated during the process
 // @param tts       {dict} Feature and target data split into training and testing set
 // @param modelName {str} Name of best model
 // @param cfg       {dict} Configuration information relating to the current run of AutoML
 // return {dict} Confusion matrix created from predictions and true values
-optimizeModels.confMatrix:{[preds;tts;modelName;cfg]
+optimizeModels.confMatrix:{[pred;tts;modelName;cfg]
   if[`reg~cfg`problemType;:()!()];
   yTest:tts`ytest;
-  if[not type[preds]~type[yTest];
-    preds:`long$preds;
+  if[not type[pred]~type yTest;
+    pred :`long$pred;
     yTest:`long$yTest
     ];
-  -1"Confusion matrix for testing set:\n";
-  show confMatrix:optimizeModels.i.confTab[preds;yTest];
+  -1"\nConfusion matrix for testing set:\n";
+  show confMatrix:optimizeModels.i.confTab[pred;yTest];
   confMatrix
   }
 
 // @kind function
 // @category optimizeModels
 // @fileoverview Create impact dictionary
+// @param mdlLib      {sym}  Python library model belongs to
 // @param hyperSearch {dict} Values returned from hyperParameter search
 // @param modelName   {str} Name of best model
 // @param tts         {dict} Feature and target data split into training and testing set
@@ -136,14 +134,13 @@ optimizeModels.confMatrix:{[preds;tts;modelName;cfg]
 // @param scoreFunc   {func} Scoring function
 // @param mdls        {tab} Information about models applied to the data
 // return {dict} Impact of each column in the data set 
-optimizeModels.impactDict:{[hyperSearch;modelName;tts;cfg;scoreFunc;mdls]
+optimizeModels.impactDict:{[mdlLib;hyperSearch;modelName;tts;cfg;scoreFunc;mdls]
   bestModel:hyperSearch`bestModel;
   countCols:count first tts`xtest;
-  scores:optimizeModels.i.predShuffle[bestModel;modelName;tts;scoreFunc;cfg`seed;mdls]each til countCols;
+  scores:optimizeModels.i.predShuffle[mdlLib;bestModel;modelName;tts;scoreFunc;cfg`seed;mdls]each til countCols;
   ordFunc:get string first utils.txtParse[`score;"/code/customization/"]scoreFunc;
   optimizeModels.i.impact[scores;countCols;ordFunc];
   }
-
 
 // @kind function
 // @category optimizeModels
@@ -153,15 +150,12 @@ optimizeModels.impactDict:{[hyperSearch;modelName;tts;cfg;scoreFunc;mdls]
 // @param cfg         {dict} Configuration information relating to the current run of AutoML
 // return {dict} Residual errors and true values
 optimizeModels.residuals:{[hyperSearch;tts;cfg]
-  problemTyp:cfg`problemType;
-  if[problemTyp~`class;()!()];
+  if[`class~cfg`problemType;()!()];
   true:tts`ytest;
-  preds:hyperSearch`predictions;
-  resids:true-preds;
-  `resids`true!(resids;true)
+  pred:hyperSearch`predictions;
+  `resids`true!(true-pred;true)
   }
   
-
 // @kind function
 // @category optimizeModels
 // @fileoverview Consolidate all parameters created from node
@@ -171,8 +165,6 @@ optimizeModels.residuals:{[hyperSearch;tts;cfg]
 // @param residuals   {dict} Residual errors for regression problems
 // @return {dict} All parameters created during node
 optimizeModels.consolidateParams:{[hyperSearch;confMatrix;impactDict;residuals]
-  analyzeKeys:`confMatrix`impact`residuals;
-  analyzeVals:(confMatrix;impactDict;residuals);
-  analyzeDict:analyzeKeys!analyzeVals;
+  analyzeDict:`confMatrix`impact`residuals!(confMatrix;impactDict;residuals);
   (`predictions _hyperSearch),enlist[`analyzeModel]!enlist analyzeDict
   }

@@ -10,19 +10,18 @@
 // @return {dict} The hyperparameters appropriate for the model being used
 optimizeModels.i.extractdict:{[bestModel;cfg]
   hyperParam:cfg`hp;
-  // get grid/random hyperparameter file name
+  // Get grid/random hyperparameter file name
   hyperTyp:$[`grid=hyperParam;
-    `gs;
+      `gs;
     hyperParam in`random`sobol;
       `rs;
-      '"unsupported hyperparameter generation method"];
-  // load in table of hyperparameters to dictionary with (hyperparameter!values)
+      '"Unsupported hyperparameter generation method"
+    ];
+  // Load in table of hyperparameters to dictionary with (hyperparameter!values)
   hyperParamsDir:path,"/code/customization/hyperParameters/";
   system"l ",hyperParamsDir,string[hyperTyp],"Hyperparameters.q";
   extractParams:hyperparams bestModel;
-  returnKeys:`hyperTyp`hyperDict;
-  returnVals:(hyperTyp;extractParams[`hyperparams]!extractParams`values);
-  returnKeys!returnVals
+  `hyperTyp`hyperDict!(hyperTyp;extractParams[`hyperparams]!extractParams`values)
   }
 
 // @kind function
@@ -32,16 +31,15 @@ optimizeModels.i.extractdict:{[bestModel;cfg]
 //  on KNN that there are sufficient, data points in the validation set for all hyperparameter 
 //  nearest neighbour calculations.
 // @param hyperFunc {sym} Hyperparameter function to be used
-// @param hyperTyp  {sym} Type of hyperparameter to be used
 // @param numFolds  {int} Number of folds to use
 // @param tts       {dict} Feature and target data split into training and testing set
 // @param cfg       {dict} Configuration information assigned by the user and related to the current run
 // @return {dict} The hyperparameters appropriate for the model being used
-optimizeModels.i.splitCount:{[hyperFunc;hyperTyp;numFolds;tts;cfg]
- $[hyperFunc in `mcsplit`pcsplit;
+optimizeModels.i.splitCount:{[hyperFunc;numFolds;tts;cfg]
+ $[hyperFunc in`mcsplit`pcsplit;
    1-numFolds;
    (numFolds-1)%numFolds
-   ]*count[tts`xtrain]*1-cfg[`hld]
+   ]*count[tts`xtrain]*1-cfg`hld
   }
 
 // @kind function
@@ -57,32 +55,30 @@ optimizeModels.i.splitCount:{[hyperFunc;hyperTyp;numFolds;tts;cfg]
 optimizeModels.i.updDict:{[modelName;hyperTyp;splitCnt;hyperDict;cfg]
   knModel:modelName in`KNeighborsClassifier`KNeighborsRegressor;
   if[knModel&hyperTyp~`gs;
-    if[0<count where n:splitCnt<hyperDict`n_neighbors;
-      hyperDict[`n_neighbors]@:where not n;
+    n:splitCnt<hyperDict`n_neighbors;
+    if[0<count where n;
+      hyperDict[`n_neighbors]@:where not n
       ]
-     ];
+    ];
   if[hyperTyp~`rs;
     if[knModel;
       if[splitCnt<hyperDict[`n_neighbors;2];
         hyperDict[`n_neighbors;2]:"j"$splitCnt
         ]
-      ]; 
-   // if random add extra parameters
-   // check can you join all to 1 dict?
+      ];
     hyperDict:`typ`random_state`n`p!(cfg`hp;cfg`seed;cfg`trials;hyperDict)
     ];
   hyperDict
   }
 
-
 // @kind function
 // @category optimizeModelsUtilitity
 // @fileoverview Show true and predicted values from confusion matrix
-// @param preds {(int[];bool[])} Predicted values
+// @param pred {(int[];bool[])} Predicted values
 // @param true {(int[];bool[])} True values
 // @return {dict} Confusion matrix with true and predicted values
-optimizeModels.i.confTab:{[preds;true]
-  confMatrix:.ml.confmat[preds;true];
+optimizeModels.i.confTab:{[pred;true]
+  confMatrix:.ml.confmat[pred;true];
   keyMatrix:string key confMatrix;
   predVals:`$"pred_",/:keyMatrix;
   trueVals:`$"true_",/:keyMatrix;
@@ -92,43 +88,40 @@ optimizeModels.i.confTab:{[preds;true]
 // @kind function
 // @category optimizeModelsUtilitity
 // @fileoverview Save down confusionMatrix
+// @param mdlLib     {sym}  Python library model belongs to
 // @param bestModel {<} Fitted best model
 // @param modelName {str} Name of best model
 // @param tts       {dict} Feature and target data split into training and testing set
 // @param scoreFunc {<} Scoring metric applied to evaluate the model
 // @param seed      {int} Random seed to use
 // @param modelTab  {tab} Information about each model ran on the test data
-// @param i         {int} Index of column that is being shuffled
+// @param idx       {int} Index of column that is being shuffled
 // return {float} Score returned from predicted values using shuffled data 
-optimizeModels.i.predShuffle:{[bestModel;modelName;tts;scoreFunc;seed;mdls;i]
-  tts[`xtest]:optimizeModels.i.shuffle[tts`xtest;i];
-  modelLib:first exec lib from mdls where model=modelName;
-  preds:$[modelLib in key models;
-  [predFunc:get["automl.",modelLib,".",modelName,"predict"];
-  predFunc[tts;bestModel]
-  ];
-  bestModel[`:predict][tts`xtest]`
-  ];
+optimizeModels.i.predShuffle:{[mdlLib;bestModel;modelName;tts;scoreFunc;seed;mdls;idx]
+  tts[`xtest]:optimizeModels.i.shuffle[tts`xtest;idx];
+  preds:$[mdlLib in key models;
+    [predFunc:get"automl.",modelLib,".",modelName,"predict";
+     predFunc[tts;bestModel]];
+    bestModel[`:predict][tts`xtest]`
+    ];
   scoreFunc[preds;tts`ytest]
-  } 
-
+  }
 
 // @kind function
 // @category optimizeModelsUtility
 // @fileoverview Shuffle column within the data
 // @param data {float[]} Data to shuffle
-// @param i    {int} Column in data to shuffle
+// @param col  {int} Column in data to shuffle
 // @return {float[]} The original data shuffled 
-optimizeModels.i.shuffle:{[data;i]
+optimizeModels.i.shuffle:{[data;col]
   countData:count data;
   idx:neg[countData]?countData;
   $[98h~type data;
-    data:@[data;i;@;idx];
-    data[;i]:data[;i]idx
+    data:data[col]idx;
+    data[;col]:data[;col]idx
     ];
   data
   }
-
 
 // @kind function
 // @category optimizeModelsUtility
@@ -150,7 +143,6 @@ optimizeModels.i.impact:{[scores;countCols;ordFunc]
 // Expected input is now at minimum t:enlist[`val]!enlist num, while for testing on the holdout sets this
 // should be include the scoring function and ordering the model requires to find the best model
 // `val`scf`ord!(0.2;`.ml.mse;asc) for example
-// Location might be moved in future?
 xv.i.search:{[sf;k;n;x;y;f;p;t]
  if[0=t`val;:sf[k;n;x;y;f;p]];i:(0,floor count[y]*1-abs t`val)_$[0>t`val;.ml.xv.i.shuffle;til count@]y;
  (r;pr;[$[type[fn:get t`scf]in(100h;104h);
