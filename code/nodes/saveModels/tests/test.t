@@ -34,16 +34,13 @@ savePath:.automl.utils.ssrwin .automl.path,filePath
 system"mkdir",$[.z.o like"w*";" ";" -p "],savePath;
 
 // Generate model meta data
-mdlMetaData:enlist[`pythonLib]!enlist `sklearn
-
-// Generate config data
-configSave :enlist[`configSavePath]!enlist savePath
+mdlMetaData:enlist[`modelLib]!enlist `sklearn
 
 // NLP w2v models cannot be tested as gensim is not a requirement
-configSave :enlist[`modelSavePath]!enlist savePath
-configNormal0:configSave,`saveopt`featExtractType!(0;`normal)
-configNormal1:configSave,`saveopt`featExtractType!(1;`normal)
-configNormal2:configSave,`saveopt`featExtractType!(2;`normal)
+configSave :`modelsSavePath`featExtractType!((savePath;());`normal)
+configNormal0:configSave,enlist[`saveopt]!enlist 0
+configNormal1:configSave,enlist[`saveopt]!enlist 1
+configNormal2:configSave,enlist[`saveopt]!enlist 2
 
 
 // Generate Random Forest Regressor model
