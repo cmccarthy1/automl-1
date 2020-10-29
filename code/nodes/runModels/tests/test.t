@@ -1,32 +1,10 @@
 \l automl.q
 .automl.loadfile`:init.q
-
-// The following utilities are used to test that a function is returning the expected
-// error message or data, these functions will likely be provided in some form within
-// the test.q script provided as standard for the testing of q and embedPy code
-
-// @category tests
-// @fileoverview Ensure that a test that is expected to pass, 
-//   does so with an appropriate return
-// @param function {(func;proj)} The function or projection to be tested
-// @param data {any} The data to be applied to the function as an individual item for
-//   unary functions or a list of variables for multivariant functions
-// @param applyType {boolean} Is the function to be applied unary(1b) or multivariant(0b)
-// @param expectedReturn {string} The data expected to be returned on 
-//   execution of the function with the supplied data
-// @return {boolean} Function returned the appropriate output (1b), function failed 
-//   or executed with incorrect output (0b)
-passingTest:{[function;data;applyType;expectedReturn]
-  // Is function to be applied unary or multivariant
-  applyType:$[applyType;@;.];
-  functionReturn:applyType[function;data];
-  expectedReturn~functionReturn
-  }
-
+.automl.loadfile`:code/tests/utils.q
 
 // Default configuration dictionaries
 configKeys   :`seed`tts`gs`xv`prf`scf`hld
-configVals   :(1234;`.ml.traintestsplit;(`.automl.gs.kfshuff;5);(`.ml.xv.kfshuff;5);`.automl.utils.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);.2)
+configVals   :(42;`.ml.traintestsplit;(`.automl.gs.kfshuff;5);(`.ml.xv.kfshuff;5);`.automl.utils.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);.2)
 configDefault:configKeys!configVals
 
 /S 42
@@ -127,14 +105,16 @@ passingTest[.automl.runModels.scoringFunc;(configDefault;regModelTab   );0b;`.ml
 // Generate function to get keys of dictionary returned from orderModels
 keyOrderModels:{[tab;score;preds]key .automl.runModels.orderModels[tab;score;preds]}
 
+\S 42
+
 // Generated predicted values
 binaryPreds:5 1 2 16#160?0b
 multiPreds:6 1 2 16#192?0b
 regPreds:8 1 2 16#256?1f
 
-binaryReturn:`LinearSVC`binarykeras`LogisticRegression`GaussianNB`SVC
-multiReturn:`multikeras`RandomForestClassifier`AdaBoostClassifier`GradientBoostingClassifier`MLPClassifier`KNeighborsClassifier
-regReturn  :`MLPRegressor`RandomForestRegressor`KNeighborsRegressor`AdaBoostRegressor`regkeras`Lasso`GradientBoostingRegressor`LinearRegression
+binaryReturn:`SVC`LogisticRegression`GaussianNB`LinearSVC`binarykeras
+multiReturn:`MLPClassifier`KNeighborsClassifier`AdaBoostClassifier`multikeras`RandomForestClassifier`GradientBoostingClassifier
+regReturn  :`Lasso`LinearRegression`regkeras`AdaBoostRegressor`GradientBoostingRegressor`MLPRegressor`RandomForestRegressor`KNeighborsRegressor
 
 // Test appropriate inputs values to orderModels
 passingTest[keyOrderModels;(binaryModelTab;`.ml.accuracy;binaryPreds);0b;binaryReturn]
