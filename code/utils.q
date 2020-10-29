@@ -106,3 +106,13 @@ utils.ttsNonShuff:{[feat;tgt;size]
    `xtrain`ytrain`xtest`ytest!raze(feat;tgt)@\:/:(0,floor n*1-size)_til n:count feat
     }
 
+// @kind function
+// @category Utility
+// @fileoverview Return column value based on best model
+// @param mdls      {tab}  Models to be applied to feature data
+// @param modelName {sym} The name of the model
+// @param col       {sym} Column to search
+// @return {sym} Column value
+utils.bestModelDef:{[mdls;modelName;col]
+  first?[mdls;enlist(=;`model;enlist modelName);();col]
+  }
