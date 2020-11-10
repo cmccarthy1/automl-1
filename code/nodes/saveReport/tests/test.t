@@ -23,7 +23,7 @@ genCfg:{[start;feat;ftype;ptype]
   
 applyAndCheck:{[savePath;params;ftype;ptype]
   .automl.saveReport.node.function params;
-  report:`$"FPDFReport_",string[ftype],@[string ptype;0;upper],".pdf";
+  report:`$"Report_",string[ftype],@[string ptype;0;upper],".pdf";
   report in key hsym`$savePath
   }[savePath]
 

@@ -4,7 +4,7 @@
 
 // @kind function
 // @category saveReport
-// @fileoverview  Create dictionary with image filenames for report generation
+// @fileoverview  Create a dictionary with image filenames for report generation
 // @param params {dict} All data generated during the process
 // @return {dict} Image filenames for report generation
 saveReport.reportDict:{[params]
@@ -24,13 +24,17 @@ saveReport.reportDict:{[params]
 saveReport.saveReport:{[params]
   savePath :params[`config;`reportSavePath]0;
   modelName:params`modelName;
-  filePath:savePath,"FPDFReport_",string modelName;
+  filePath:savePath,"Report_",string modelName;
   -1"\nSaving down procedure report to ",savePath;
   $[0~checkimport[2];
     @[{saveReport.latexGenerate . x};
       (params;filePath);
-      {[params;err] -1"The following error occurred when attempting to run latex report generation";-1 err,"\n";
-       saveReport.i.FPDFReport . params;}[(params;filePath)]];
-    saveReport.i.FPDFReport[params;filePath]
+      {[params;err] 
+       -1"The following error occurred when attempting to run latex report generation";
+       -1 err,"\n";
+       saveReport.reportlabGenerate . params;
+      }[(params;filePath)]
+     ];
+    saveReport.reportlabGenerate[params;filePath]
     ]
   }
