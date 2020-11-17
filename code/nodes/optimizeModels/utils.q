@@ -19,9 +19,42 @@ optimizeModels.i.extractdict:{[bestModel;cfg]
     ];
   // Load in table of hyperparameters to dictionary with (hyperparameter!values)
   hyperParamsDir:path,"/code/customization/hyperParameters/";
-  system"l ",hyperParamsDir,string[hyperTyp],"Hyperparameters.q";
-  extractParams:hyperparams bestModel;
-  `hyperTyp`hyperDict!(hyperTyp;extractParams[`hyperparams]!extractParams`values)
+  hyperParams:.j.k raze read0`$hyperParamsDir,string[hyperTyp],"HyperParameters.json";
+  extractParams:hyperParams bestModel;
+  typeConvert:`$extractParams[`meta;`typeConvert];
+  /n:where "s"=typeConvert;
+  /typeConvert[n]:"S";
+  n:where `symbol=typeConvert;
+  typeConvert[n]:`;
+  extractParams:$[`gs~hyperTyp;
+   optimizeModels.i.gridParams;
+   optimizeModels.i.randomParams 
+   ] . (extractParams;typeConvert);
+  `hyperTyp`hyperDict!(hyperTyp;extractParams)
+  }
+
+// @kind function
+// @category optimizeModelsUtility
+// @fileoverview Transform grid hyperparam dictionary to its correct format
+// @param extractParams {dict} Hyperparams for the given model
+// @param typeConvert   {str} What type to convert each parameter to
+// @return {dict} Hyperparams in the correct format
+optimizeModels.i.gridParams:{[extractParams;typeConvert]
+  typeConvert$'extractParams[`params]
+  }
+
+// @kind function
+// @category optimizeModelsUtility
+// @fileoverview Transform random hyperparam dictionary to its correct format
+// @param extractParams {dict} Hyperparams for the given model
+// @param typeConvert   {str} What type to convert each parameter to
+// @return {dict} Hyperparams in the correct format
+optimizeModels.i.randomParams:{[extractParams;typeConvert]
+  randomType:`$extractParams[`meta;`randomType];
+  paramDict:extractParams`params;
+  params:typeConvert$'paramDict;
+  paramsJoin:randomType,'value[params],'typeConvert;
+  key[paramDict]!paramsJoin
   }
 
 // @kind function
