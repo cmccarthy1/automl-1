@@ -48,9 +48,9 @@ dataCheck.i.getDict:{[fileName]
 // @category dataCheckUtility
 // @fileoverview retrieve default parameters and update with custom information
 // @param cfg  {dict} Configuration information assigned by the user and related to the current run
-// @param feat {tab} The feature data as a table
-// @param ptyp {sym} problem type being solved (`nlp/`normal/`fresh)
-/. returns > configuration dictionary modified with any custom information
+// @param feat {tab}  The feature data as a table
+// @param ptyp {sym}  problem type being solved (`nlp/`normal/`fresh)
+// @return     {dict} configuration dictionary modified with any custom information
 dataCheck.i.getCustomConfig:{[feat;cfg;ptyp]
   d:$[ptyp=`fresh ;dataCheck.i.freshDefault[];
       ptyp=`normal;dataCheck.i.normalDefault[];
@@ -110,7 +110,7 @@ dataCheck.i.nlpDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`s
 // @fileoverview parse the hyperparameter flat file
 // @param fileName {char[]} name of the file to be parsed
 // @param filePath {char[]} file path to the hyperparmeter file relative to `.automl.path`
-/. returns  > dictionary mapping model name to possible hyper parameters 
+// @returns  > dictionary mapping model name to possible hyper parameters 
 dataCheck.i.paramParse:{[fileName;filePath]
   key[k]!(value@){(!).("S=;")0:x}each k:(!).("S*";"|")0:hsym`$.automl.path,filePath,fileName
   }
@@ -137,6 +137,7 @@ dataCheck.i.pathConstruct:{[cfg]
 // @category dataCheckUtility
 // @fileoverview Construct save path using date and time of the run
 // @param cfg {dict} Configuration information assigned by the user and related to the current run
+// @return {str} Path constructed based on run date and time 
 dataCheck.i.dateTimePath:{[cfg]
   date:string cfg`startDate;
   time:string cfg`startTime;
@@ -147,9 +148,12 @@ dataCheck.i.dateTimePath:{[cfg]
 // @category dataCheckUtility
 // @fileoverview Construct save path using custom model name
 // @param cfg {dict} Configuration information assigned by the user and related to the current run
+// @return {str} Path constructed based on user defined custom model name
 dataCheck.i.customPath:{[cfg]
   modelName:cfg[`saveModelName];
-  if[not 10h~type modelName;modelName:string modelName];
+  modelName:$[10h=type modelName;modelName;
+   -11h=type modelName;string modelName;
+   '"unsupported input type, model name must be a symbol atom or string"];
   filePath:path,"/outputs/namedModels/",modelName,"/";
   if[count key hsym`$filePath;
     '"This save path already exists, please choose another model name"];
