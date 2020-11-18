@@ -6,53 +6,54 @@
 // @category optimizeModelsUtility
 // @fileoverview Extract the hyperparameter dictionaries based on the applied model
 // @param bestModel  {<} Fitted best Model
-// @param cfg        {dict} Configuration information assigned by the user and related to the current run
+// @param cfg        {dict} Configuration information assigned 
+//   by the user and related to the current run
 // @return {dict} The hyperparameters appropriate for the model being used
 optimizeModels.i.extractdict:{[bestModel;cfg]
   hyperParam:cfg`hp;
   // Get grid/random hyperparameter file name
-  hyperTyp:$[`grid=hyperParam;
-      `gs;
-    hyperParam in`random`sobol;
-      `rs;
-      '"Unsupported hyperparameter generation method"
+  hyperTyp:$[`grid=hyperParam;`gs;
+    hyperParam in`random`sobol;`rs;
+    '"Unsupported hyperparameter generation method"
     ];
   // Load in table of hyperparameters to dictionary with (hyperparameter!values)
   hyperParamsDir:path,"/code/customization/hyperParameters/";
-  hyperParams:.j.k raze read0`$hyperParamsDir,string[hyperTyp],"HyperParameters.json";
+  hyperParamFile:string[hyperTyp],"HyperParameters.json";
+  hyperParams:.j.k raze read0`$hyperParamsDir,hyperParamFile;
   extractParams:hyperParams bestModel;
   typeConvert:`$extractParams[`meta;`typeConvert];
-  /n:where "s"=typeConvert;
-  /typeConvert[n]:"S";
   n:where `symbol=typeConvert;
   typeConvert[n]:`;
   extractParams:$[`gs~hyperTyp;
-   optimizeModels.i.gridParams;
-   optimizeModels.i.randomParams 
-   ] . (extractParams;typeConvert);
+    optimizeModels.i.gridParams;
+    optimizeModels.i.randomParams] . (extractParams;typeConvert);
   `hyperTyp`hyperDict!(hyperTyp;extractParams)
   }
 
 // @kind function
 // @category optimizeModelsUtility
-// @fileoverview Transform grid hyperparam dictionary to its correct format
-// @param extractParams {dict} Hyperparams for the given model
-// @param typeConvert   {str} What type to convert each parameter to
-// @return {dict} Hyperparams in the correct format
+// @fileoverview Convert hyperparameters from json to the correct types
+// @param extractParams {dict} Hyperparameters for the given model type (class/reg)
+//   initially parsed with '.j.k' from 'gsHyperParameters.json'
+// @param typeConvert   {str}  List of appropriate types to convert the hyperparameters to
+// @return {dict} Hyperparameters cast to appropriate representation
 optimizeModels.i.gridParams:{[extractParams;typeConvert]
-  typeConvert$'extractParams[`params]
+  typeConvert$'extractParams[`Parameters]
   }
 
 // @kind function
 // @category optimizeModelsUtility
-// @fileoverview Transform random hyperparam dictionary to its correct format
-// @param extractParams {dict} Hyperparams for the given model
-// @param typeConvert   {str} What type to convert each parameter to
-// @return {dict} Hyperparams in the correct format
+// @fileoverview Parse the correct structure for random/sobol search from
+//   JSON format provided 
+// @param extractParams {dict} Hyperparameters for the given model type (class/reg)
+//   initially parsed with '.j.k' from 'rsHyperParameters.json'
+// @param typeConvert   {str} List of appropriate types to convert the hyperparameters to
+// @return {dict} Hyperparameters converted to an appropriate representation
 optimizeModels.i.randomParams:{[extractParams;typeConvert]
   randomType:`$extractParams[`meta;`randomType];
-  paramDict:extractParams`params;
+  paramDict:extractParams`Parameters;
   params:typeConvert$'paramDict;
+  // Generate the structure required for random/sobol search
   paramsJoin:randomType,'value[params],'typeConvert;
   key[paramDict]!paramsJoin
   }
