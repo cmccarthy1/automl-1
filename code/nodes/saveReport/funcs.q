@@ -24,8 +24,10 @@ saveReport.reportDict:{[params]
 saveReport.saveReport:{[params]
   savePath :params[`config;`reportSavePath];
   modelName:params`modelName;
+  printFile:params[`config;`printFile];
   filePath:savePath,"Report_",string modelName;
-  -1"\nSaving down procedure report to ",savePath;
+  savePrint:utils.printDict[`save],savePath;
+  .api.printFunction[printFile;savePrint;1];
   $[0~checkimport[2];
     @[{saveReport.latexGenerate . x};
       (params;filePath);

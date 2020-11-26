@@ -115,3 +115,16 @@ utils.ttsNonShuff:{[feat;tgt;size]
 utils.bestModelDef:{[mdls;modelName;col]
   first?[mdls;enlist(=;`model;enlist modelName);();col]
   }
+
+// Dictionary with mappings for console printing to reduce clutter
+utils.printDict:`describe`preproc`sigFeat`totalFeat`select`modelFit`hyperParam`score`confMatrix`save!
+ ("The following is a breakdown of information for each of the relevant columns in the dataset";
+  "Data preprocessing complete, starting feature creation";
+  "Feature creation and significance testing complete";
+  "Total features being passed to the models = ";
+  "Starting initial model selection - allow ample time for large datasets";
+  "Continuing to final model fitting on testing set";
+  "Continuing to hyperparameter search and final model fitting on testing set";
+  "Best model fitting now complete - final score on testing set = ";
+  "Confusion matrix for testing set:";
+  "Saving down procedure report to ")
