@@ -23,13 +23,13 @@ dataCheck.updateConfig:{[feat;cfg]
             ];
   // Retrieve default parameters and replace defaults with any custom configuration defined
   updateCfg:$[typ in `normal`nlp`fresh;
-              dataCheck.i.getCustomConfig[feat;customCfg;typ];
+              dataCheck.i.getCustomConfig[feat;customCfg;cfg;typ];
               '`$"Inappropriate feature extraction type"
             ];
   config:standardCfg,updateCfg;
   // If applicable add save path information to configuration dictionary
-  savePaths:$[0<config`saveopt;dataCheck.i.pathConstruct[config];()!()];
-  if[`rand_val~config[`seed];config[`seed]:"j"$.z.t];
+  savePaths:$[0<config`saveOption;dataCheck.i.pathConstruct[config];()!()];
+  if[0W~config[`seed];config[`seed]:"j"$.z.t];
   config,savePaths
   }
 
@@ -44,11 +44,13 @@ dataCheck.updateConfig:{[feat;cfg]
 // @return    {(Null;err)} error indicating invalid fuctions otherwise generic null on success
 dataCheck.functions:{[cfg]
   // List of possible objects where user may input a custom function
-  function:raze cfg[`funcs`prf`tts`sigFeats],value[cfg`scf],first each cfg`xv`gs;
+  funcs:raze cfg[`functions`predictionFunction`trainTestSplit`significantFeatures,
+                 `scoringFunctionClassification`scoringFunctionRegression,
+                 `gridSearchFunction`randomSearchFunction`crossValidationFunction];
   // Ensure the custom inputs are suitably typed
-  locs:@[{$[not type[utils.qpyFuncSearch x]in(99h;100h;104h;105h);'err;0b]};;{[err]err;1b}]each function;
+  locs:@[{$[not type[utils.qpyFuncSearch x]in(99h;100h;104h;105h);'err;0b]};;{[err]err;1b}]each funcs;
   if[0<cnt:sum locs;
-     functionList:{$[2>x;" ",raze[y]," is";"s ",sv[", ";y]," are"]}[cnt]string function where locs;
+     functionList:{$[2>x;" ",raze[y]," is";"s ",sv[", ";y]," are"]}[cnt]string funcs where locs;
     '`$"The function",/functionList," not defined in your process\n"
   ]
   }
@@ -95,7 +97,7 @@ dataCheck.featureTypes:{[feat;cfg]
     ];
     typ=`fresh;
     // ignore the aggregating columns for FRESH as these can be of any type
-    [apprCols:flip(aggCols:cfg[`aggcols])_ flip feat;
+    [apprCols:flip(aggCols:cfg[`aggregationColumns])_ flip feat;
       cls:.ml.i.fndcols[apprCols;"sfiehjb"];
       // restore the aggregating columns
       tab:flip(aggCols!feat aggCols,:()),cls!feat cls;
@@ -121,8 +123,10 @@ dataCheck.length:{[feat;tgt;cfg]
   $[-11h=type typ;
     $[`fresh=typ;
       // Check that the number of unique aggregating sets is the same as number of targets
-      if[count[tgt]<>count distinct $[1=count cfg`aggcols;feat[cfg`aggcols];(,'/)feat cfg`aggcols];
-         '`$"Target count must equal count of unique agg values for fresh"
+      [aggcols:cfg`aggregationColumns;
+        if[count[tgt]<>count distinct$[1=count aggcols;feat aggcols;(,'/)feat aggcols];
+          '`$"Target count must equal count of unique agg values for fresh"
+          ];
       ];
       typ in`normal`nlp;
       if[count[tgt]<>count feat;'"Must have the same number of targets as values in table"];
@@ -148,5 +152,5 @@ dataCheck.target:{[tgt]
 // @param cfg  {dict} configuration information relating to the current run of AutoML
 // @return {(Null;err)} error on unsuitable target otherwise generic null
 dataCheck.ttsSize:{[cfg]
-  if[(sz<0.)|(sz>1.)|-9h<>type sz:cfg`sz;'"Testing size must be in range 0-1"]
+  if[(sz<0.)|(sz>1.)|-9h<>type sz:cfg`testingSize;'"Testing size must be in range 0-1"]
   }

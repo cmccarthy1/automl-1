@@ -27,10 +27,16 @@
 // @return        {table} The full graph executed to completeness or with a diagnostic error
 //   highlight to the user.
 run:{[graph;xdata;ydata;ftype;ptype;params]
-  // Handle default parameters and retrieval from file path
-  if[params~(::);params:()!()];
-  if[type[params]in 10 -11h;params:enlist[`configPath]!enlist params];
-  automlConfig:params,`featExtractType`problemType`startDate`startTime!(ftype;ptype;.z.D;.z.T);
+  // Retrieve default parameters parsed at startup and append necessary
+  // information for further parameter retrieval
+  modelName:enlist[`saveModelName]!enlist`$problemDict`modelName;
+  defaultParams:paramDict[`general],paramDict[ftype],modelName;
+  automlConfig :defaultParams,$[type[params]in 10 -11h;enlist[`configPath]!enlist params;
+    99h=type params;params;
+    params~(::);()!();
+    '"Unsupported input type for 'params'"
+    ];
+  automlConfig:automlConfig,`featExtractType`problemType`startDate`startTime!(ftype;ptype;.z.D;.z.T);
   // Default = accept data from process. Overwritten if dictionary input
   xdata:$[99h=type xdata;xdata;`typ`data!(`process;xdata)];
   ydata:$[99h=type ydata;ydata;`typ`data!(`process;ydata)];
@@ -43,3 +49,50 @@ run:{[graph;xdata;ydata;ftype;ptype;params]
   .ml.execPipeline .ml.createPipeline[graph];
   automlConfig`startDate`startTime
   }[graph]
+
+// @kind function
+// @category automl
+// @fileoverview Generate a new json flat file for use in application of AutoML
+//   for command line or as an alternative to the param file in .automl.run.
+// @param  fileName {str/sym/hsym} Name to be associated with the json file
+//   to be generated in 'code/customization/configuration/customConfig'.
+// @return          {::} Returns generic null on successful invocation and saves
+//   a copy of the file 'code/customization/configuration/default.json' to the 
+//   appropriate named file.
+newDefault:{[fileName]
+  fileNameType:type fileName;
+  fileName:$[10h=fileNameType;fileName;
+    -11h=fileNameType;
+    $[":"~first strFileName;1_;]strFileName:string fileName;
+    '`$"fileName must be string, symbol or hsym"];
+  fileName:raze[path],"/code/customization/configuration/customConfig/",fileName;
+  filePath:hsym`$utils.ssrWindows fileName;
+  if[not ()~key filePath;
+    '"A configuration of this name already exists at:",fileName
+    ];
+  defaultConfig:read0 `$path,"/code/customization/configuration/default.json";
+  h:hopen filePath;
+  {x y,"\n"}[h]each defaultConfig;
+  hclose h;
+  }
+
+// @kind function
+// @category automl
+// @fileoverview Run the AutoML framework based on user provided custom json flat files.
+//   This function is triggered when executing the automl.q file and invoking the functionality
+//   is based on the presence of an appropriately named configuration file and presence of the
+//   run command line argument on session startup i.e.
+//   $ q automl.q -config myconfig.json -run
+//   This function takes no parameters as input an does not returns any artifacts to be used 
+//   in process. Instead it executes the entirety of the automl pipeline saving the report/model
+//   images and metadata to disc and exits the process.
+runCommandLine:{[]
+  ptype:`$problemDict`problemType;
+  ftype:`$problemDict`featureExtractionType;
+  dataRetrieval:`$problemDict`dataRetrievalMethod;
+  if[any(ptype;ftype;dataRetrieval)=\:`;
+    '"`problemType,`featureExtractionType and `dataRetrievalMethod must all be defined"
+  ];
+  data:i.getCommandLineData[dataRetrieval];
+  run[;;ftype;ptype;::]. data`features`target;
+  }

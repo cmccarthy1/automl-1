@@ -21,88 +21,45 @@ dataCheck.i.errColumns:{[clist;slist;cfg]
 
 // @kind function
 // @category dataCheckUtility
-// @fileoverview retrieve a parameter flatfile from disk 
-// @param  fileName {char[]} name of the file from which the dictionary is being extracted
-// @return          {dict} configuration dictionary retrieved from a flatfile
-dataCheck.i.getDict:{[fileName]
-  d:dataCheck.i.paramParse[fileName;"/models/flat_parameters/"];
-  idx:(k except`scf;
-    k except`xv`gs`scf`seed;
-    $[`xv in k;`xv;()],$[`gs in k;`gs;()];
-    $[`scf in k;`scf;()];
-    $[`seed in k:key d;`seed;()]);
-  fnc:(key;
-    {get string first x};
-    {(x 0;get string x 1)};
-    {key[x]!`$value x};
-    {$[`rand_val~first x;first x;get string first x]});
-  // Addition of empty dictionary entry needed as parsing
-  // of file behaves oddly if only a single entry is given to the system
-  if[sgl:1=count d;d:(enlist[`]!enlist""),d];
-  d:{$[0<count y;@[x;y;z];x]}/[d;idx;fnc];
-  if[sgl;d:1_d];
-  d
-  }
-
-// @kind function
-// @category dataCheckUtility
 // @fileoverview retrieve default parameters and update with custom information
-// @param cfg  {dict} Configuration information assigned by the user and related to the current run
-// @param feat {tab}  The feature data as a table
-// @param ptyp {sym}  problem type being solved (`nlp/`normal/`fresh)
-// @return     {dict} configuration dictionary modified with any custom information
-dataCheck.i.getCustomConfig:{[feat;cfg;ptyp]
-  d:$[ptyp=`fresh ;dataCheck.i.freshDefault[];
-      ptyp=`normal;dataCheck.i.normalDefault[];
-      ptyp=`nlp   ;dataCheck.i.nlpDefault[];
-      '`$"Inappropriate type supplied"
-    ];
-  d:$[(typ:type cfg)in 10 -11 99h;
-      [if[10h~typ ;cfg:dataCheck.i.getDict cfg];
-       if[-11h~typ;cfg:dataCheck.i.getDict$[":"~first cfg;1_;]cfg:string cfg];
-       $[min key[cfg]in key d;d,cfg;'`$"Inappropriate key provided for configuration input"]
+// @param feat    {tab} The feature data as a table
+// @param cfg     {dict} Configuration information assigned by the user and related to the current run
+// @param default {dict} Default dictionary which may need to be updated
+// @param ptyp    {sym} problem type being solved (`nlp/`normal/`fresh)
+/. returns > configuration dictionary modified with any custom information
+dataCheck.i.getCustomConfig:{[feat;cfg;default;ptyp]
+  dict:$[(typ:type cfg)in 10 -11 99h;
+      [if[10h~typ ;cfg:dataCheck.i.getData[cfg;ptyp]];
+       if[-11h~typ;cfg:dataCheck.i.getData[;ptyp]$[":"~first cfg;1_;]cfg:string cfg];
+       $[min key[cfg]in key default;
+         default,cfg;
+         '`$"Inappropriate key provided for configuration input"
+        ]
       ];
       not any cfg;d;
       '`$"cfg must be passed the identity `(::)`, a filepath to a parameter flatfile",
          " or a dictionary with appropriate key/value pairs"
     ];
   if[ptyp=`fresh;
-     d[`aggcols]:$[100h~typagg:type d`aggcols;d[`aggcols]feat;
-                   11h~abs typagg;d`aggcols;
+     aggcols:dict`aggregationColumns;
+     dict[`aggregationColumns]:$[100h~typagg:type aggcols;aggcols feat;
+                   11h~abs typagg;aggcols;
                    '`$"aggcols must be passed function or list of columns"
-                 ]
+                   ]
   ];
-  d,enlist[`tf]!enlist 1~checkimport[0]
+  dict,enlist[`tensorFlow]!enlist 1~checkimport[0]
   }
 
 // @kind function
 // @category dataCheckUtility
-// @fileoverview default parameters used in the application of 'FRESH' AutoML
-// @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.freshDefault:{`aggcols`funcs`xv`gs`rs`hp`trials`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName!
-  ({first cols x};`.ml.fresh.params;(`.ml.xv.kfshuff;5);(`.automl.gs.kfshuff;5);
-  (`.automl.rs.kfshuff;5);`grid;256;`.automl.utils.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);`rand_val;2;
-   0.2;`.automl.utils.ttsNonShuff;0.2;`.automl.featureSignificance.significance;`)
-  }
-
-// @kind function
-// @category dataCheckUtility
-// @fileoverview default parameters used in the application of 'normal' AutoML 
-// @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.normalDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName!
-  ((`.ml.xv.kfshuff;5);(`.automl.gs.kfshuff;5);(`.automl.rs.kfshuff;5);`grid;256;`.automl.featureCreation.normal.default;
-   `.automl.utils.fitPredict; `class`reg!(`.ml.accuracy;`.ml.mse);
-   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;`)
-  }
-
-// @kind function
-// @category dataCheckUtility
-// @fileoverview default parameters used in the application of 'NLP' AutoML
-// @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.nlpDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`w2v`saveModelName!
-  ((`.ml.xv.kfshuff;5);(`.automl.gs.kfshuff;5);(`.automl.rs.kfshuff;5);`grid;256;`.automl.featureCreation.normal.default;
-   `.automl.utils.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);
-   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;0;`)
+// @fileoverview retrieve a json flatfile from disk 
+// @param  fileName {char[]} name of the file from which the dictionary is being extracted
+// @param  ptype    {sym} The problem type being solved(`nlp`normal`fresh)
+// @return          {dict} configuration dictionary retrieved from a flatfile
+dataCheck.i.getData:{[fileName;ptype]
+  customFile:cli.i.checkCustom fileName;
+  customJson:.j.k raze read0 `$customFile;
+  (,/)cli.i.parseParameters[customJson]each(`general;ptype)
   }
 
 // @kind function
@@ -126,7 +83,7 @@ dataCheck.i.paramParse:{[fileName;filePath]
 //   and truncated for use in outputs to terminal
 dataCheck.i.pathConstruct:{[cfg]
   names:`config`models;
-  if[cfg[`saveopt]=2;names:names,`images`report];
+  if[cfg[`saveOption]=2;names:names,`images`report];
   pname:$[`~cfg`saveModelName;dataCheck.i.dateTimePath;dataCheck.i.customPath]cfg;
   paths:pname,/:string[names],\:"/";
   dictNames:`$string[names],\:"SavePath";

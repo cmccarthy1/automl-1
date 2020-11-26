@@ -18,8 +18,8 @@ runModels.setSeed:{[cfg]
 // @param tts  {dict} Feature and target data split into training and testing set
 // @return {dict} Training and holdout split of data
 runModels.holdoutSplit:{[cfg;tts]
-  ttsFunc:utils.qpyFuncSearch cfg`tts;
-  ttsFunc[tts`xtrain;tts`ytrain;cfg`hld]
+  ttsFunc:utils.qpyFuncSearch cfg`trainTestSplit;
+  ttsFunc[tts`xtrain;tts`ytrain;cfg`holdoutSize]
   }
 
 // @kind function
@@ -34,7 +34,7 @@ runModels.xValSeed:{[tts;cfg;mdl]
   xTrain:tts`xtrain;
   yTrain:tts`ytrain;
   numReps:1;
-  scoreFunc:cfg[`prf]mdl`minit;
+  scoreFunc:get[cfg[`predictionFunction]]mdl`minit;
   seedModel:`seed~mdl`seed;
   isSklearn:`sklearn~mdl`lib;
   // Seed handled differently for sklearn and keras  
@@ -46,14 +46,14 @@ runModels.xValSeed:{[tts;cfg;mdl]
       ];
   $[seedModel&isSklearn;
     // Grid search required to incorporate the random state definition
-    [gsFunc:utils.qpyFuncSearch cfg[`gs]0;
-     numFolds:cfg[`gs]1;
+    [gsFunc:utils.qpyFuncSearch cfg`gridSearchFunction;
+     numFolds:cfg`gridSearchArgument;
      val:enlist[`val]!enlist 0;
      first value gsFunc[numFolds;numReps;xTrain;yTrain;scoreFunc;seed;val]
      ];
     // Otherwise a vanilla cross validation is performed
-    [xvFunc:utils.qpyFuncSearch cfg[`xv]0;
-     numFolds:cfg[`xv]1;
+    [xvFunc:utils.qpyFuncSearch cfg`crossValidationFunction;
+     numFolds:cfg`crossValidationArgument;
      xvFunc[numFolds;numReps;xTrain;yTrain;scoreFunc seed]
      ]
     ]
@@ -66,8 +66,8 @@ runModels.xValSeed:{[tts;cfg;mdl]
 // @param mdls  {tab}  Models to be applied to feature data
 // @return {<} Scoring function appropriate to the problem being solved
 runModels.scoringFunc:{[cfg;mdls]
-  problemType:$[`reg in distinct mdls`typ;`reg;`class];
-  scoreFunc:cfg[`scf]problemType;
+  problemType:$[`reg in distinct mdls`typ;"Regression";"Classification"];
+  scoreFunc:cfg`$"scoringFunction",problemType;
   -1"\nScores for all models using ",string[scoreFunc],":";
   scoreFunc
   }

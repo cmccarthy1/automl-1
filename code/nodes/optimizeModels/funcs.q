@@ -75,24 +75,24 @@ optimizeModels.scoreSklearn:{[bestModel;tts]
 optimizeModels.paramSearch:{[mdls;modelName;tts;scoreFunc;cfg]
   // Hyperparameter (HP) search inputs
   hyperParams:optimizeModels.i.extractdict[modelName;cfg];
-  hyperTyp:hyperParams`hyperTyp;
-  numFolds:cfg[hyperTyp]1;
+  hyperTyp:$[`gs=hyperParams`hyperTyp;"gridSearch";"randomSearch"];
+  numFolds:cfg`$hyperTyp,"Argument";
   numReps:1;
   xTrain:tts`xtrain;
   yTrain:tts`ytrain;
   mdlFunc:utils.bestModelDef[mdls;modelName;`minit];
-  scoreCalc:cfg[`prf]mdlFunc;
+  scoreCalc:get[cfg[`predictionFunction]]mdlFunc;
   // Extract HP dictionary
   hyperDict:hyperParams`hyperDict;
   txtPath:utils.txtParse[;"/code/customization/"];
   module:` sv 2#txtPath[cfg`problemType]modelName;
   embedPyMdl:.p.import[module]hsym modelName;
-  hyperFunc:cfg[hyperTyp]0;
+  hyperFunc:cfg`$hyperTyp,"Function";
   splitCnt:optimizeModels.i.splitCount[hyperFunc;numFolds;tts;cfg];
   hyperDict:optimizeModels.i.updDict[modelName;hyperTyp;splitCnt;hyperDict;cfg];
   // Final parameter required for result ordering and function definition
   orderFunc:get string first txtPath[`score]scoreFunc;
-  params:`val`ord`scf!(cfg`hld;orderFunc;scoreFunc);
+  params:`val`ord`scf!(cfg`holdoutSize;orderFunc;scoreFunc);
   // Perform HP search and extract best HP set based on scoring function
   results:get[hyperFunc][numFolds;numReps;xTrain;yTrain;scoreCalc;hyperDict;params];
   bestHPs:first key first results;

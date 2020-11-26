@@ -14,7 +14,7 @@ dataPreprocessing.symEncoding:{[feat;cfg;symEncode]
   if[all {not ` in x}each value symEncode;
     if[count symEncode`freq;
       feat:$[`fresh~typ;
-            raze .ml.freqencode[;symEncode`freq]each flip each 0!cfg[`aggcol] xgroup feat;
+            raze .ml.freqencode[;symEncode`freq]each flip each 0!cfg[`aggregationColumns] xgroup feat;
             .ml.freqencode[feat;symEncode`freq]
             ]; 
       ];
@@ -38,8 +38,8 @@ dataPreprocessing.featPreprocess:{[feat;cfg]
   // steps, this ensures that encoding is not performed on the aggregate columns
   // if this is a symbol and or if this column is constant in the case of new data
   if[`fresh=typ;
-    aggData:(cfg[`aggcols],())#flip feat;
-    feat:flip (cols[feat]except cfg[`aggcols])#flip feat
+    aggData:(cfg[`aggregationColumns],())#flip feat;
+    feat:flip (cols[feat]except cfg[`aggregationColumns])#flip feat
     ];
   featTable:$[not typ in`nlp;
              dataPreprocessing.nonTextPreprocess[feat];

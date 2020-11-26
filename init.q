@@ -9,6 +9,8 @@ nodelist:`configuration`featureData`targetData`dataCheck`modelGeneration`feature
          `runModels`selectModels`optimizeModels`preprocParams`predictParams`pathConstruct,
          `saveGraph`saveMeta`saveReport`saveModels
 
+loadfile`:code/commandLine/utils.q
+loadfile`:code/commandLine/cli.q
 {loadfile hsym `$"code/nodes/",string[x],"/init.q"}each nodelist;
 loadfile`:code/customization/init.q
 loadfile`:code/graph.q
