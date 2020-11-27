@@ -112,7 +112,7 @@
     },
     "normal":{
       "functions":{
-        "value":[".automl.featureCreation.normal.default"],
+        "value":".automl.featureCreation.normal.default",
         "type" :"symbol"
       },
       "trainTestSplit":{
@@ -122,12 +122,16 @@
     },
     "nlp":{
       "functions":{
-        "value":[".automl.featureCreation.normal.default"],
+        "value":".automl.featureCreation.normal.default",
         "type" :"symbol"
       },
       "trainTestSplit":{
         "value":".ml.traintestsplit",
         "type" :"symbol"
+      },
+      "w2v":{
+	"value":0,
+	"type":"long"
       }
     }
   }

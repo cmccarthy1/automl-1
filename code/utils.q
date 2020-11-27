@@ -127,6 +127,12 @@ i.getCommandLineData:{[method]
     targetName:`$dict`targetColumn;
     :`features`target!(flip targetName _ flip data;data targetName)
   ];
+  if[`binary=method;
+    dict:methodSpecification[method],enlist[`typ]!enlist`binary;
+    data:.ml.i.loaddset[dict];
+    targetName:`$dict`targetColumn;
+    :`features`target!(flip targetName _ flip data;data targetName)
+  ];
   if[`ipc=method;
     dict:methodSpecification[method];
     dict:("J";"c";`)$/:dict,\:enlist[`typ]!enlist"ipc";
