@@ -3,7 +3,10 @@
     "featureExtractionType":"",
     "problemType"          :"",
     "modelName"            :"",
-    "dataRetrievalMethod"  :""
+    "dataRetrievalMethod"  :{
+      "featureData":"",
+      "targetData" :""
+    }
   },
   "retrievalMethods":{
     "ipc":{
@@ -12,22 +15,37 @@
         "select":""
       },
       "targetData":{
-        "port"  :"",
-        "select":""
+        "port"        :"",
+        "select"      :"",
+	"targetColumn":""
       }
     },
     "csv":{
-      "schema"      :"",
-      "separator"   :"",
-      "directory"   :"",
-      "fileName"    :"",
-      "targetColumn":""
+     "featureDate":{
+       "schema"   :"",
+       "separator":"",
+       "directory":"",
+       "fileName" :""
+     },
+     "targetData":{
+       "schema"      :"",
+       "separator"   :"",
+       "directory"   :"",
+       "fileName"    :"",
+       "targetColumn":""
+     }
     },
     "binary":{
-      "directory"   :"",
-      "fileName"    :"",
-      "targetColumn":""
+     "featureData":{
+       "directory":"",
+       "fileName" :""
+    },
+     "targetData":{
+       "directory"   :"",
+       "fileName"    :"",
+       "targetColumn":""
     }
+   }
   },
   "problemParameters":{
     "general":{
@@ -112,7 +130,7 @@
     },
     "normal":{
       "functions":{
-        "value":".automl.featureCreation.normal.default",
+        "value":[".automl.featureCreation.normal.default"],
         "type" :"symbol"
       },
       "trainTestSplit":{
@@ -122,7 +140,7 @@
     },
     "nlp":{
       "functions":{
-        "value":".automl.featureCreation.normal.default",
+        "value":[".automl.featureCreation.normal.default"],
         "type" :"symbol"
       },
       "trainTestSplit":{

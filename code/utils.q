@@ -117,28 +117,27 @@ utils.bestModelDef:{[mdls;modelName;col]
   }
 
 // @kind function
+// @category Utility
 // @fileoverview Retrieve the feature and target data based on user defined json
-i.getCommandLineData:{[method]
+// @param method {Dict} method of data retrieval
+// @return {dict} features and target data
+utils.getCommandLineData:{[method]
   methodSpecification:cli.input`retrievalMethods;
-  // Using if statements rather than if else (neater as logic contained inside is slightly complicated)
-  if[`csv=method;
-    dict:methodSpecification[method],enlist[`typ]!enlist`csv;
-    data:.ml.i.loaddset[dict];
-    targetName:`$dict`targetColumn;
-    :`features`target!(flip targetName _ flip data;data targetName)
-  ];
-  if[`binary=method;
-    dict:methodSpecification[method],enlist[`typ]!enlist`binary;
-    data:.ml.i.loaddset[dict];
-    targetName:`$dict`targetColumn;
-    :`features`target!(flip targetName _ flip data;data targetName)
-  ];
-  if[`ipc=method;
-    dict:methodSpecification[method];
-    dict:("J";"c";`)$/:dict,\:enlist[`typ]!enlist"ipc";
-    features:.ml.i.loaddset dict`featureData;
-    target  :.ml.i.loaddset dict`targetData;
-    :`features`target!.ml.i.loaddset each dict`featureData`targetData
-  ];
-  '"Method defined by user for data retrieval not currently supported";
+  dict:key[method]!methodSpecification'[value method;key method];
+  if[count n:where `ipc=method;dict[n]:("J";"c";"c")$/:3#'dict[n]];
+  dict:dict,'([]typ:value method);
+  featureData:.ml.i.loaddset dict`featureData;
+  featurePath:dict[`featureData]utils.dataType method`featureData;
+  targetPath :dict[`targetData]utils.dataType method`targetData;
+  targetName :`$dict[`targetData]`targetColumn;
+  data:$[featurePath~targetPath;
+      (flip targetName _ flip featureData;featureData targetName);
+      (featureData;.ml.i.loaddset[dict`targetData]targetName)
+      ];
+  `features`target!data 
   }
+
+// @kind function
+// @category Utility
+// @fileoverview Dictionary to retrieve each datatype
+utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`fileName)
