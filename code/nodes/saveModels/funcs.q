@@ -22,7 +22,8 @@ saveModels.saveModel:{[params;savePath]
       torch[`:save][bestModel;filePath,".pt"];
     -1"\nSaving of non keras/sklearn/torch models types is not currently supported\n"
   ]; 
-  -1"\nSaving down ",modelName," model to ",savePath,"\n";
+  printPath:utils.printDict[`model],savePath;
+  .api.printFunction[params[`config;`printFile];printPath;2];
   }
 
 

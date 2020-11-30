@@ -26,5 +26,6 @@ saveMeta.saveMeta:{[mdlMeta;params]
   savePath:params[`config;`configSavePath];
   // move the metadata information to the appropriate location based on OS
   system$[.z.o like "w*";"move";"mv"]," metadata ",savePath;
-  -1"\nSaving down model parameters to ",utils.ssrsv[savePath],"\n";
+  printPath:utils.printDict[`meta],savePath;
+  .api.printFunction[mdlMeta`printFile;printPath;2];
   }

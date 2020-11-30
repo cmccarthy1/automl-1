@@ -15,10 +15,10 @@ runModels.node.function:{[cfg;tts;mdls]
   runModels.setSeed cfg;
   holdoutSet:runModels.holdoutSplit[cfg;tts];
   startTime:.z.T;
-  .api.printFunction[cfg`printFile;utils.printDict`select;1];
+  .api.printFunction[cfg`printFile;utils.printDict`select;2];
   predictions:runModels.xValSeed[holdoutSet;cfg]each mdls;
   scoringFunc:runModels.scoringFunc[cfg;mdls];
-  show scores:runModels.orderModels[mdls;scoringFunc;predictions];
+  scores:runModels.orderModels[mdls;scoringFunc;predictions];
   totalTime:.z.T-startTime;
   holdoutRun:runModels.bestModelFit[scores;holdoutSet;mdls;scoringFunc;cfg];
   metaData:runModels.createMeta[holdoutRun;scores;scoringFunc;totalTime;mdls;holdoutRun`bestModel];

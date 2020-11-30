@@ -30,6 +30,7 @@ dataCheck.updateConfig:{[feat;cfg]
   // If applicable add save path information to configuration dictionary
   savePaths:$[0<config`saveopt;dataCheck.i.pathConstruct[config];()!()];
   if[not .api.printing;config:dataCheck.i.printFile config];
+  .p.import[`warnings][`:filterwarnings]$[config`pythonWarn;`module;`ignore];
   if[`rand_val~config[`seed];config[`seed]:"j"$.z.t];
   config,savePaths
   }

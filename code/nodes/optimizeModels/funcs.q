@@ -23,7 +23,7 @@ optimizeModels.hyperSearch:{[mdlDict;mdls;bestModel;modelName;tts;scoreFunc;cfg]
     ];
   score:get[scoreFunc][predDict`predictions;tts`ytest];
   printScore:utils.printDict[`score],string score;
-  .api.printFunction[cfg`printFile;printScore;1];
+  .api.printFunction[cfg`printFile;printScore;2];
   predDict,`modelName`testScore!(modelName;score)
   }
 
@@ -37,7 +37,7 @@ optimizeModels.hyperSearch:{[mdlDict;mdls;bestModel;modelName;tts;scoreFunc;cfg]
 // @param cfg       {dict} Configuration information relating to the current run of AutoML
 // @return {(float[];bool[];int[])} Predicted values  
 optimizeModels.scorePred:{[custom;mdlDict;bestModel;tts;cfg]
-  .api.printFunction[cfg`printFile;utils.printDict`modelFit;1];
+  .api.printFunction[cfg`printFile;utils.printDict`modelFit;2];
   pred:$[custom;
     optimizeModels.scoreCustom[mdlDict];
     optimizeModels.scoreSklearn
@@ -77,7 +77,7 @@ optimizeModels.scoreSklearn:{[bestModel;tts]
 // @param cfg        {dict} Configuration information relating to the current run of AutoML
 // @return {(float[];bool[];int[])} Predicted values 
 optimizeModels.paramSearch:{[mdls;modelName;tts;scoreFunc;cfg]
-  .api.printFunction[cfg`printFile;utils.printDict`hyperParam;1];
+  .api.printFunction[cfg`printFile;utils.printDict`hyperParam;2];
   // Hyperparameter (HP) search inputs
   hyperParams:optimizeModels.i.extractdict[modelName;cfg];
   hyperTyp:hyperParams`hyperTyp;
@@ -123,7 +123,7 @@ optimizeModels.confMatrix:{[pred;tts;modelName;cfg]
     ];
   confMatrix:.ml.confmat[pred;yTest];
   confTable:optimizeModels.i.confTab[confMatrix];
-  .api.printFunction[cfg`printFile;;1]each (utils.printDict`confMatrix;confTable);
+  .api.printFunction[cfg`printFile;;2]each (utils.printDict`confMatrix;confTable);
   confMatrix
   }
 

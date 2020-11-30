@@ -26,8 +26,8 @@ saveReport.saveReport:{[params]
   modelName:params`modelName;
   printFile:params[`config;`printFile];
   filePath:savePath,"Report_",string modelName;
-  savePrint:utils.printDict[`save],savePath;
-  .api.printFunction[printFile;savePrint;1];
+  savePrint:utils.printDict[`report],savePath;
+  .api.printFunction[printFile;savePrint;2];
   $[0~checkimport[2];
     @[{saveReport.latexGenerate . x};
       (params;filePath);

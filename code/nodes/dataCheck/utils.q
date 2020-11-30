@@ -79,30 +79,30 @@ dataCheck.i.getCustomConfig:{[feat;cfg;ptyp]
 // @category dataCheckUtility
 // @fileoverview default parameters used in the application of 'FRESH' AutoML
 // @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.freshDefault:{`aggcols`funcs`xv`gs`rs`hp`trials`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName`printFile!
+dataCheck.i.freshDefault:{`aggcols`funcs`xv`gs`rs`hp`trials`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName`printFile`pythonWarn!
   ({first cols x};`.ml.fresh.params;(`.ml.xv.kfshuff;5);(`.automl.gs.kfshuff;5);
   (`.automl.rs.kfshuff;5);`grid;256;`.automl.utils.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);`rand_val;2;
-   0.2;`.automl.utils.ttsNonShuff;0.2;`.automl.featureSignificance.significance;`;`)
+   0.2;`.automl.utils.ttsNonShuff;0.2;`.automl.featureSignificance.significance;`;`;0b)
   }
 
 // @kind function
 // @category dataCheckUtility
 // @fileoverview default parameters used in the application of 'normal' AutoML 
 // @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.normalDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName`printFile!
+dataCheck.i.normalDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName`printFile`pythonWarn!
   ((`.ml.xv.kfshuff;5);(`.automl.gs.kfshuff;5);(`.automl.rs.kfshuff;5);`grid;256;`.automl.featureCreation.normal.default;
    `.automl.utils.fitPredict; `class`reg!(`.ml.accuracy;`.ml.mse);
-   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;`;`)
+   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;`;`;0b)
   }
 
 // @kind function
 // @category dataCheckUtility
 // @fileoverview default parameters used in the application of 'NLP' AutoML
 // @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.nlpDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`w2v`saveModelName`printFile!
+dataCheck.i.nlpDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`w2v`saveModelName`printFile`pythonWarn!
   ((`.ml.xv.kfshuff;5);(`.automl.gs.kfshuff;5);(`.automl.rs.kfshuff;5);`grid;256;`.automl.featureCreation.normal.default;
    `.automl.utils.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);
-   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;0;`;`)
+   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;0;`;`;0b)
   }
 
 // @kind function
@@ -162,7 +162,7 @@ dataCheck.i.customPath:{[cfg]
 
 dataCheck.i.printFile:{[cfg]
   if[`~cfg`printFile;'`$"printFile param not set. Please update or enable printing to screen"];
-  if[0~cfg`saveopt;:cfg];
+  if[0~cfg`saveopt;"Print statements must be enabled if saveOption is 0";.api.printing:1b;:cfg];
   pname:$[`~cfg`saveModelName;dataCheck.i.dateTimePath;dataCheck.i.customPath]cfg;
   cfg[`printFile]:pname,cfg`printFile;
   cfg

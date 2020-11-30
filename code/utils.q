@@ -117,14 +117,18 @@ utils.bestModelDef:{[mdls;modelName;col]
   }
 
 // Dictionary with mappings for console printing to reduce clutter
-utils.printDict:`describe`preproc`sigFeat`totalFeat`select`modelFit`hyperParam`score`confMatrix`save!
+utils.printDict:`describe`preproc`sigFeat`totalFeat`select`scoreFunc`bestModel`modelFit`hyperParam`score`confMatrix`report`meta`model!
  ("The following is a breakdown of information for each of the relevant columns in the dataset";
   "Data preprocessing complete, starting feature creation";
   "Feature creation and significance testing complete";
   "Total features being passed to the models = ";
   "Starting initial model selection - allow ample time for large datasets";
+  "Scores for all models using ";
+  "Best scoring model = ";
   "Continuing to final model fitting on testing set";
   "Continuing to hyperparameter search and final model fitting on testing set";
   "Best model fitting now complete - final score on testing set = ";
   "Confusion matrix for testing set:";
-  "Saving down procedure report to ")
+  "Saving down procedure report to ";
+  "Saving down model parameters to ";
+  "Saving down model to ")

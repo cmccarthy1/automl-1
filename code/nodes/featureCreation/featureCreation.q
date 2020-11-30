@@ -11,7 +11,7 @@
 // @param cfg  {dict} Configuration information assigned by the user and related to the current run
 // @return {dict} table with appropriate feature creation along with time taken and any saved models 
 featureCreation.node.function:{[cfg;feat]
-  .api.printFunction[cfg`printFile;utils.printDict`preproc;1];
+  .api.printFunction[cfg`printFile;utils.printDict`preproc;2];
   typ:cfg`featExtractType;
   $[typ=`fresh;
       featureCreation.fresh.create[feat;cfg];
