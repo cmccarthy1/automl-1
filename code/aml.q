@@ -64,7 +64,8 @@ fit:{[graph;xdata;ydata;ftype;ptype;params]
 //    and all relevant metadata information for the model
 getModel:{[modelDetails]
   pathToOutputs:utils.modelPath[modelDetails];
-  config:get hsym`$pathToOutputs,"config/metadata";
+  pathToMeta:hsym`$pathToOutputs,"config/metadata";
+  config:utils.extractModelMeta[modelDetails;pathToMeta];
   loadModel:utils.loadModel[config];
   modelConfig:config,enlist[`bestModel]!enlist loadModel;
   predictFunc:utils.generatePredict[modelConfig];

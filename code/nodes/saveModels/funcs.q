@@ -25,7 +25,6 @@ saveModels.saveModel:{[params;savePath]
   -1"\nSaving down ",modelName," model to ",savePath,"\n";
   }
 
-
 // @kind function
 // @category saveGraph
 // @fileoverview Save nlp w2v model

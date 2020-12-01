@@ -237,6 +237,16 @@ utils.modelPath:{[dict]
 
 // @kind function
 // @category Utility
+// @fileoverview Extract model meta while checking that the directory for the specified model exists
+// @param pathToMeta {hsym} Path to previous model meta data
+// @returns Either returns extracted model meta data or errors out
+utils.extractModelMeta:{[modelDetails;pathToMeta]
+  errFunc:{[modelDetails;err]'"Model ",sv[" - ";string value modelDetails]," does not exist\n"}modelDetails;
+  @[get;pathToMeta;errFunc]
+  }
+
+// @kind function
+// @category Utility
 // @fileoverview Dictionary outlining the keys which must be equivalent for data retrieval
 //   in order for a dataset not to be loaded twice (assumes tabular return under equivalence)
 utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`fileName)
