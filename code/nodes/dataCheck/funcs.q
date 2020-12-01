@@ -29,8 +29,9 @@ dataCheck.updateConfig:{[feat;cfg]
   config:standardCfg,updateCfg;
   // If applicable add save path information to configuration dictionary
   savePaths:$[0<config`saveOption;dataCheck.i.pathConstruct[config];()!()];
+  savedWord2Vec:enlist[`savedWord2Vec]!enlist 0b;
   if[0W~config[`seed];config[`seed]:"j"$.z.t];
-  config,savePaths
+  config,savePaths,savedWord2Vec
   }
 
 

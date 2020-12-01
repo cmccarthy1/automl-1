@@ -87,7 +87,7 @@ dataCheck.i.pathConstruct:{[cfg]
   pname:$[`~cfg`saveModelName;dataCheck.i.dateTimePath;dataCheck.i.customPath]cfg;
   paths:pname,/:string[names],\:"/";
   dictNames:`$string[names],\:"SavePath";
-  dictNames!paths
+  (dictNames!paths),enlist[`mainSavePath]!enlist pname
   }
 
 // @kind function

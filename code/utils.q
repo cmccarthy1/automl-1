@@ -108,7 +108,7 @@ utils.ttsNonShuff:{[feat;tgt;size]
 // @kind function
 // @category Utility
 // @fileoverview Return column value based on best model
-// @param mdls      {tab}  Models to be applied to feature data
+// @param mdls      {tab} Models to be applied to feature data
 // @param modelName {sym} The name of the model
 // @param col       {sym} Column to search
 // @return {sym} Column value
@@ -117,27 +117,126 @@ utils.bestModelDef:{[mdls;modelName;col]
   }
 
 // @kind function
-// @category Utility
-// @fileoverview Retrieve the feature and target data based on user defined json
-// @param method {Dict} method of data retrieval
-// @return {dict} features and target data
+// @category automl
+// @fileoverview Retrieve the feature and target data from a user defined
+//   json file containing data retrieval information.
+// @param method {dict} A dictionary outlining the methods to be used for
+//   retrieval of the command line data. i.e. `featureData`targetData!("csv";"ipc")
+// @return       {dict} A dictionary containing the feature and target data
+//   retrieved based on user instructions
 utils.getCommandLineData:{[method]
   methodSpecification:cli.input`retrievalMethods;
   dict:key[method]!methodSpecification'[value method;key method];
-  if[count n:where `ipc=method;dict[n]:("J";"c";"c")$/:3#'dict[n]];
+  if[count idx:where `ipc=method;dict[idx]:("J";"c";"c")$/:3#'dict[idx]];
   dict:dict,'([]typ:value method);
   featureData:.ml.i.loaddset dict`featureData;
   featurePath:dict[`featureData]utils.dataType method`featureData;
   targetPath :dict[`targetData]utils.dataType method`targetData;
   targetName :`$dict[`targetData]`targetColumn;
+  // If the data retrieval methods are the same for target and feature
+  // only load the data once and retrieve the target from the table otherwise
+  // retrieve the target data using i.loaddset
   data:$[featurePath~targetPath;
       (flip targetName _ flip featureData;featureData targetName);
-      (featureData;.ml.i.loaddset[dict`targetData]targetName)
+      (featureData;.ml.i.loaddset[dict`targetData]$[`~targetName;::;targetName])
       ];
-  `features`target!data 
+  `features`target!data
   }
 
 // @kind function
 // @category Utility
-// @fileoverview Dictionary to retrieve each datatype
+// @fileoverview Create the prediction function used when applying the model to new data
+//   this function is used as the '`predict' value off the fit model and retrieved model
+//   as a projection with feature data provided on calls to the function.
+// @param config {dict} Configuration information related to a run of automl. This contains
+//   information about the feature extraction procedure and the embedPy model (sklearn/keras)
+//   used to make predictions
+// @param feats  {tab}   Feature data based on which predictions are to be made.
+// @returns      {num[]} Predictions
+utils.generatePredict:{[config;feats]
+  bestModel:config`bestModel;
+  feats:utils.featureCreation[config;feats];
+  modelLibrary:config`modelLib;
+  $[`sklearn~modelLibrary;bestModel[`:predict;<]feats;
+    `keras~modelLibrary;
+    [feats:enlist[`xtest]!enlist feats;
+     get[".automl.models.keras.",(neg[5]_string config`modelName),".predict"][feats;bestModel]];
+    '"NotYetImplemented"]
+  }
+
+// @kind function
+// @category Utility
+// @fileoverview Apply feature extraction/creation and feature selection on provided data
+//   for based on a previous run
+// @param config {dict} Configuration information related to a run of automl. This contains
+//   information about the feature extraction procedure
+// @param feats  {tab} Feature data based on which predictions are to be made.
+// @returns      {tab} Table with feature extraction procedures applied to
+//   retrieve appropriate features
+utils.featureCreation:{[config;feats]
+  sigFeats     :config`sigFeats;
+  extractType  :config`featExtractType;
+  if[`nlp  ~extractType;config[`savedWord2Vec]:1b];
+  if[`fresh~extractType;
+    relevantFuncs:raze`$distinct{("_" vs string x)1}each sigFeats;
+    appropriateFuncs:1!select from 0!.ml.fresh.params where f in relevantFuncs;
+    config[`functions]:appropriateFuncs];
+  feats:dataPreprocessing.node.function[config;feats;config`symEncode];
+  feats:featureCreation.node.function[config;feats]`features;
+  if[not all newFeats:sigFeats in cols feats;
+    newColumns:sigFeats where not newFeats;
+    feats:sigFeats xcols flip flip[feats],newColumns!((count newColumns;count feats)#0f),()];
+  flip value flip sigFeats#"f"$0^feats
+  }
+
+// @kind function
+// @category Utility
+// @fileoverview Retrieve model from disk generated previously from
+// @param config {dict} Configuration information related to a run of automl. This contains
+//   information about the feature extraction procedure
+// @returns      {tab} Table with feature extraction procedures applied to
+//   retrieve appropriate features
+utils.loadModel:{[config]
+  modelLibrary:config`modelLib;
+  loadFunction:$[modelLibrary~`sklearn;
+    .p.import[`joblib][`:load];
+    modelLibrary~`keras;
+    $[0~checkimport[0];.p.import[`keras.models][`:load_model];'"Keras model could not be loaded"]
+   ];
+  modelFile:config[`modelsSavePath],$[modelLibrary~`sklearn;
+    string[config`modelName];
+    modelLibrary~`keras;string[config`modelName],".h5";
+    '"Unsupported model type provided"];
+  loadFunction modelFile
+  }
+
+// @kind function
+// @category Utility
+// @fileoverview Generate the path to a model based on user defined dictionary input.
+//   This assumes no knowledge of the configuration rather this is the gateway to
+//   retrieve the configuration and models
+// @param dict {dict}   Configuration detailing where to retrieve the model.
+//   This must contain one of the following:
+//     1. Dictionary mapping `startDate`startTime to the date and time associated with the model run
+//     2. Dictionary mapping `savedModelName to a model named for a run previously executed
+// @returns    {char[]} Path to the model detail information
+utils.modelPath:{[dict]
+  pathStem:path,"/outputs/";
+  keyDict:key dict;
+  pathStem,$[all `startDate`startTime in keyDict;
+    $[all(-14h;-19h)=type each dict`startDate`startTime;
+      ssr[string[dict`startDate],"/run_",string[dict`startTime],"/";":";"."];
+      '"Types provided for date/time retrieval must be a date and time respectively"];
+    `savedModelName in keyDict;
+    $[10h=type dict`savedModelName;
+      "namedModels/",dict[`savedModelName],"/";
+      '"Types provided for model name based retrieval must be a string"];
+    '"A user must define model start date/time or model name.";
+    ]
+  }
+
+// @kind function
+// @category Utility
+// @fileoverview Dictionary outlining the keys which must be equivalent for data retrieval
+//   in order for a dataset not to be loaded twice (assumes tabular return under equivalence)
 utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`fileName)
