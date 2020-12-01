@@ -175,7 +175,7 @@ utils.generatePredict:{[config;feats]
 //   retrieve appropriate features
 utils.featureCreation:{[config;feats]
   sigFeats     :config`sigFeats;
-  extractType  :config`featExtractType;
+  extractType  :config`featureExtractionType;
   if[`nlp  ~extractType;config[`savedWord2Vec]:1b];
   if[`fresh~extractType;
     relevantFuncs:raze`$distinct{("_" vs string x)1}each sigFeats;

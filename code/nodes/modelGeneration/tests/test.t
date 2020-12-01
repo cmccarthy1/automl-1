@@ -5,18 +5,13 @@
 // Suitable feature data and configuration for testing of configuration update
 featData:([]100?1f;100?1f)
 startDateTime:`startDate`startTime!(.z.D;.z.T)
-// Retrieve default values defined at startup by .automl.paramDict
-modelName:enlist[`saveModelName]!enlist`
-normalDefault:.automl.paramDict[`general],.automl.paramDict[`normal],modelName;
-freshDefault :.automl.paramDict[`general],.automl.paramDict[`fresh] ,modelName;
-nlpDefault   :.automl.paramDict[`general],.automl.paramDict[`nlp]   ,modelName;
 
-configNLPReg     :nlpDefault,startDateTime,`featureExtractionType`problemType!`nlp`reg
-configNLPClass   :nlpDefault,startDateTime,`featureExtractionType`problemType!`nlp`class
-configFRESHReg   :freshDefault,startDateTime,`featureExtractionType`problemType!`fresh`reg
-configFRESHClass :freshDefault,startDateTime,`featureExtractionType`problemType!`fresh`class
-configNormalReg  :normalDefault,startDateTime,`featureExtractionType`problemType!`normal`reg
-configNormalClass:normalDefault,startDateTime,`featureExtractionType`problemType!`normal`class
+configNLPReg     :startDateTime,`featureExtractionType`problemType!`nlp`reg
+configNLPClass   :startDateTime,`featureExtractionType`problemType!`nlp`class
+configFRESHReg   :startDateTime,`featureExtractionType`problemType!`fresh`reg
+configFRESHClass :startDateTime,`featureExtractionType`problemType!`fresh`class
+configNormalReg  :startDateTime,`featureExtractionType`problemType!`normal`reg
+configNormalClass:startDateTime,`featureExtractionType`problemType!`normal`class
 
 
 // list of input configurations
