@@ -23,7 +23,7 @@ saveModels.saveModel:{[params;savePath]
     -1"\nSaving of non keras/sklearn/torch models types is not currently supported\n"
   ]; 
   printPath:utils.printDict[`model],savePath;
-  .api.printFunction[params[`config;`printFile];printPath;2];
+  params[`config;`logFunc] printPath;
   }
 
 

@@ -24,10 +24,10 @@ saveReport.reportDict:{[params]
 saveReport.saveReport:{[params]
   savePath :params[`config;`reportSavePath];
   modelName:params`modelName;
-  printFile:params[`config;`printFile];
+  logFunc:params[`config;`logFunc];
   filePath:savePath,"Report_",string modelName;
   savePrint:utils.printDict[`report],savePath;
-  .api.printFunction[printFile;savePrint;2];
+  logFunc savePrint;
   $[0~checkimport[2];
     @[{saveReport.latexGenerate . x};
       (params;filePath);

@@ -69,7 +69,7 @@ runModels.scoringFunc:{[cfg;mdls]
   problemType:$[`reg in distinct mdls`typ;`reg;`class];
   scoreFunc:cfg[`scf]problemType;
   printScore:utils.printDict[`scoreFunc],string scoreFunc;
-  .api.printFunction[cfg`printFile;printScore;2];
+  cfg[`logFunc]printScore;
   scoreFunc
   }
 
@@ -97,11 +97,11 @@ runModels.orderModels:{[mdls;scoreFunc;predicts]
 // @param cfg       {dict} Configuration information assigned by the user and related to the current run
 // @return {dict} Fitted model and scores along with time taken 
 runModels.bestModelFit:{[scores;tts;mdls;scoreFunc;cfg]
-  .api.printFunction[cfg`printFile;scores;2];
+  cfg[`logFunc]scores;
   holdoutTimeStart:.z.T;
   bestModel:first key scores;
   printModel:utils.printDict[`bestModel],string bestModel;
-  .api.printFunction[cfg`printFile;printModel;2];
+  cfg[`logFunc]printModel;
   modelLib:first exec lib from mdls where model=bestModel;
   fitScore:$[modelLib in key models;
     runModels.i.customModel[bestModel;tts;mdls;scoreFunc;cfg];

@@ -27,5 +27,5 @@ saveMeta.saveMeta:{[mdlMeta;params]
   // move the metadata information to the appropriate location based on OS
   system$[.z.o like "w*";"move";"mv"]," metadata ",savePath;
   printPath:utils.printDict[`meta],savePath;
-  .api.printFunction[mdlMeta`printFile;printPath;2];
+  mdlMeta[`logFunc] printPath;
   }

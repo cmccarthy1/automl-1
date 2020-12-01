@@ -15,7 +15,7 @@ runModels.node.function:{[cfg;tts;mdls]
   runModels.setSeed cfg;
   holdoutSet:runModels.holdoutSplit[cfg;tts];
   startTime:.z.T;
-  .api.printFunction[cfg`printFile;utils.printDict`select;2];
+  cfg[`logFunc] utils.printDict`select;
   predictions:runModels.xValSeed[holdoutSet;cfg]each mdls;
   scoringFunc:runModels.scoringFunc[cfg;mdls];
   scores:runModels.orderModels[mdls;scoringFunc;predictions];

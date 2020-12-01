@@ -13,7 +13,7 @@
 featureDescription.node.function:{[cfg;feats]
   symEncode  :featureDescription.symEncodeSchema[feats;10;cfg];
   dataSummary:featureDescription.dataDescription[feats];
-  .api.printFunction[cfg`printFile;;2]each (utils.printDict[`describe];dataSummary);
+  cfg[`logFunc]each (utils.printDict[`describe];dataSummary);
   `symEncode`dataDescription`features!(symEncode;dataSummary;feats)
   }
 

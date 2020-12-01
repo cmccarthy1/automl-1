@@ -79,30 +79,30 @@ dataCheck.i.getCustomConfig:{[feat;cfg;ptyp]
 // @category dataCheckUtility
 // @fileoverview default parameters used in the application of 'FRESH' AutoML
 // @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.freshDefault:{`aggcols`funcs`xv`gs`rs`hp`trials`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName`printFile`pythonWarn!
+dataCheck.i.freshDefault:{`aggcols`funcs`xv`gs`rs`hp`trials`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName`logDir`logFile`pythonWarn!
   ({first cols x};`.ml.fresh.params;(`.ml.xv.kfshuff;5);(`.automl.gs.kfshuff;5);
   (`.automl.rs.kfshuff;5);`grid;256;`.automl.utils.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);`rand_val;2;
-   0.2;`.automl.utils.ttsNonShuff;0.2;`.automl.featureSignificance.significance;`;`;0b)
+   0.2;`.automl.utils.ttsNonShuff;0.2;`.automl.featureSignificance.significance;`;`;`;0b)
   }
 
 // @kind function
 // @category dataCheckUtility
 // @fileoverview default parameters used in the application of 'normal' AutoML 
 // @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.normalDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName`printFile`pythonWarn!
+dataCheck.i.normalDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`saveModelName`logDir`logFile`pythonWarn!
   ((`.ml.xv.kfshuff;5);(`.automl.gs.kfshuff;5);(`.automl.rs.kfshuff;5);`grid;256;`.automl.featureCreation.normal.default;
    `.automl.utils.fitPredict; `class`reg!(`.ml.accuracy;`.ml.mse);
-   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;`;`;0b)
+   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;`;`;`;0b)
   }
 
 // @kind function
 // @category dataCheckUtility
 // @fileoverview default parameters used in the application of 'NLP' AutoML
 // @return {dict} default dictionary which will be used if no user updates are supplied
-dataCheck.i.nlpDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`w2v`saveModelName`printFile`pythonWarn!
+dataCheck.i.nlpDefault:{`xv`gs`rs`hp`trials`funcs`prf`scf`seed`saveopt`hld`tts`sz`sigFeats`w2v`saveModelName`logDir`logFile`pythonWarn!
   ((`.ml.xv.kfshuff;5);(`.automl.gs.kfshuff;5);(`.automl.rs.kfshuff;5);`grid;256;`.automl.featureCreation.normal.default;
    `.automl.utils.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);
-   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;0;`;`;0b)
+   `rand_val;2;0.2;`.ml.traintestsplit;0.2;`.automl.featureSignificance.significance;0;`;`;`;0b)
   }
 
 // @kind function
@@ -130,7 +130,7 @@ dataCheck.i.pathConstruct:{[cfg]
   pname:$[`~cfg`saveModelName;dataCheck.i.dateTimePath;dataCheck.i.customPath]cfg;
   paths:pname,/:string[names],\:"/";
   dictNames:`$string[names],\:"SavePath";
-  dictNames!paths
+  (dictNames!paths),enlist[`mainSavePath]!enlist pname
   }
 
 // @kind function
@@ -141,7 +141,7 @@ dataCheck.i.pathConstruct:{[cfg]
 dataCheck.i.dateTimePath:{[cfg]
   date:string cfg`startDate;
   time:string cfg`startTime;
-  path,"/",ssr["outputs/",date,"/run_",time,"/";":";"."]
+  path,"/",dataCheck.i.dateTimeStr["outputs/",date,"/run_",time,"/"]
   }
 
 // @kind function
@@ -160,10 +160,41 @@ dataCheck.i.customPath:{[cfg]
   filePath
   }
 
-dataCheck.i.printFile:{[cfg]
-  if[`~cfg`printFile;'`$"printFile param not set. Please update or enable printing to screen"];
-  if[0~cfg`saveopt;"Print statements must be enabled if saveOption is 0";.api.printing:1b;:cfg];
-  pname:$[`~cfg`saveModelName;dataCheck.i.dateTimePath;dataCheck.i.customPath]cfg;
-  cfg[`printFile]:pname,cfg`printFile;
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Construct saved logged file path
+// @param cfg {dict} Configuration information assigned by the user and related to the current run
+// @return {str} Path constructed to log file based on user defined paths
+dataCheck.i.logging:{[cfg]
+  if[0~cfg`saveopt;
+    if[`~cfg`logDir;-1"\nPrint statements must be enabled if saveOption is 0 and logDir is not defined\n";
+    .api.printing:1b;:cfg]];
+  printDir:$[`~cfg`logDir;cfg[`mainSavePath],"/log/";path,"/",cfg[`logDir],"/"];
+  if[`~cfg`logFile;
+    date:string cfg`startDate;
+    time:string cfg`startTime;
+    logStr:"logFile_",date,"_",time,".txt";
+    cfg[`logFile]:dataCheck.i.dateTimeStr logStr];
+  cfg[`printFile]:printDir,cfg`logFile;
+  dataCheck.i.logFileCheck[cfg];
+  cfg[`logFunc]:.api.printFunction[cfg`printFile;;1;1];
   cfg
   }
+
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Construct date time string path in appropriate format
+// @param strPath {str} Date time path string
+// @return {str} Date and time path converted to appropriate format
+dataCheck.i.dateTimeStr:{[strPath]ssr[strPath;":";"."]}
+
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Check if logfile path already exists
+// @param cfg {dict} Configuration information assigned by the user and related to the current run
+// @return {null;err} Error if logfile already exists
+dataCheck.i.logFileCheck:{[cfg]
+  if[count key hsym`$cfg`printFile;
+    '"This logging path already exists, please choose another logFile name"];
+  }
+  

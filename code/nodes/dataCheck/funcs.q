@@ -28,11 +28,13 @@ dataCheck.updateConfig:{[feat;cfg]
             ];
   config:standardCfg,updateCfg;
   // If applicable add save path information to configuration dictionary
-  savePaths:$[0<config`saveopt;dataCheck.i.pathConstruct[config];()!()];
-  if[not .api.printing;config:dataCheck.i.printFile config];
+  config,:$[0<config`saveopt;dataCheck.i.pathConstruct[config];()!()];
+  if[not .api.printing;config:dataCheck.i.logging config];
+  config[`logFunc]:.api.printFunction[config`printFile;;1;1];
   .p.import[`warnings][`:filterwarnings]$[config`pythonWarn;`module;`ignore];
+  if[not config`tf;.p.get[`tfWarnings]$[config`pythonWarn;`0;`2]];
   if[`rand_val~config[`seed];config[`seed]:"j"$.z.t];
-  config,savePaths
+  config
   }
 
 
