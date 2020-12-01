@@ -175,7 +175,7 @@ saveGraph.i.dataSplit:{[config;fileName]
   {x[`:barh][.4;y;`color pykw z%255;`edgecolor pykw`black;`linewidth pykw 3];
     }[utils.plt]'[(sz;trnHld;trn);(white;blue;kxBlue)];
   utils.plt[`:title]["Data split";`fontsize pykw 20];
-  utils.plt[`:text][trnHld+config[`sz]%3;.4;"Test";`fontsize pykw 25];
+  utils.plt[`:text][trnHld+config[`testingSize]%3;.4;"Test";`fontsize pykw 25];
   utils.plt[`:text][trn+(trnHld-trn)%4;.4;"Holdout";`fontsize pykw 25];
   utils.plt[`:text][trn%3;.4;"Train";`fontsize pykw 25];
   utils.plt[`:xticks][`fontsize pykw 20];

@@ -89,7 +89,7 @@ optimizeModels.paramSearch:{[mdls;modelName;tts;scoreFunc;cfg]
   embedPyMdl:.p.import[module]hsym modelName;
   hyperFunc:cfg`$hyperTyp,"Function";
   splitCnt:optimizeModels.i.splitCount[hyperFunc;numFolds;tts;cfg];
-  hyperDict:optimizeModels.i.updDict[modelName;hyperTyp;splitCnt;hyperDict;cfg];
+  hyperDict:optimizeModels.i.updDict[modelName;hyperParams`hyperTyp;splitCnt;hyperDict;cfg];
   // Final parameter required for result ordering and function definition
   orderFunc:get string first txtPath[`score]scoreFunc;
   params:`val`ord`scf!(cfg`holdoutSize;orderFunc;scoreFunc);

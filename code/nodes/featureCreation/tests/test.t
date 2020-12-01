@@ -18,9 +18,9 @@ normBulkData :.automl.featureCreation.normal.bulkTransform normData
 normTruncData:.automl.featureCreation.normal.truncSingleDecomp normData
 
 // Configuration Dictionaries
-cfgKey:`featExtractType`funcs
-freshCfg       :(cfgKey,`aggcols)!`fresh`.ml.fresh.params`x
-nlpCfg         :(cfgKey,`w2v`seed)!`nlp`.automl.featureCreation.normal.default,0,42
+cfgKey:`featureExtractionType`functions
+freshCfg       :(cfgKey,`aggregationColumns)!`fresh`.ml.fresh.params`x
+nlpCfg         :(cfgKey,`w2v`savedWord2Vec`seed)!`nlp`.automl.featureCreation.normal.default,0,0b,42
 normCfg        :cfgKey!`normal`.automl.featureCreation.normal.default
 normBulkCfg    :cfgKey!`normal`.automl.featureCreation.normal.bulkTransform
 normTruncCfg   :cfgKey!`normal`.automl.featureCreation.normal.truncSingleDecomp
@@ -54,7 +54,7 @@ returnCols :`creationTime`featModel`features
 -1"\nTesting appropriate FRESH feature creation";
 
 passingTest[featCreate;(freshCfg;freshData;`key  );0b;returnCols]
-passingTest[featCreate;(freshCfg;freshData;`count);0b;698       ]
+passingTest[featCreate;(freshCfg;freshData;`count);0b;649       ]
 
 -1"\nTesting appropriate NLP feature creation.\nNote that some answers returned from NLP feature creation may vary depending on environment settings",
   "\nThe below was ran using spacy==2.3.2";
@@ -62,7 +62,7 @@ passingTest[featCreate;(freshCfg;freshData;`count);0b;698       ]
 passingTest[featCreate;(nlpCfg;nlpData     ;`key  );0b;returnCols]
 passingTest[featCreate;(nlpCfg;nlpData     ;`count);0b;12        ]
 passingTest[featCreate;(nlpCfg;nlpMultiData;`key  );0b;returnCols]
-passingTest[featCreate;(nlpCfg;nlpMultiData;`count);0b;62        ]
+passingTest[featCreate;(nlpCfg;nlpMultiData;`count);0b;58        ]
 
 -1"\nTesting inappropriate NLP feature creation";
 

@@ -16,7 +16,7 @@
 //   columns are to be frequency or one-hot encoded based on the number of unique symbols allowing
 //   a user to appropriately encode data when running on new datasets
 featureDescription.symEncodeSchema:{[feat;nVals;cfg]
-  aggcols:$[`fresh~cfg`featExtractType;cfg`aggregationColumns;(::)];
+  aggcols:$[`fresh~cfg`featureExtractionType;cfg`aggregationColumns;(::)];
   symbolCols:.ml.i.fndcols[feat;"s"]except aggcols;
   $[0=count symbolCols;
     `freq`ohe!``;
