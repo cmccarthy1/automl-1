@@ -45,7 +45,7 @@ saveReport.reportlabGenerate:{[params;filePath]
   f:saveReport.i.text[pdf;f;30;"Breakdown of Pre-Processing";"Helvetica-Bold";13];
 
   numSig:count params`sigFeats;
-  f:saveReport.i.text[pdf;f;30;@[string config`featExtractType;0;upper],
+  f:saveReport.i.text[pdf;f;30;@[string config`featureExtractionType;0;upper],
     " feature extraction and selection was performed with a total of ",string[numSig],
     " feature",$[1~numSig;;"s",]" produced.";"Helvetica";11];
   f:saveReport.i.text[pdf;f;30;"Feature extraction took ",string[params`creationTime],

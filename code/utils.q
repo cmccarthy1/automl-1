@@ -177,7 +177,7 @@ utils.generatePredict:{[config;feats]
 //   retrieve appropriate features
 utils.featureCreation:{[config;feats]
   sigFeats     :config`sigFeats;
-  extractType  :config`featExtractionType;
+  extractType  :config`featureExtractionType;
   if[`nlp  ~extractType;config[`savedWord2Vec]:1b];
   if[`fresh~extractType;
     relevantFuncs:raze`$distinct{("_" vs string x)1}each sigFeats;
@@ -239,6 +239,16 @@ utils.modelPath:{[dict]
       '"Types provided for model name based retrieval must be a string"];
     '"A user must define model start date/time or model name.";
     ]
+  }
+
+// @kind function
+// @category Utility
+// @fileoverview Extract model meta while checking that the directory for the specified model exists
+// @param pathToMeta {hsym} Path to previous model meta data
+// @returns Either returns extracted model meta data or errors out
+utils.extractModelMeta:{[modelDetails;pathToMeta]
+  errFunc:{[modelDetails;err]'"Model ",sv[" - ";string value modelDetails]," does not exist\n"}modelDetails;
+  @[get;pathToMeta;errFunc]
   }
 
 // @kind function

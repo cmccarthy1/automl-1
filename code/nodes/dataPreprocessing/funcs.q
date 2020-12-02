@@ -9,7 +9,7 @@
 // @param cfg    {dict} configuration information relating to the current run of AutoML
 // @return {tab} the feature table encoded appropriately for the task
 dataPreprocessing.symEncoding:{[feat;cfg;symEncode]
-  typ:cfg`featExtractType;
+  typ:cfg`featureExtractionType;
   // if no symbol columns return table or empty encoding schema
   if[all {not ` in x}each value symEncode;
     if[count symEncode`freq;
@@ -33,7 +33,7 @@ dataPreprocessing.symEncoding:{[feat;cfg;symEncode]
 // @param cfg     {dict} configuration information relating to the current run of AutoML
 // @return {tab} the feature table with appropriate feature preprocessing applied
 dataPreprocessing.featPreprocess:{[feat;cfg]
-  typ:cfg`featExtractType;
+  typ:cfg`featureExtractionType;
   // For FRESH the aggregate columns need to be excluded from the preprocessing
   // steps, this ensures that encoding is not performed on the aggregate columns
   // if this is a symbol and or if this column is constant in the case of new data

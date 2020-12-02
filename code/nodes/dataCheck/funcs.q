@@ -13,13 +13,13 @@
 //   containing relevant information for the update of augmented with start date/time,
 // @return     {dict} full configuration info needed augmenting cfg with any default information
 dataCheck.updateConfig:{[feat;cfg]
-  typ:cfg`featExtractType;
+  typ:cfg`featureExtractionType;
   // Retrieve boiler plate additions at run start s.t. they must be ignored in custom additions
-  standardCfg:`startDate`startTime`featExtractType`problemType # cfg;
+  standardCfg:`startDate`startTime`featureExtractionType`problemType # cfg;
   // Retrieve any custom configuration information used to update default parameters
   customCfg:$[`configPath in key cfg;
               cfg`configPath;
-              `startDate`startTime`featExtractType`problemType _ cfg
+              `startDate`startTime`featureExtractionType`problemType _ cfg
             ];
   // Retrieve default parameters and replace defaults with any custom configuration defined
   updateCfg:$[typ in `normal`nlp`fresh;
@@ -62,7 +62,7 @@ dataCheck.functions:{[cfg]
 // @param cfg {dict} configuration information relating to the current run of AutoML
 // @return    {(Null;err)} error indicating unsufficient requirements on issue otherwise generic null
 dataCheck.NLPLoad:{[cfg]
-  if[not `nlp~cfg`featExtractType;:()];
+  if[not `nlp~cfg`featureExtractionType;:()];
   if[not (0~checkimport[3]) & ((::)~@[{system"l ",x};"nlp/nlp.q";{0b}]);
     '"User attempting to run NLP models with insufficient requirements, see documentation"];
   if[""~getenv`PYTHONHASHSEED;
@@ -79,7 +79,7 @@ dataCheck.NLPLoad:{[cfg]
 // @param feat {tab} the feature data as a table
 // @return     {(Null;err)} error indicating inappropriate data or generic null on success
 dataCheck.NLPSchema:{[cfg;feat]
-  if[not `nlp~cfg`featExtractType;:()];
+  if[not `nlp~cfg`featureExtractionType;:()];
   if[0~count .ml.i.fndcols[feat;"C"];
     '`$"User wishing to apply nlp functionality must pass a table containing a character column."];
   }
@@ -91,7 +91,7 @@ dataCheck.NLPSchema:{[cfg;feat]
 // @param cfg  {dict} configuration information relating to the current run of AutoML
 // @return     {tab}  feature dataset with inappropriate columns removed and highlighted to user
 dataCheck.featureTypes:{[feat;cfg]
-  typ:cfg`featExtractType;
+  typ:cfg`featureExtractionType;
   $[typ in `tseries`normal;
     [fCols:.ml.i.fndcols[feat;"sfihjbepmdznuvt"];
      tab:flip fCols!feat fCols
@@ -120,7 +120,7 @@ dataCheck.featureTypes:{[feat;cfg]
 // @param cfg  {dict} configuration information relating to the current run of AutoML
 // @return     {(Null;err)} error on length check between target and feature otherwise generic null
 dataCheck.length:{[feat;tgt;cfg]
-  typ:cfg`featExtractType;
+  typ:cfg`featureExtractionType;
   $[-11h=type typ;
     $[`fresh=typ;
       // Check that the number of unique aggregating sets is the same as number of targets

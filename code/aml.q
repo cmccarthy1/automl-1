@@ -37,7 +37,7 @@ fit:{[graph;xdata;ydata;ftype;ptype;params]
     params~(::);()!();
     '"Unsupported input type for 'params'"
     ];
-  automlConfig:automlConfig,`featExtractType`problemType`startDate`startTime!(ftype;ptype;.z.D;.z.T);
+  automlConfig:automlConfig,`featureExtractionType`problemType`startDate`startTime!(ftype;ptype;.z.D;.z.T);
   // Default = accept data from process. Overwritten if dictionary input
   xdata:$[99h=type xdata;xdata;`typ`data!(`process;xdata)];
   ydata:$[99h=type ydata;ydata;`typ`data!(`process;ydata)];
@@ -63,7 +63,8 @@ fit:{[graph;xdata;ydata;ftype;ptype;params]
 //    and all relevant metadata information for the model
 getModel:{[modelDetails]
   pathToOutputs:utils.modelPath[modelDetails];
-  config:get hsym`$pathToOutputs,"config/metadata";
+  pathToMeta:hsym`$pathToOutputs,"config/metadata";
+  config:utils.extractModelMeta[modelDetails;pathToMeta];
   loadModel:utils.loadModel[config];
   modelConfig:config,enlist[`bestModel]!enlist loadModel;
   predictFunc:utils.generatePredict[modelConfig];
