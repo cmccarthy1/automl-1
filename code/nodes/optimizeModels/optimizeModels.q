@@ -14,7 +14,8 @@
 // @param tts       {dict} Feature and target data split into training and testing set 
 // @return {dict} Score, prediction and best model
 optimizeModels.node.function:{[cfg;mdls;bestModel;modelName;tts]
-  scoreFunc:cfg[`scf]cfg`problemType;
+  ptype:$[`reg=cfg`problemType;"Regression";"Classification"];
+  scoreFunc:cfg`$"scoringFunction",ptype;
   mdlDict  :`mdlLib`mdlFunc!utils.bestModelDef[mdls;modelName]each`lib`fnc;
   hyperSearch :optimizeModels.hyperSearch[mdlDict;mdls;bestModel;modelName;tts;scoreFunc;cfg];
   confMatrix  :optimizeModels.confMatrix[hyperSearch`predictions;tts;modelName;cfg];

@@ -21,7 +21,7 @@ saveMeta.extractMdlMeta:{[params]
 // @param params  {dict} All data generated during the process
 // return {null} Save metadict to appropriate location
 saveMeta.saveMeta:{[mdlMeta;params]
-  mdlMeta:mdlMeta,params`config;
+  mdlMeta:mdlMeta,params[`config],modelInfo!params modelInfo:`modelName`symEncode`sigFeats;
   `:metadata set mdlMeta;
   savePath:params[`config;`configSavePath];
   // move the metadata information to the appropriate location based on OS

@@ -3,8 +3,11 @@
 .automl.loadfile`:code/tests/utils.q
 
 // Default configuration dictionaries
-configKeys   :`seed`tts`gs`xv`prf`scf`hld
-configVals   :(42;`.ml.traintestsplit;(`.automl.gs.kfshuff;5);(`.ml.xv.kfshuff;5);`.automl.utils.fitPredict;`class`reg!(`.ml.accuracy;`.ml.mse);.2)
+configKeys   :`seed`trainTestSplit`gridSearchFunction`gridSearchArgument,
+              `crossValidationFunction`crossValidationArgument`predictionFunction,
+              `scoringFunctionClassification`scoringFunctionRegression`holdoutSize
+configVals   :(42;`.ml.traintestsplit;`.automl.gs.kfshuff;5;`.ml.xv.kfshuff;5;
+               `.automl.utils.fitPredict;`.ml.accuracy;`.ml.mse;.2)
 configDefault:configKeys!configVals
 
 /S 42

@@ -26,7 +26,6 @@ saveModels.saveModel:{[params;savePath]
   params[`config;`logFunc] printPath;
   }
 
-
 // @kind function
 // @category saveGraph
 // @fileoverview Save nlp w2v model
@@ -34,7 +33,7 @@ saveModels.saveModel:{[params;savePath]
 // @param savePath {str} Path where images are to be saved
 // return {null} Save nlp w2v to appropriate location
 saveModels.saveW2V:{[params;savePath]
-  extractType:params[`config]`featExtractType;
+  extractType:params[`config]`featureExtractionType;
   if[not extractType~`nlp;:(::)];
   w2vModel:params`featModel;
   w2vModel[`:save][savePath,"w2v.model"];

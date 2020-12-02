@@ -12,7 +12,7 @@
 // @return {dict} table with appropriate feature creation along with time taken and any saved models 
 featureCreation.node.function:{[cfg;feat]
   cfg[`logFunc] utils.printDict`preproc;
-  typ:cfg`featExtractType;
+  typ:cfg`featureExtractionType;
   $[typ=`fresh;
       featureCreation.fresh.create[feat;cfg];
     typ=`normal;
