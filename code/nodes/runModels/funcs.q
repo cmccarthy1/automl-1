@@ -42,7 +42,7 @@ runModels.xValSeed:{[tts;cfg;mdl]
     ::;
     isSklearn;
       enlist[`random_state]!enlist cfg`seed;
-      (cfg`seed;mdl`typ)
+      (cfg`seed;mdl`fnc)
       ];
   $[seedModel&isSklearn;
     // Grid search required to incorporate the random state definition
@@ -122,8 +122,8 @@ runModels.bestModelFit:{[scores;tts;mdls;scoreFunc;cfg]
 // @return {dict} Metadata to be contained within the end reports
 runModels.createMeta:{[holdoutRun;scores;scoreFunc;xValTime;mdls;modelName]
   modelLib:first exec lib from mdls where model=modelName;
-  mdlType :first exec typ from mdls where model=modelName;
-  metaKeys:`holdoutScore`modelScores`metric`xValTime`holdoutTime`modelLib`mdlType;
-  metaVals:(holdoutRun`score;scores;scoreFunc;xValTime;holdoutRun`holdoutTime;modelLib;mdlType);
+  mdlFunc :first exec fnc from mdls where model=modelName;
+  metaKeys:`holdoutScore`modelScores`metric`xValTime`holdoutTime`modelLib`mdlFunc;
+  metaVals:(holdoutRun`score;scores;scoreFunc;xValTime;holdoutRun`holdoutTime;modelLib;mdlFunc);
   metaKeys!metaVals
   }

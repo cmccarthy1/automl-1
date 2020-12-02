@@ -57,7 +57,6 @@ fit:{[graph;xdata;ydata;ftype;ptype;params]
 // @kind function
 // @category automl
 // @fileoverview Retrieve a fit automl model and associated workflow for use in prediction
-// @param config {configuration related to }
 // @param modelDetails {dict} Information regarding where within the outputs folder the model
 //    and required metadata is to be retrieved
 // @return {dict} a dictionary containing the predict function (generated using utils.generatePredict)
@@ -108,7 +107,7 @@ newConfig:{[fileName]
 runCommandLine:{[]
   ptype:`$problemDict`problemType;
   ftype:`$problemDict`featureExtractionType;
-  dataRetrieval:`$problemDict`dataRetrievalMethods;
+  dataRetrieval:`$problemDict`dataRetrievalMethod;
   if[any(raze ptype,ftype,raze dataRetrieval)=\:`;
     '"`problemType,`featureExtractionType and `dataRetrievalMethods must all be fully defined"
   ];
