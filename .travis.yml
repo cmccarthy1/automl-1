@@ -27,6 +27,7 @@ install:
   - if [[ "x$QLIC_KC" != "x" ]]; then
       echo -n $QLIC_KC |base64 --decode > q/kc.lic;
       pip -q install -r requirements.txt;
+      pip install tensorflow;
       pip install keras;
       pip install pytorch;
       pip install gensim;
