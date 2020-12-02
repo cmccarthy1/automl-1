@@ -9,7 +9,7 @@
 // Datasets
 n:100
 nlpList:("generate";"random";"data";"for";"tests")
-freshData    :([]n?til 10;n?1f;n?1f;n?1f)
+freshData    :([]5000?100?0p;5000?1f;5000?1f;5000?1f)
 nlpData      :([]n?nlpList;n?n;n?1f)
 nlpMultiData :([]n?nlpList;n?nlpList;n?n;n?1f)
 nlpErrData   :([]string each n?`5;n?n;n?1f)
@@ -42,7 +42,7 @@ featCreate:{[cfg;feat;returnType]
   $[returnType~`key;
       asc key feats;
     returnType~`count;
-      count cols feats`features;
+      show count cols feats`features;
       ]
   }
 
@@ -54,7 +54,7 @@ returnCols :`creationTime`featModel`features
 -1"\nTesting appropriate FRESH feature creation";
 
 passingTest[featCreate;(freshCfg;freshData;`key  );0b;returnCols]
-passingTest[featCreate;(freshCfg;freshData;`count);0b;649       ]
+passingTest[featCreate;(freshCfg;freshData;`count);0b;698       ]
 
 -1"\nTesting appropriate NLP feature creation.\nNote that some answers returned from NLP feature creation may vary depending on environment settings",
   "\nThe below was ran using spacy==2.3.2";
@@ -62,7 +62,7 @@ passingTest[featCreate;(freshCfg;freshData;`count);0b;649       ]
 passingTest[featCreate;(nlpCfg;nlpData     ;`key  );0b;returnCols]
 passingTest[featCreate;(nlpCfg;nlpData     ;`count);0b;12        ]
 passingTest[featCreate;(nlpCfg;nlpMultiData;`key  );0b;returnCols]
-passingTest[featCreate;(nlpCfg;nlpMultiData;`count);0b;58        ]
+passingTest[featCreate;(nlpCfg;nlpMultiData;`count);0b;62        ]
 
 -1"\nTesting inappropriate NLP feature creation";
 
