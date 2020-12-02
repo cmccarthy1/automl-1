@@ -120,20 +120,20 @@ utils.bestModelDef:{[mdls;modelName;col]
 // @category Utility
 // @fileoverview Dictionary with mappings for console printing to reduce clutter
 utils.printDict:(!) . flip(
-  (`describe;"The following is a breakdown of information for each of the relevant columns in the dataset");
-  (`preproc;"Data preprocessing complete, starting feature creation");
-  (`sigFeat;"Feature creation and significance testing complete");
-  (`totalFeat;"Total features being passed to the models = ");
-  (`select;"Starting initial model selection - allow ample time for large datasets");
-  (`scoreFunc;"Scores for all models using ");
-  (`bestModel;"Best scoring model = ");
-  (`modelFit;"Continuing to final model fitting on testing set");
+  (`describe  ;"The following is a breakdown of information for each of the relevant columns in the dataset");
+  (`preproc   ;"Data preprocessing complete, starting feature creation");
+  (`sigFeat   ;"Feature creation and significance testing complete");
+  (`totalFeat ;"Total features being passed to the models = ");
+  (`select    ;"Starting initial model selection - allow ample time for large datasets");
+  (`scoreFunc ;"Scores for all models using ");
+  (`bestModel ;"Best scoring model = ");
+  (`modelFit  ;"Continuing to final model fitting on testing set");
   (`hyperParam;"Continuing to hyperparameter search and final model fitting on testing set");
-  (`score;"Best model fitting now complete - final score on testing set = ");
+  (`score     ;"Best model fitting now complete - final score on testing set = ");
   (`confMatrix;"Confusion matrix for testing set:");
-  (`report;"Saving down procedure report to ");
-  (`meta;"Saving down model parameters to ");
-  (`model;"Saving down model to "))
+  (`report    ;"Saving down procedure report to ");
+  (`meta      ;"Saving down model parameters to ");
+  (`model     ;"Saving down model to "))
 
 
 // @kind function
