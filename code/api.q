@@ -1,6 +1,7 @@
 \d .automl
 
 printing:1b
+logging:0b
 
 changePrinting:{printing::not printing}
 
@@ -16,12 +17,11 @@ printFunction:{[filename;val;nline1;nline2]
   newLine1:nline1#"\n";
   newLine2:nline2#"\n";
   printString :newLine1,val,newLine2;
-  if[not .automl.printing;
+  if[logging;
     h:hopen hsym`$filename;
     h printString;
     hclose h;
-    :(::)
     ];
-  -1 printString;
+  if[printing;-1 printString];
   }
 

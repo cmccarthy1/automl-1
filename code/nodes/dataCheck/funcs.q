@@ -29,7 +29,10 @@ dataCheck.updateConfig:{[feat;cfg]
   config:standardCfg,updateCfg;
   // If applicable add save path information to configuration dictionary
   config,:$[0<config`saveOption;dataCheck.i.pathConstruct[config];()!()];
-  if[not .automl.printing;config:dataCheck.i.logging config];
+  if[.automl.logging;config:dataCheck.i.logging config];
+  if[all not .automl[`printing`logging],config`saveOption;
+     -1"\nIf saveOption is 0, logging or printing to screen must be enabled. Defaulting to .automl.printing:1b\n";
+     .automl.printing:1b];
   config[`logFunc]:.automl.printFunction[config`printFile;;1;1];
   .p.import[`warnings][`:filterwarnings]$[config`pythonWarning;`module;`ignore];
   if[not config`tensorFlow;.p.get[`tfWarnings]$[config`pythonWarning;`0;`2]];

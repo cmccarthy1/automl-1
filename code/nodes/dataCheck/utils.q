@@ -122,16 +122,17 @@ dataCheck.i.customPath:{[cfg]
 // @param cfg {dict} Configuration information assigned by the user and related to the current run
 // @return {str} Path constructed to log file based on user defined paths
 dataCheck.i.logging:{[cfg]
-  if[0~cfg`saveopt;
-    if[`~cfg`loggingDir;-1"\nPrint statements must be enabled if saveOption is 0 and loggingDir is not defined\n";
-    .api.printing:1b;:cfg]];
+  if[0~cfg`saveOption;
+    if[`~cfg`loggingDir;
+     -1"\nPrinting to screen must be enabled if saveOption is 0 and loggingDir is not defined\n";
+    .automl.printing:1b;.automl.logging:0b;:cfg]];
   printDir:$[`~cfg`loggingDir;cfg[`mainSavePath],"/log/";path,"/",cfg[`loggingDir],"/"];
-  if[`~cfg`loggingFileName;
+  if[`~cfg`loggingFile;
     date:string cfg`startDate;
     time:string cfg`startTime;
     logStr:"logFile_",date,"_",time,".txt";
-    cfg[`loggingFileName]:dataCheck.i.dateTimeStr logStr];
-  cfg[`printFile]:printDir,cfg`loggingFileName;
+    cfg[`loggingFile]:dataCheck.i.dateTimeStr logStr];
+  cfg[`printFile]:printDir,cfg`loggingFile;
   dataCheck.i.logFileCheck[cfg];
   cfg
   }
@@ -150,6 +151,6 @@ dataCheck.i.dateTimeStr:{[strPath]ssr[strPath;":";"."]}
 // @return {null;err} Error if logfile already exists
 dataCheck.i.logFileCheck:{[cfg]
   if[count key hsym`$cfg`printFile;
-    '"This logging path already exists, please choose another loggingFileName name"];
+    '"This logging path already exists, please choose another loggingFile name"];
   }
   
