@@ -16,7 +16,6 @@ loadfile`:code/customization/init.q
 loadfile`:code/graph.q
 loadfile`:code/aml.q
 loadfile`:code/utils.q
-loadfile`:code/api.q
 
 \d .nlp
 .automl.utils.loadNLP[]

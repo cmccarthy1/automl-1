@@ -124,7 +124,7 @@ dataCheck.i.customPath:{[cfg]
 dataCheck.i.logging:{[cfg]
   if[0~cfg`saveOption;
     if[`~cfg`loggingDir;
-     -1"\nPrinting to screen must be enabled if saveOption is 0 and loggingDir is not defined\n";
+     -1"\nIf saveOption is 0 and loggingDir is not defined, logging is disabled.\n";
     .automl.printing:1b;.automl.logging:0b;:cfg]];
   printDir:$[`~cfg`loggingDir;cfg[`mainSavePath],"/log/";path,"/",cfg[`loggingDir],"/"];
   if[`~cfg`loggingFile;
