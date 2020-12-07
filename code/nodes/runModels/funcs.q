@@ -79,7 +79,8 @@ runModels.xValSeed:{[tts;cfg;mdl]
 runModels.scoringFunc:{[cfg;mdls]
   problemType:$[`reg in distinct mdls`typ;"Regression";"Classification"];
   scoreFunc:cfg`$"scoringFunction",problemType;
-  -1"\nScores for all models using ",string[scoreFunc],":";
+  printScore:utils.printDict[`scoreFunc],string scoreFunc;
+  cfg[`logFunc]printScore;
   scoreFunc
   }
 
@@ -107,9 +108,11 @@ runModels.orderModels:{[mdls;scoreFunc;orderFunc;predicts]
 // @param cfg       {dict} Configuration information assigned by the user and related to the current run
 // @return {dict} Fitted model and scores along with time taken 
 runModels.bestModelFit:{[scores;tts;mdls;scoreFunc;cfg]
+  cfg[`logFunc]scores;
   holdoutTimeStart:.z.T;
   bestModel:first key scores;
-  -1"\nBest scoring model = ",string[bestModel],"\n";
+  printModel:utils.printDict[`bestModel],string bestModel;
+  cfg[`logFunc]printModel;
   modelLib:first exec lib from mdls where model=bestModel;
   fitScore:$[modelLib in key models;
     runModels.i.customModel[bestModel;tts;mdls;scoreFunc;cfg];

@@ -21,4 +21,4 @@ loadfile`:code/utils.q
 .automl.utils.loadNLP[]
 \d .automl
 
--1"\nDocumention can be found at https://code.kx.com/q/ml/automl/";
+-1"\nDocumentation can be found at https://code.kx.com/q/ml/automl/";

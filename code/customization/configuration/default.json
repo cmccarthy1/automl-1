@@ -112,6 +112,18 @@
       "scoringFunctionRegression":{
         "value":".ml.mse",
         "type" :"symbol"
+      },
+      "loggingDir":{
+        "value":"",
+        "type" :"symbol"
+      },
+      "loggingFile":{
+        "value":"",
+        "type" :"symbol"
+      },
+      "pythonWarning":{
+        "value":0,
+        "type" :"long"
       }
     },
     "fresh":{

@@ -52,7 +52,6 @@ dataCheck.i.getCustomConfig:{[feat;cfg;default;ptyp]
 
 // @kind function
 // @category dataCheckUtility
-// @fileoverview retrieve a json flatfile from disk 
 // @param  fileName {char[]} name of the file from which the dictionary is being extracted
 // @param  ptype    {sym} The problem type being solved(`nlp`normal`fresh)
 // @return          {dict} configuration dictionary retrieved from a flatfile
@@ -98,7 +97,7 @@ dataCheck.i.pathConstruct:{[cfg]
 dataCheck.i.dateTimePath:{[cfg]
   date:string cfg`startDate;
   time:string cfg`startTime;
-  path,"/",ssr["outputs/",date,"/run_",time,"/";":";"."]
+  path,"/",dataCheck.i.dateTimeStr["outputs/",date,"/run_",time,"/"]
   }
 
 // @kind function
@@ -117,3 +116,53 @@ dataCheck.i.customPath:{[cfg]
   filePath
   }
 
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Construct saved logged file path
+// @param cfg {dict} Configuration information assigned by the user and related to the current run
+// @return {str} Path constructed to log file based on user defined paths
+dataCheck.i.logging:{[cfg]
+  if[0~cfg`saveOption;
+    if[`~cfg`loggingDir;
+     -1"\nIf saveOption is 0 and loggingDir is not defined, logging is disabled.\n";
+    .automl.printing:1b;.automl.logging:0b;:cfg]];
+  if[10h<>type cfg`loggingDir;string cfg`loggingDir]
+  printDir:$[`~cfg`loggingDir;
+    cfg[`mainSavePath],"/log/";
+    [typeLogDir:type cfg`loggingDir;
+     loggingDir:$[10h=typeLogDir;;
+       -11h=typeLogDir;string;
+       '"type must be a char array or symbol"]cfg`loggingDir;
+    path,"/",loggingDir,"/"]
+    ];
+  if[`~cfg`loggingFile;
+    date:string cfg`startDate;
+    time:string cfg`startTime;
+    logStr:"logFile_",date,"_",time,".txt";
+    cfg[`loggingFile]:dataCheck.i.dateTimeStr logStr];
+  typeLoggingFile:type cfg[`loggingFile];
+  loggingFile:$[10h=typeLoggingFile;;
+    -11h=typeLoggingFile;string;
+    '"loggingFile input must be a char array or symbol"]cfg`loggingFile;
+  cfg[`printFile]:printDir,loggingFile;
+  dataCheck.i.logFileCheck[cfg];
+  cfg
+  }
+
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Construct date time string path in appropriate format
+// @param strPath {str} Date time path string
+// @return {str} Date and time path converted to appropriate format
+dataCheck.i.dateTimeStr:{[strPath]ssr[strPath;":";"."]}
+
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Check if logfile path already exists
+// @param cfg {dict} Configuration information assigned by the user and related to the current run
+// @return {null;err} Error if logfile already exists
+dataCheck.i.logFileCheck:{[cfg]
+  if[count key hsym`$cfg`printFile;
+    '"This logging path already exists, please choose another loggingFile name"];
+  }
+  
