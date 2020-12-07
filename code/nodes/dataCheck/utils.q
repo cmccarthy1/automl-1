@@ -126,13 +126,25 @@ dataCheck.i.logging:{[cfg]
     if[`~cfg`loggingDir;
      -1"\nIf saveOption is 0 and loggingDir is not defined, logging is disabled.\n";
     .automl.printing:1b;.automl.logging:0b;:cfg]];
-  printDir:$[`~cfg`loggingDir;cfg[`mainSavePath],"/log/";path,"/",cfg[`loggingDir],"/"];
+  if[10h<>type cfg`loggingDir;string cfg`loggingDir]
+  printDir:$[`~cfg`loggingDir;
+    cfg[`mainSavePath],"/log/";
+    [typeLogDir:type cfg`loggingDir;
+     loggingDir:$[10h=typeLogDir;;
+       -11h=typeLogDir;string;
+       '"type must be a char array or symbol"]cfg`loggingDir;
+    path,"/",loggingDir,"/"]
+    ];
   if[`~cfg`loggingFile;
     date:string cfg`startDate;
     time:string cfg`startTime;
     logStr:"logFile_",date,"_",time,".txt";
     cfg[`loggingFile]:dataCheck.i.dateTimeStr logStr];
-  cfg[`printFile]:printDir,cfg`loggingFile;
+  typeLoggingFile:type cfg[`loggingFile];
+  loggingFile:$[10h=typeLoggingFile;;
+    -11h=typeLoggingFile;string;
+    '"loggingFile input must be a char array or symbol"]cfg`loggingFile;
+  cfg[`printFile]:printDir,loggingFile;
   dataCheck.i.logFileCheck[cfg];
   cfg
   }
