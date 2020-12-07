@@ -17,13 +17,14 @@ runModels.node.function:{[cfg;tts;mdls]
   startTime:.z.T;
   cfg[`logFunc] utils.printDict`select;
   predictions:runModels.xValSeed[holdoutSet;cfg]each mdls;
-  scoringFunc:runModels.scoringFunc[cfg;mdls];
-  scores:runModels.orderModels[mdls;scoringFunc;predictions];
+  scoreFunc:runModels.scoringFunc[cfg;mdls];
+  orderFunc:runModels.jsonParse scoreFunc;
+  scores:runModels.orderModels[mdls;scoreFunc;orderFunc;predictions];
   totalTime:.z.T-startTime;
-  holdoutRun:runModels.bestModelFit[scores;holdoutSet;mdls;scoringFunc;cfg];
-  metaData:runModels.createMeta[holdoutRun;scores;scoringFunc;totalTime;mdls;holdoutRun`bestModel];
-  returnKeys:`bestModel`bestScoringName`modelMetaData;
-  returnVals:(holdoutRun`model;holdoutRun`bestModel;metaData);
+  holdoutRun:runModels.bestModelFit[scores;holdoutSet;mdls;scoreFunc;cfg];
+  metaData:runModels.createMeta[holdoutRun;scores;scoreFunc;totalTime;mdls;holdoutRun`bestModel];
+  returnKeys:`orderFunc`bestModel`bestScoringName`modelMetaData;
+  returnVals:(orderFunc;holdoutRun`model;holdoutRun`bestModel;metaData);
   returnKeys!returnVals
   }
 
@@ -31,4 +32,4 @@ runModels.node.function:{[cfg;tts;mdls]
 runModels.node.inputs  :`config`ttsObject`models!"!!+"
 
 // Output information
-runModels.node.outputs :`bestModel`bestScoringName`modelMetaData!"<s!"
+runModels.node.outputs :`orderFunc`bestModel`bestScoringName`modelMetaData!"<<s!"

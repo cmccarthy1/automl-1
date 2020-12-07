@@ -1,6 +1,5 @@
 \l automl.q
 .automl.loadfile`:init.q
-.automl.loadfile`:code/tests/utils.q
 
 // Generate input models to be saved 
 

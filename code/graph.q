@@ -81,6 +81,7 @@ graph:.ml.connectEdge[graph;`selectModels  ;`output ;`runModels;`models]
 graph:.ml.connectEdge[graph;`dataCheck     ;`config ;`runModels;`config]
 
 // Optimize_Models
+graph:.ml.connectEdge[graph;`runModels     ;`orderFunc      ;`optimizeModels;`orderFunc]
 graph:.ml.connectEdge[graph;`runModels     ;`bestModel      ;`optimizeModels;`bestModel]
 graph:.ml.connectEdge[graph;`runModels     ;`bestScoringName;`optimizeModels;`bestScoringName]
 graph:.ml.connectEdge[graph;`selectModels  ;`output         ;`optimizeModels;`models]
