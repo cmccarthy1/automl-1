@@ -125,12 +125,12 @@ dataCheck.i.logging:{[cfg]
   if[0~cfg`saveopt;
     if[`~cfg`loggingDir;-1"\nPrint statements must be enabled if saveOption is 0 and loggingDir is not defined\n";
     .api.printing:1b;:cfg]];
-  printDir:$[`~cfg`loggingDir;cfg[`mainSavePath],"/log/";path,"/",cfg[`logDir],"/"];
+  printDir:$[`~cfg`loggingDir;cfg[`mainSavePath],"/log/";path,"/",cfg[`loggingDir],"/"];
   if[`~cfg`loggingFileName;
     date:string cfg`startDate;
     time:string cfg`startTime;
     logStr:"logFile_",date,"_",time,".txt";
-    cfg[`logFile]:dataCheck.i.dateTimeStr logStr];
+    cfg[`loggingFileName]:dataCheck.i.dateTimeStr logStr];
   cfg[`printFile]:printDir,cfg`loggingFileName;
   dataCheck.i.logFileCheck[cfg];
   cfg
