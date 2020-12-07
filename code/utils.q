@@ -123,7 +123,7 @@ utils.printDict:(!) . flip(
   (`describe  ;"The following is a breakdown of information for each of the relevant columns in the dataset");
   (`preproc   ;"Data preprocessing complete, starting feature creation");
   (`sigFeat   ;"Feature creation and significance testing complete");
-  (`totalFeat ;"Total features being passed to the models = ");
+  (`totalFeat ;"Total number of significant features being passed to the models = ");
   (`select    ;"Starting initial model selection - allow ample time for large datasets");
   (`scoreFunc ;"Scores for all models using ");
   (`bestModel ;"Best scoring model = ");
@@ -131,6 +131,7 @@ utils.printDict:(!) . flip(
   (`hyperParam;"Continuing to hyperparameter search and final model fitting on testing set");
   (`score     ;"Best model fitting now complete - final score on testing set = ");
   (`confMatrix;"Confusion matrix for testing set:");
+  (`graph     ;"Saving down graphs to ");
   (`report    ;"Saving down procedure report to ");
   (`meta      ;"Saving down model parameters to ");
   (`model     ;"Saving down model to "))
@@ -283,15 +284,8 @@ utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`file
 // @kind function
 // @category Utility
 // @fileoverview Default printing and logging functionality
-printing:1b
-logging:0b
-
-
-// @kind function
-// @category Utility
-// @fileoverview Change logging and printing states
-changeLogging:{printing::not logging}
-changePrinting:{printing::not printing}
+utils.printing:1b
+utils.logging:0b
 
 // @kind function
 // @category api
@@ -300,15 +294,15 @@ changePrinting:{printing::not printing}
 // @param val      {str} Item that is to be displayed to standard out of any type
 // @param nline1   {int} Number of new line breaks before the text that are needed to 'pretty print' the display
 // @param nline2   {int} Number of new line breaks after the text that are needed to 'pretty print' the display
-printFunction:{[filename;val;nline1;nline2]
+utils.printFunction:{[filename;val;nline1;nline2]
   if[not 10h~type val;val:.Q.s[val]];
   newLine1:nline1#"\n";
   newLine2:nline2#"\n";
   printString :newLine1,val,newLine2;
-  if[logging;
+  if[utils.logging;
     h:hopen hsym`$filename;
     h printString;
     hclose h;
     ];
-  if[printing;-1 printString];
+  if[utils.printing;-1 printString];
   }

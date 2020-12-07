@@ -46,6 +46,7 @@ dataPreprocessing.featPreprocess:{[feat;cfg]
              dataPreprocessing.textPreprocess[feat]
              ];
   // rejoin the separated aggregate columns for FRESH
+  cfg[`logFunc] utils.printDict`preproc;
   $[`fresh=typ;flip[aggData],';]featTable
   }
 
