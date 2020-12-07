@@ -285,9 +285,9 @@ utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`file
 // @category Utility
 // @fileoverview Dictionary of warning print statements that can be turned on/off
 utils.printWarnings:(!) . flip(
-  (`configExists    ;"A configuration of this name already exists");
-  (`savePath        ;"The save path chosen already exists");
-  (`loggingPath     ;"The logging path chosen already exists");
+  (`configExists    ;"A configuration of this name already exists and will be overwritten");
+  (`savePath        ;"The save path chosen already exists and will be overwritten");
+  (`loggingPath     ;"The logging path chosen already exists and will be overwritten");
   (`printDefault    ;"If saveOption is 0, logging or printing to screen must be enabled. Defaulting to .automl.printing:1b");
   (`pythonHashSeed  ;"For full reproducibility between q processes of the NLP word2vec implementation,",
                      " the PYTHONHASHSEED environment variable must be set upon initialization of q. See ",

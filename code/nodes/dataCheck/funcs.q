@@ -74,7 +74,7 @@ dataCheck.NLPLoad:{[cfg]
   if[not `nlp~cfg`featureExtractionType;:()];
   if[not (0~checkimport[3]) & ((::)~@[{system"l ",x};"nlp/nlp.q";{0b}]);
     '"User attempting to run NLP models with insufficient requirements, see documentation"];
-  if[(""~getenv`PYTHONHASHSEED)&ignoreWarnings<2;-1 utils.printWarnings`pythonHashSeed];
+  if[(""~getenv`PYTHONHASHSEED)&ignoreWarnings<2;cfg[`logFunc] utils.printWarnings`pythonHashSeed];
   }
 
 // @kind function

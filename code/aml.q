@@ -91,7 +91,8 @@ newConfig:{[fileName]
   fileName:raze[path],"/code/customization/configuration/customConfig/",fileName;
   filePath:hsym`$utils.ssrWindows fileName;
   if[not ()~key filePath;
-    $[utils.ignoreWarnings=0;{'x};ignoreWarnings=1;-1;]utils.printWarnings`configExists
+    ignore:utils.ignoreWarnings;
+    $[ignore=0;{'x};ignore=1;-1;]utils.printWarnings`configExists
     ];
   defaultConfig:read0 `$path,"/code/customization/configuration/default.json";
   h:hopen filePath;

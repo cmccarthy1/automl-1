@@ -173,7 +173,6 @@ dataCheck.i.fileNameCheck:{[cfg]
       dataCheck.i.warningOption[cfg;ignore] utils.printWarnings`savePath];
      ];
   }
-  
 
 // @kind function
 // @category dataCheckUtility
