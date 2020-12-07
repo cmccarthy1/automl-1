@@ -205,7 +205,8 @@ utils.loadModel:{[config]
     modelLibrary~`keras;
     $[0~checkimport[0];.p.import[`keras.models][`:load_model];'"Keras model could not be loaded"];
     modelLibrary~`torch;
-    $[0~checkimport[1];.p.import[`torch][`:load];'"Torch model could not be loaded"]
+    $[0~checkimport[1];.p.import[`torch][`:load];'"Torch model could not be loaded"];
+    '"Model Library must be one of 'sklearn', 'keras' or 'torch'"
    ];
   modelPath:config[`modelsSavePath],string config`modelName;
   modelFile:$[modelLibrary~`sklearn;
@@ -213,7 +214,7 @@ utils.loadModel:{[config]
     modelLibrary in`keras;modelPath,".h5";
     modelLibrary~`torch;modelPath,".pt";
     '"Unsupported model type provided"];
-  loadFunction modelFile	
+  loadFunction modelFile
   }
 
 // @kind function
