@@ -205,7 +205,8 @@ utils.loadModel:{[config]
     modelLibrary~`keras;
     $[0~checkimport[0];.p.import[`keras.models][`:load_model];'"Keras model could not be loaded"];
     modelLibrary~`torch;
-    $[0~checkimport[1];.p.import[`torch][`:load];'"Torch model could not be loaded"]
+    $[0~checkimport[1];.p.import[`torch][`:load];'"Torch model could not be loaded"];
+    '"Model Library must be one of 'sklearn', 'keras' or 'torch'"
    ];
   modelPath:config[`modelsSavePath],string config`modelName;
   modelFile:$[modelLibrary~`sklearn;
@@ -257,10 +258,23 @@ utils.extractModelMeta:{[modelDetails;pathToMeta]
 //   in order for a dataset not to be loaded twice (assumes tabular return under equivalence)
 utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`fileName)
 
+
+// @kind function
+// @category Utility
+// @fileoverview Dictionary of warning print statements that can be turned on/off
 utils.printWarnings:(!) . flip(
-  (`configExists;"A configuration of this name already exists");
-  (`savePath    ;"This save path already exists");
-  (`neuralNetworkTgt;"Limiting the models being applied due to number targets>10,000;No longer running neural nets or svms")
+  (`configExists    ;"A configuration of this name already exists");
+  (`savePath        ;"This save path chosen already exists");
+  (`pythonHashSeed  ;"For full reproducibility between q processes of the NLP word2vec implementation,",
+                     " the PYTHONHASHSEED environment variable must be set upon initialization of q. See ",
+                     "https://code.kx.com/q/ml/automl/ug/options/#seed for details.");
+  (`removeNeuralNet ;"Limiting the models being applied due to number of datapoints; No longer running neural nets or svms");
+  (`neuralNetWarning;"Due to the large number of datapoints, it is advised to remove the neural networks from the model Config")
   )
 
-ignoreWarnings:0b
+
+// @kind function
+// @category Utility
+// @fileoverview Decide how warning statemenst should be handles. 0=Warning given and appropriate 
+// action taken. 1=Warning given but no action taken. 2=No warning or action taken
+utils.ignoreWarnings:0

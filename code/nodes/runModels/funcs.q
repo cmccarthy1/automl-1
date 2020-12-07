@@ -4,6 +4,17 @@
 
 // @kind function
 // @category runModels
+// @fileoverview Extraction of an appropriately valued dictionary from a json file
+// @param scoreFunc {sym} function used to score models run
+// @return {func} order function chosen from json file for specific scoring function
+runModels.jsonParse:{[scoreFunc]
+  jsonPath:hsym`$.automl.path,"/code/customization/scoring/scoringFunctions.json";
+  funcs:.j.k raze read0 jsonPath;
+  get first value funcs scoreFunc
+  }
+
+// @kind function
+// @category runModels
 // @fileoverview Set value of random seed for reproducability
 // @param cfg {dict} configuration information relating to the current run of AutoML
 // @return {Null} Value of seed is set
@@ -77,10 +88,10 @@ runModels.scoringFunc:{[cfg;mdls]
 // @fileoverview Order average predictions returned by models
 // @param mdls        {tab}  Models to be applied to feature data
 // @param scoreFunc   {<} Scoring function applied to predictions
+// @param orderFunc   {<} Ordering function applied to scores
 // @param predictions {(bool[];float[])} Predictions made by model
 // @return {dict} Scores returned by each model in appropriate order 
-runModels.orderModels:{[mdls;scoreFunc;predicts]
-  orderFunc:get string first runModels.i.txtParse[`score;"/code/customization/"]scoreFunc;
+runModels.orderModels:{[mdls;scoreFunc;orderFunc;predicts]
   avgScore:avg each scoreFunc .''predicts;
   scoreDict:mdls[`model]!avgScore;
   orderFunc scoreDict

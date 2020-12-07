@@ -7,12 +7,13 @@
 // @fileoverview print to standard out flagging the removal of inappropriate columns
 // @param clist {sym[]} list of all columns in the dataset
 // @param slist {sym[]} sublist of columns appropriate for the use case
-// @param cfg   {dict} configuration information assigned by the user and related to the current run
+// @param typ   {sym} Feature extraction type being implemented
 // @return      {(Null;stdout)} generic null if all columns suitable, appropriate print out
 //   in the case there are outstanding issues
-dataCheck.i.errColumns:{[clist;slist;cfg]
+dataCheck.i.errColumns:{[clist;slist;typ]
   if[count[clist]<>count slist;
-    -1 "\n Removed the following columns due to type restrictions for ",string cfg;
+     // Add to print dict when branch merged in
+    -1 "\n Removed the following columns due to type restrictions for ",string typ;
     0N!clist where not clist in slist
     ]
   }
@@ -112,7 +113,9 @@ dataCheck.i.customPath:{[cfg]
    -11h=type modelName;string modelName;
    '"unsupported input type, model name must be a symbol atom or string"];
   filePath:path,"/outputs/namedModels/",modelName,"/";
-  if[(count key hsym`$filePath)&not ignoreWarnings;'utils.printWarnings`savePath];
+  if[count key hsym`$filePath;
+    $[utils.ignoreWarnings=0;{'x};utils.ignoreWarnings=1;-1;]utils.printWarnings`configExists
+    ];
   filePath
   }
 

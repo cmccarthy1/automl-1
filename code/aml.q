@@ -88,7 +88,9 @@ newConfig:{[fileName]
     '`$"fileName must be string, symbol or hsym"];
   fileName:raze[path],"/code/customization/configuration/customConfig/",fileName;
   filePath:hsym`$utils.ssrWindows fileName;
-  if[(not ()~key filePath)&not ignoreWarnings;'utils.printWarnings`configExists];
+  if[not ()~key filePath;
+    $[utils.ignoreWarnings=0;{'x};ignoreWarnings=1;-1;]utils.printWarnings`configExists
+    ];
   defaultConfig:read0 `$path,"/code/customization/configuration/default.json";
   h:hopen filePath;
   {x y,"\n"}[h]each defaultConfig;
@@ -115,3 +117,8 @@ runCommandLine:{[]
   data:utils.getCommandLineData[dataRetrieval];
   fit[;;ftype;ptype;::]. data`features`target;
   }
+
+// @kind function
+// @category Utility
+// @fileoverview Update print Warning statements
+updateIgnoreWarnings:{utils.ignoreWarnings::not utils.ignoreWarnings}
