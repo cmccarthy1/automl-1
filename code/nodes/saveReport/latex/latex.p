@@ -65,7 +65,7 @@ def python_latex(dict,paths,dscrb,score,grid,exclude):
     createImage(doc,''.join(paths['target']),'Distribution of input target data.')
   
   with doc.create(Section('Pre-processing Breakdown')):
-    doc.append(configDict['featExtractType'].capitalize() + ' feature extraction was performed with a total of ' + str(len(dict['sigFeats'])) + ' features produced\n')
+    doc.append(configDict['featureExtractionType'].capitalize() + ' feature extraction was performed with a total of ' + str(len(dict['sigFeats'])) + ' features produced\n')
     doc.append('Feature extraction took a total time of ' +dict['creationTime'] + '.\n')
  
   with doc.create(Section('Initial Scores')):

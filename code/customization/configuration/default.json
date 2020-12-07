@@ -15,37 +15,37 @@
         "select":""
       },
       "targetData":{
-        "port"        :"",
-        "select"      :"",
-	"targetColumn":""
+        "port"  :"",
+        "select":"",
+        "targetColumn":""
       }
     },
     "csv":{
-     "featureDate":{
-       "schema"   :"",
-       "separator":"",
-       "directory":"",
-       "fileName" :""
-     },
-     "targetData":{
-       "schema"      :"",
-       "separator"   :"",
-       "directory"   :"",
-       "fileName"    :"",
-       "targetColumn":""
-     }
+      "featureData":{
+        "schema"   :"",
+        "separator":"",
+        "directory":"",
+        "fileName" :""
+      },
+      "targetData":{
+        "schema"      :"",
+        "separator"   :"",
+        "directory"   :"",
+        "fileName"    :"",
+        "targetColumn":""
+      }
     },
     "binary":{
-     "featureData":{
+      "featureData":{
        "directory":"",
        "fileName" :""
-    },
-     "targetData":{
-       "directory"   :"",
-       "fileName"    :"",
-       "targetColumn":""
+      },
+      "targetData":{
+        "directory"   :"",
+        "fileName"    :"",
+        "targetColumn":""
+      }
     }
-   }
   },
   "problemParameters":{
     "general":{
@@ -112,6 +112,18 @@
       "scoringFunctionRegression":{
         "value":".ml.mse",
         "type" :"symbol"
+      },
+      "loggingDir":{
+        "value":"",
+        "type" :"symbol"
+      },
+      "loggingFile":{
+        "value":"",
+        "type" :"symbol"
+      },
+      "pythonWarning":{
+        "value":0,
+        "type" :"long"
       }
     },
     "fresh":{
@@ -148,8 +160,8 @@
         "type" :"symbol"
       },
       "w2v":{
-	"value":0,
-	"type":"long"
+        "value":0,
+        "type":"long"
       }
     }
   }

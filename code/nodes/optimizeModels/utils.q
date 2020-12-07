@@ -100,7 +100,7 @@ optimizeModels.i.updDict:{[modelName;hyperTyp;splitCnt;hyperDict;cfg]
         hyperDict[`n_neighbors;2]:"j"$splitCnt
         ]
       ];
-    hyperDict:`typ`random_state`n`p!(cfg`hp;cfg`seed;cfg`trials;hyperDict)
+    hyperDict:`typ`random_state`n`p!(cfg`hyperparameterSearchType;cfg`seed;cfg`numberTrials;hyperDict)
     ];
   hyperDict
   }
