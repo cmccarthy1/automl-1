@@ -31,9 +31,8 @@ selectModels.targetKeras:{[mdls;tts;tgt]
 // @param tgt  {(num[];sym[])} Numerical or symbol vector containing the target dataset
 // @return {tab} Appropriate models removed if needed and model removal highlighted
 selectModels.targetLimit:{[mdls;tgt]
- if[10000<count tgt;
-    -1"\nLimiting the models being applied due to number targets>10,000";
-    -1"No longer running neural nets or svms\n";
+ if[(10000<count tgt)&not ignoreWarnings;
+    utils.printWarnings`neuralNetworkTgt;
     :select from mdls where lib<>`keras,not fnc in`neural_network`svm
    ];
    mdls

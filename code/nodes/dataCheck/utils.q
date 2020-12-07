@@ -112,8 +112,7 @@ dataCheck.i.customPath:{[cfg]
    -11h=type modelName;string modelName;
    '"unsupported input type, model name must be a symbol atom or string"];
   filePath:path,"/outputs/namedModels/",modelName,"/";
-  if[count key hsym`$filePath;
-    '"This save path already exists, please choose another model name"];
+  if[(count key hsym`$filePath)&not ignoreWarnings;'utils.printWarnings`savePath];
   filePath
   }
 

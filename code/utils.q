@@ -256,3 +256,11 @@ utils.extractModelMeta:{[modelDetails;pathToMeta]
 // @fileoverview Dictionary outlining the keys which must be equivalent for data retrieval
 //   in order for a dataset not to be loaded twice (assumes tabular return under equivalence)
 utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`fileName)
+
+utils.printWarnings:(!) . flip(
+  (`configExists;"A configuration of this name already exists");
+  (`savePath    ;"This save path already exists");
+  (`neuralNetworkTgt;"Limiting the models being applied due to number targets>10,000;No longer running neural nets or svms")
+  )
+
+ignoreWarnings:0b
