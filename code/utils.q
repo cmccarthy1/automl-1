@@ -157,10 +157,12 @@ utils.generatePredict:{[config;feats]
   bestModel:config`bestModel;
   feats:utils.featureCreation[config;feats];
   modelLibrary:config`modelLib;
-  $[`sklearn~modelLibrary;bestModel[`:predict;<]feats;
-    `keras~modelLibrary;
+  $[`sklearn~modelLibrary;
+    bestModel[`:predict;<]feats;
+    modelLibrary in`keras`torch;
     [feats:enlist[`xtest]!enlist feats;
-     get[".automl.models.keras.",(neg[5]_string config`modelName),".predict"][feats;bestModel]];
+    customName:"." sv string config`modelLib`mdlFunc;
+     get[".automl.models.",customName,".predict"][feats;bestModel]];
     '"NotYetImplemented"]
   }
 
@@ -185,7 +187,7 @@ utils.featureCreation:{[config;feats]
   feats:featureCreation.node.function[config;feats]`features;
   if[not all newFeats:sigFeats in cols feats;
     newColumns:sigFeats where not newFeats;
-    feats:sigFeats xcols flip flip[feats],newColumns!((count newColumns;count feats)#0f),()];
+    feats:flip flip[feats],newColumns!((count newColumns;count feats)#0f),()];
   flip value flip sigFeats#"f"$0^feats
   }
 
@@ -201,11 +203,16 @@ utils.loadModel:{[config]
   loadFunction:$[modelLibrary~`sklearn;
     .p.import[`joblib][`:load];
     modelLibrary~`keras;
-    $[0~checkimport[0];.p.import[`keras.models][`:load_model];'"Keras model could not be loaded"]
+    $[0~checkimport[0];.p.import[`keras.models][`:load_model];'"Keras model could not be loaded"];
+    modelLibrary~`torch;
+    $[0~checkimport[1];.p.import[`torch][`:load];'"Torch model could not be loaded"];
+    '"Model Library must be one of 'sklearn', 'keras' or 'torch'"
    ];
-  modelFile:config[`modelsSavePath],$[modelLibrary~`sklearn;
-    string[config`modelName];
-    modelLibrary~`keras;string[config`modelName],".h5";
+  modelPath:config[`modelsSavePath],string config`modelName;
+  modelFile:$[modelLibrary~`sklearn;
+    modelPath;
+    modelLibrary in`keras;modelPath,".h5";
+    modelLibrary~`torch;modelPath,".pt";
     '"Unsupported model type provided"];
   loadFunction modelFile
   }

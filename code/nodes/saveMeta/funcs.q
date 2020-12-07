@@ -10,8 +10,8 @@
 saveMeta.extractMdlMeta:{[params]
   mdlMeta:params`modelMetaData;
   modelLib:mdlMeta`modelLib;
-  mdlType :mdlMeta`mdlType;
-  `modelLib`mdlType!(modelLib;mdlType)
+  mdlFunc :mdlMeta`mdlFunc;
+  `modelLib`mdlFunc!(modelLib;mdlFunc)
    }
 
 // @kind function
