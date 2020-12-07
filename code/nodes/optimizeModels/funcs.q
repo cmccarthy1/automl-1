@@ -19,10 +19,12 @@ optimizeModels.hyperSearch:{[mdlDict;mdls;bestModel;modelName;tts;scoreFunc;orde
   custom :mdlDict[`mdlLib] in key models;
   exclude:modelName in utils.excludeList; 
   predDict:$[custom|exclude;
-    optimizeModels.scorePred[custom;mdlDict;bestModel;tts];
+    optimizeModels.scorePred[custom;mdlDict;bestModel;tts;cfg];
     optimizeModels.paramSearch[mdls;modelName;tts;scoreFunc;orderFunc;cfg]
     ];
   score:get[scoreFunc][predDict`predictions;tts`ytest];
+  printScore:utils.printDict[`score],string score;
+  cfg[`logFunc]printScore;
   predDict,`modelName`testScore!(modelName;score)
   }
 
@@ -33,8 +35,10 @@ optimizeModels.hyperSearch:{[mdlDict;mdls;bestModel;modelName;tts;scoreFunc;orde
 // @param mdlDict    {dict}  Library and function for best model
 // @param bestModel  {<} Fitted best model
 // @param tts        {dict} Feature and target data split into training and testing set
+// @param cfg       {dict} Configuration information relating to the current run of AutoML
 // @return {(float[];bool[];int[])} Predicted values  
-optimizeModels.scorePred:{[custom;mdlDict;bestModel;tts]
+optimizeModels.scorePred:{[custom;mdlDict;bestModel;tts;cfg]
+  cfg[`logFunc] utils.printDict`modelFit;
   pred:$[custom;
     optimizeModels.scoreCustom[mdlDict];
     optimizeModels.scoreSklearn
@@ -75,6 +79,7 @@ optimizeModels.scoreSklearn:{[bestModel;tts]
 // @param cfg        {dict} Configuration information relating to the current run of AutoML
 // @return {(float[];bool[];int[])} Predicted values 
 optimizeModels.paramSearch:{[mdls;modelName;tts;scoreFunc;orderFunc;cfg]
+  cfg[`logFunc]utils.printDict`hyperParam;
   // Hyperparameter (HP) search inputs
   hyperParams:optimizeModels.i.extractdict[modelName;cfg];
   hyperTyp:$[`gs=hyperParams`hyperTyp;"gridSearch";"randomSearch"];
@@ -115,9 +120,9 @@ optimizeModels.confMatrix:{[pred;tts;modelName;cfg]
     pred :`long$pred;
     yTest:`long$yTest
     ];
-  -1"\nConfusion matrix for testing set:\n";
   confMatrix:.ml.confmat[pred;yTest];
-  show optimizeModels.i.confTab[confMatrix];
+  confTable:optimizeModels.i.confTab[confMatrix];
+  cfg[`logFunc]each (utils.printDict`confMatrix;confTable);
   confMatrix
   }
 

@@ -112,6 +112,26 @@
       "scoringFunctionRegression":{
         "value":".ml.mse",
         "type" :"symbol"
+      },
+      "loggingDir":{
+        "value":"",
+        "type" :"symbol"
+      },
+      "loggingFile":{
+        "value":"",
+        "type" :"symbol"
+      },
+      "pythonWarning":{
+        "value":0,
+        "type" :"long"
+      },
+      "overWriteFiles":{
+        "value":0,
+        "type" :"long"
+      },
+      "targetLimit":{
+        "value":10000,
+	"type" :"long"
       }
     },
     "fresh":{

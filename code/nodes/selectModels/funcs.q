@@ -29,15 +29,16 @@ selectModels.targetKeras:{[mdls;tts;tgt]
 // @fileoverview Update models available for use based on the number of rows in the target set
 // @param mdls {tab} Models which are to be applied to the dataset
 // @param tgt  {(num[];sym[])} Numerical or symbol vector containing the target dataset
+// @param cfg  {dict} Configuration information assigned by the user and related to the current run
 // @return {tab} Appropriate models removed if needed and model removal highlighted
-selectModels.targetLimit:{[mdls;tgt]
- if[(10000<count tgt);
+selectModels.targetLimit:{[mdls;tgt;cfg]
+ if[cfg[`targetLimit]<count tgt;
     if[utils.ignoreWarnings=0;
-    -1 utils.printWarnings`removeNeuralNet;
+    cfg[`logFunc] utils.printWarnings`removeNeuralNet;
     :select from mdls where lib<>`keras,not fnc in`neural_network`svm
     ];
     if[utils.ignoreWarnings=1;
-    -1 utils.printWarnings`neuralNetWarning
+    cfg[`logFunc] utils.printWarnings`neuralNetWarning
     ]];
    mdls
   }

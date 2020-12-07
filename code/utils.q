@@ -117,6 +117,28 @@ utils.bestModelDef:{[mdls;modelName;col]
   }
 
 // @kind function
+// @category Utility
+// @fileoverview Dictionary with mappings for console printing to reduce clutter
+utils.printDict:(!) . flip(
+  (`describe  ;"The following is a breakdown of information for each of the relevant columns in the dataset");
+  (`errColumns;"The following columns were removed due to type restrictions for ");
+  (`preproc   ;"Data preprocessing complete, starting feature creation");
+  (`sigFeat   ;"Feature creation and significance testing complete");
+  (`totalFeat ;"Total number of significant features being passed to the models = ");
+  (`select    ;"Starting initial model selection - allow ample time for large datasets");
+  (`scoreFunc ;"Scores for all models using ");
+  (`bestModel ;"Best scoring model = ");
+  (`modelFit  ;"Continuing to final model fitting on testing set");
+  (`hyperParam;"Continuing to hyperparameter search and final model fitting on testing set");
+  (`score     ;"Best model fitting now complete - final score on testing set = ");
+  (`confMatrix;"Confusion matrix for testing set:");
+  (`graph     ;"Saving down graphs to ");
+  (`report    ;"Saving down procedure report to ");
+  (`meta      ;"Saving down model parameters to ");
+  (`model     ;"Saving down model to "))
+
+
+// @kind function
 // @category automl
 // @fileoverview Retrieve the feature and target data from a user defined
 //   json file containing data retrieval information.
@@ -214,7 +236,7 @@ utils.loadModel:{[config]
     modelLibrary in`keras;modelPath,".h5";
     modelLibrary~`torch;modelPath,".pt";
     '"Unsupported model type provided"];
-  loadFunction modelFile	
+  loadFunction modelFile
   }
 
 // @kind function
@@ -264,7 +286,9 @@ utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`file
 // @fileoverview Dictionary of warning print statements that can be turned on/off
 utils.printWarnings:(!) . flip(
   (`configExists    ;"A configuration of this name already exists");
-  (`savePath        ;"This save path chosen already exists");
+  (`savePath        ;"The save path chosen already exists");
+  (`loggingPath     ;"The logging path chosen already exists");
+  (`printDefault    ;"If saveOption is 0, logging or printing to screen must be enabled. Defaulting to .automl.printing:1b");
   (`pythonHashSeed  ;"For full reproducibility between q processes of the NLP word2vec implementation,",
                      " the PYTHONHASHSEED environment variable must be set upon initialization of q. See ",
                      "https://code.kx.com/q/ml/automl/ug/options/#seed for details.");
@@ -278,3 +302,41 @@ utils.printWarnings:(!) . flip(
 // @fileoverview Decide how warning statemenst should be handles. 0=Warning given and appropriate 
 // action taken. 1=Warning given but no action taken. 2=No warning or action taken
 utils.ignoreWarnings:0
+
+// @kind function
+// @category Utility
+// @fileoverview Default printing and logging functionality
+utils.printing:1b
+utils.logging:0b
+
+// @kind function
+// @category api
+// @fileoverview Print statements to screen and/or to a logging script depending on user configuration
+//  upon initialization
+// @param filename {sym} Name of the file which can be used to save a log of outputs to file
+// @param val      {str} Item that is to be displayed to standard out of any type
+// @param nline1   {int} Number of new line breaks before the text that are needed to 'pretty print' the display
+// @param nline2   {int} Number of new line breaks after the text that are needed to 'pretty print' the display
+// @return {null} String is printed to terminal or logged to a script
+utils.printFunction:{[filename;val;nline1;nline2]
+  if[not 10h~type val;val:.Q.s[val]];
+  newLine1:nline1#"\n";
+  newLine2:nline2#"\n";
+  printString :newLine1,val,newLine2;
+  if[utils.logging;
+    h:hopen hsym`$filename;
+    h printString;
+    hclose h;
+    ];
+  if[utils.printing;-1 printString];
+  }
+
+
+// @kind function
+// @category utility
+// @fileoverview If savePath already exists, delete content from previous run
+// @param path {str} Path to where plots,reports,meta etc is saved
+// @return {null} Content from previous runs are deleted if already exist 
+utils.clearSavePath:{[path]
+  if[count key hsym`$path;system"rm ",path,"/*"]
+  }

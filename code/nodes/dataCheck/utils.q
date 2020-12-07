@@ -8,13 +8,14 @@
 // @param clist {sym[]} list of all columns in the dataset
 // @param slist {sym[]} sublist of columns appropriate for the use case
 // @param typ   {sym} Feature extraction type being implemented
+// @param cfg   {dict} Configuration information assigned by the user and related to the current run
 // @return      {(Null;stdout)} generic null if all columns suitable, appropriate print out
 //   in the case there are outstanding issues
-dataCheck.i.errColumns:{[clist;slist;typ]
+dataCheck.i.errColumns:{[clist;slist;typ;cfg]
   if[count[clist]<>count slist;
-     // Add to print dict when branch merged in
-    -1 "\n Removed the following columns due to type restrictions for ",string typ;
-    0N!clist where not clist in slist
+    errString:utils.printDict[`errColumns],string typ;
+    removedCols:", "sv string clist where not clist in slist;
+    cfg[`logFunc] errString,": ",removedCols
     ]
   }
 
@@ -80,7 +81,7 @@ dataCheck.i.paramParse:{[fileName;filePath]
 // @fileoverview create the folders that are required for the saving of the config,
 //   models, images and reports
 // @param cfg {dict} Configuration information assigned by the user and related to the current run
-// @return the file paths relevant for saving reports/config etc to file, both as full path format 
+// @return {dict} File paths relevant for saving reports/config etc to file, both as full path format 
 //   and truncated for use in outputs to terminal
 dataCheck.i.pathConstruct:{[cfg]
   names:`config`models;
@@ -99,7 +100,7 @@ dataCheck.i.pathConstruct:{[cfg]
 dataCheck.i.dateTimePath:{[cfg]
   date:string cfg`startDate;
   time:string cfg`startTime;
-  path,"/",ssr["outputs/",date,"/run_",time,"/";":";"."]
+  path,"/",dataCheck.i.dateTimeStr["outputs/",date,"/run_",time,"/"]
   }
 
 // @kind function
@@ -113,9 +114,74 @@ dataCheck.i.customPath:{[cfg]
    -11h=type modelName;string modelName;
    '"unsupported input type, model name must be a symbol atom or string"];
   filePath:path,"/outputs/namedModels/",modelName,"/";
-  if[count key hsym`$filePath;
-    $[utils.ignoreWarnings=0;{'x};utils.ignoreWarnings=1;-1;]utils.printWarnings`configExists
-    ];
   filePath
   }
 
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Construct saved logged file path
+// @param cfg {dict} Configuration information assigned by the user and related to the current run
+// @return {str} Path constructed to log file based on user defined paths
+dataCheck.i.logging:{[cfg]
+  if[0~cfg`saveOption;
+    if[`~cfg`loggingDir;
+      -1"\nIf saveOption is 0 and loggingDir is not defined, logging is disabled.\n";
+    .automl.utils.printing:1b;.automl.utils.logging:0b;:cfg]];
+  if[10h<>type cfg`loggingDir;string cfg`loggingDir]
+  printDir:$[`~cfg`loggingDir;
+    cfg[`mainSavePath],"/log/";
+    [typeLogDir:type cfg`loggingDir;
+     loggingDir:$[10h=typeLogDir;;
+       -11h=typeLogDir;string;
+       '"type must be a char array or symbol"]cfg`loggingDir;
+    path,"/",loggingDir,"/"]
+    ];
+  if[`~cfg`loggingFile;
+    date:string cfg`startDate;
+    time:string cfg`startTime;
+    logStr:"logFile_",date,"_",time,".txt";
+    cfg[`loggingFile]:dataCheck.i.dateTimeStr logStr];
+  typeLoggingFile:type cfg[`loggingFile];
+  loggingFile:$[10h=typeLoggingFile;;
+    -11h=typeLoggingFile;string;
+    '"loggingFile input must be a char array or symbol"]cfg`loggingFile;
+  cfg[`printFile]:printDir,loggingFile;
+  cfg
+  }
+
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Construct date time string path in appropriate format
+// @param strPath {str} Date time path string
+// @return {str} Date and time path converted to appropriate format
+dataCheck.i.dateTimeStr:{[strPath]ssr[strPath;":";"."]}
+
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Check if directories to be created already exist
+// @param cfg {dict} Configuration information assigned by the user and related to the current run
+// @return {null;err} Error if logfile or savePath already exists
+dataCheck.i.fileNameCheck:{[cfg]
+  if[cfg`overWriteFiles;:()]
+  ignore:utils.ignoreWarnings;
+  if[.automl.utils.logging;
+    if[count key hsym`$cfg`printFile;
+       dataCheck.i.warningOption[cfg;ignore] utils.printWarnings`loggingPath];
+    ];
+  if[0<cfg`saveOption;
+    if[count key hsym `$cfg`mainSavePath;
+      dataCheck.i.warningOption[cfg;ignore] utils.printWarnings`savePath];
+     ];
+  }
+  
+
+// @kind function
+// @category dataCheckUtility
+// @fileoverview How the warning should be handled depending on the ignoreWarning
+//  option chosen 
+// @param cfg    {dict} Configuration information assigned by the user and related to the current run
+// @param ignore {int} IgnoreWarning attribute between 0-2 descibing how to handle warnings
+// @return {err;str} Print warning to screen/log file or error out
+dataCheck.i.warningOption:{[cfg;ignore]
+  $[ignore=0;{'x};ignore=1;cfg`logFunc;]
+  }

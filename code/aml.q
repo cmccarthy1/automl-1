@@ -54,6 +54,7 @@ fit:{[graph;xdata;ydata;ftype;ptype;params]
   `modelInfo`predict!(modelConfig;predictFunc)
   }[graph]
 
+
 // @kind function
 // @category automl
 // @fileoverview Retrieve a fit automl model and associated workflow for use in prediction
@@ -70,6 +71,7 @@ getModel:{[modelDetails]
   predictFunc:utils.generatePredict[modelConfig];
   `modelInfo`predict!(modelConfig;predictFunc)
   }
+
 
 // @kind function
 // @category automl
@@ -97,6 +99,7 @@ newConfig:{[fileName]
   hclose h;
   }
 
+
 // @kind function
 // @category automl
 // @fileoverview Run the AutoML framework based on user provided custom json flat files.
@@ -122,3 +125,9 @@ runCommandLine:{[]
 // @category Utility
 // @fileoverview Update print Warning statements
 updateIgnoreWarnings:{utils.ignoreWarnings::not utils.ignoreWarnings}
+
+// @kind function
+// @category Utility
+// @fileoverview Update logging and printing states
+updateLogging :{utils.logging ::not utils.logging}
+updatePrinting:{utils.printing::not utils.printing}

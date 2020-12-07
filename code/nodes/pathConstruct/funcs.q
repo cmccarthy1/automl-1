@@ -14,6 +14,7 @@ pathConstruct.constructPath:{[preProcParams]
   if[saveOpt=0;:()!()];
   pathName:-1_value[cfg]where key[cfg]like"*SavePath";
   pathName:utils.ssrWindows each pathName;
+  utils.clearSavePath each pathName;
   pathConstruct.createFile each pathName;
   }
 

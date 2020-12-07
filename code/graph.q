@@ -73,6 +73,7 @@ graph:.ml.connectEdge[graph;`dataCheck          ;`config  ;`trainTestSplit;`conf
 // Select_Models
 graph:.ml.connectEdge[graph;`trainTestSplit ;`output;`selectModels;`ttsObject]
 graph:.ml.connectEdge[graph;`labelEncode    ;`target;`selectModels;`target]
+graph:.ml.connectEdge[graph;`dataCheck      ;`config;`selectModels;`config]
 graph:.ml.connectEdge[graph;`modelGeneration;`output;`selectModels;`models]
 
 // Run_Models
