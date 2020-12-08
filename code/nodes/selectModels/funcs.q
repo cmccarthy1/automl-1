@@ -34,10 +34,10 @@ selectModels.targetKeras:{[mdls;tts;tgt]
 selectModels.targetLimit:{[mdls;tgt;cfg]
  if[cfg[`targetLimit]<count tgt;
     if[utils.ignoreWarnings=0;
-      cfg[`logFunc] utils.printWarnings`removeNeuralNet;
+      cfg[`logFunc] utils.printWarnings[`neuralNetWarning]0;
       :select from mdls where lib<>`keras,not fnc in`neural_network`svm
      ];
     if[utils.ignoreWarnings=1;
-      cfg[`logFunc] utils.printWarnings`neuralNetWarning]];
+      cfg[`logFunc] utils.printWarnings[`neuralNetWarning][1]]];
    mdls
   }

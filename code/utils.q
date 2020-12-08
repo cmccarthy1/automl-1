@@ -283,17 +283,22 @@ utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`file
 
 // @kind function
 // @category Utility
-// @fileoverview Dictionary of warning print statements that can be turned on/off
+// @fileoverview Dictionary of warning print statements that can be turned on/off. 
+//  If two elements are within a key,first element is the warning given when ignoreWarnings=0, 
+//  the second is the warning given when ignoreWarnings=1
 utils.printWarnings:(!) . flip(
-  (`configExists    ;"A configuration of this name already exists and will be overwritten");
-  (`savePath        ;"The save path chosen already exists and will be overwritten");
-  (`loggingPath     ;"The logging path chosen already exists and will be overwritten");
-  (`printDefault    ;"If saveOption is 0, logging or printing to screen must be enabled. Defaulting to .automl.printing:1b");
-  (`pythonHashSeed  ;"For full reproducibility between q processes of the NLP word2vec implementation,",
-                     " the PYTHONHASHSEED environment variable must be set upon initialization of q. See ",
-                     "https://code.kx.com/q/ml/automl/ug/options/#seed for details.");
-  (`removeNeuralNet ;"Limiting the models being applied due to number of datapoints; No longer running neural nets or svms");
-  (`neuralNetWarning;"Due to the large number of datapoints, it is advised to remove the neural networks from the model Config")
+  (`configExists     ;("A configuration file of this name already exists, this run will be exited";
+                       "A configuration file of this name already exists and will be overwritten"));
+  (`savePathExists   ;("The savePath chosen already exists, this run will be exited";
+                       "The savePath chosen already exists and will be overwritten"));
+  (`loggingPathExists;("The logging path chosen already exists, this run will be overwritten";
+                       "The logging path chosen already exists and will be overwritten"));
+  (`printDefault     ;"If saveOption is 0, logging or printing to screen must be enabled. Defaulting to .automl.printing:1b");
+  (`pythonHashSeed   ;"For full reproducibility between q processes of the NLP word2vec implementation,",
+                      " the PYTHONHASHSEED environment variable must be set upon initialization of q. See ",
+                      "https://code.kx.com/q/ml/automl/ug/options/#seed for details.");
+  (`neuralNetWarning ;("Limiting the models being applied due to count of datapoints exceeding target limit; No longer running neural nets or svms";
+                       "Due to the count of datapoints exceeding target limit, it is advised to remove the neural networks from the model Config"))
   )
 
 
@@ -329,14 +334,4 @@ utils.printFunction:{[filename;val;nline1;nline2]
     hclose h;
     ];
   if[utils.printing;-1 printString];
-  }
-
-
-// @kind function
-// @category utility
-// @fileoverview If savePath already exists, delete content from previous run
-// @param path {str} Path to where plots,reports,meta etc is saved
-// @return {null} Content from previous runs are deleted if already exist 
-utils.clearSavePath:{[path]
-  if[count key hsym`$path;system"rm ",path,"/*"]
   }

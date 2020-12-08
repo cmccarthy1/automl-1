@@ -162,17 +162,47 @@ dataCheck.i.dateTimeStr:{[strPath]ssr[strPath;":";"."]}
 // @param cfg {dict} Configuration information assigned by the user and related to the current run
 // @return {null;err} Error if logfile or savePath already exists
 dataCheck.i.fileNameCheck:{[cfg]
-  if[cfg`overWriteFiles;:()]
   ignore:utils.ignoreWarnings;
-  if[.automl.utils.logging;
-    if[count key hsym`$cfg`printFile;
-       dataCheck.i.warningOption[cfg;ignore] utils.printWarnings`loggingPath];
-    ];
-  if[0<cfg`saveOption;
-    if[count key hsym `$cfg`mainSavePath;
-      dataCheck.i.warningOption[cfg;ignore] utils.printWarnings`savePath];
-     ];
+  if[cfg`overWriteFiles;ignore:2];
+  mainFileExists:$[0<cfg`saveOption;count key hsym`$cfg`mainSavePath;0];
+  loggingExists :$[utils.logging;count key hsym`$cfg`printFile;0];
+  dataCheck.i.delFiles[cfg;ignore;mainFileExists;loggingExists];
+  dataCheck.i.printWarning[cfg;ignore;mainFileExists;loggingExists]
   }
+ 
+
+// @kind function
+// @category dataCheckUtility
+// @fileoverview Delete any previous save paths and logging paths if warnings are to be ignored
+// @param cfg            {dict} Configuration information assigned by the user and related to the current run
+// @param ignore         {int}  The ignoreWarnings options chosen (0-2)
+// @param mainFileExists {bool} Whether the savePath exists if saveOption is greater than 0
+// @param loggingExists  {bool} Whether the logging path exists if logging option is chosen
+// @return {null} Delete save paths and logging files
+dataCheck.i.delFiles:{[cfg;ignore;mainFileExists;loggingExists]
+  if[ignore=0;:()];
+  if[mainFileExists;system"rm -rf ",cfg[`mainSavePath]];
+  if[loggingExists;system"rm -rf ",cfg[`printFile]];
+  }
+
+
+// @kind function
+// @category dataCheckUtility
+// @fileoverview If savePath and logging already exist, give warning or error out depening on
+//  ignoreWarning option
+// @param cfg            {dict} Configuration information assigned by the user and related to the current run
+// @param ignore         {int}  The ignoreWarnings options chosen (0-2)
+// @param mainFileExists {bool} Whether the savePath exists if saveOption is greater than 0
+// @param loggingExists  {bool} Whether the logging path exists if logging option is chosen
+// @return {null;err} Error if logfile or savePath already exists or give warning
+dataCheck.i.printWarning:{[cfg;ignore;mainFileExists;loggingExists]
+  if[ignore=2;:()];
+  if[mainFileExists;
+      dataCheck.i.warningOption[cfg;ignore] utils.printWarnings[`savePathExists]ignore];
+  if[loggingExists;
+       dataCheck.i.warningOption[cfg;ignore] utils.printWarnings[`loggingPathExists]ignore];
+  }
+
 
 // @kind function
 // @category dataCheckUtility
