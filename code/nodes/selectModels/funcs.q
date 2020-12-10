@@ -33,11 +33,11 @@ selectModels.targetKeras:{[mdls;tts;tgt]
 // @return {tab} Appropriate models removed if needed and model removal highlighted
 selectModels.targetLimit:{[mdls;tgt;cfg]
  if[cfg[`targetLimit]<count tgt;
-    if[utils.ignoreWarnings=0;
-      cfg[`logFunc] utils.printWarnings[`neuralNetWarning]0;
+    if[utils.ignoreWarnings=2;
+      cfg[`logFunc](utils.printWarnings[`neuralNetWarning]0),string cfg[`targetLimit];
       :select from mdls where lib<>`keras,not fnc in`neural_network`svm
      ];
     if[utils.ignoreWarnings=1;
-      cfg[`logFunc] utils.printWarnings[`neuralNetWarning][1]]];
+      cfg[`logFunc](utils.printWarnings[`neuralNetWarning]1),string cfg[`targetLimit]]];
    mdls
   }
