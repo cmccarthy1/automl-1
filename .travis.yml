@@ -48,6 +48,7 @@ script:
 -  if [[ "x$QLIC_KC" != "x" ]]; then
     curl -fsSL -o test.q https://github.com/KxSystems/embedpy/raw/master/test.q;
     PYTHONHASHSEED=0 bash code/tests/testFiles.bat
+
   else
     echo No kdb+, no tests;
   fi

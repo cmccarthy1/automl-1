@@ -27,6 +27,7 @@ passingTest[.test.checkFit;(featureDataNormal;targetBinary    ;`normal;`class;en
 
 -1"\nTesting appropriate inputs to fit function for FRESH feature extraction type\n";
 
+
 passingTest[.test.checkFit;(featureDataFresh;targetRegression;`fresh;`reg  ;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataFresh;targetBinary    ;`fresh;`class;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataFresh;targetMulti     ;`fresh;`class;::);1b;11 99 104h]
@@ -34,6 +35,7 @@ passingTest[.test.checkFit;(featureDataFresh;targetRegression;`fresh;`reg  ;enli
 passingTest[.test.checkFit;(featureDataFresh;targetMulti     ;`fresh;`class;`functions`saveOption!(`newFreshParams;1));1b;11 99 104h]
 
 -1"\nTesting appropriate inputs to fit function for NLP feature extraction type\n";
+
 
 passingTest[.test.checkFit;(featureDataNLP;targetRegression;`nlp;`reg  ;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataNLP;targetBinary    ;`nlp;`class;::);1b;11 99 104h]
@@ -44,6 +46,7 @@ passingTest[.test.checkFit;(featureDataNLP;targetMulti     ;`nlp;`class;enlist[`
 -1"\nTesting appropriate inputs for predict function\n";
 
 // Create normal, FRESH and NLP models
+
 fitNormal:.automl.fit[featureDataNormal;targetMulti     ;`normal;`class;`overWriteFiles`saveModelName!(1;"normalModel")]
 fitFresh :.automl.fit[featureDataFresh ;targetBinary    ;`fresh ;`class;`overWriteFiles`saveModelName!(1;"freshModel")]
 fitNLP   :.automl.fit[featureDataNLP   ;targetRegression;`nlp   ;`reg  ;`overWriteFiles`saveModelName!(1;"nlpModel")]
@@ -53,6 +56,7 @@ passingTest[type;fitFresh.predict[featureDataFresh]  ;1b;1h]
 passingTest[type;fitNLP.predict[featureDataNLP]      ;1b;9h]
 
 // Retrieve saved models via `getModel` method
+
 normalModel:.automl.getModel[enlist[`savedModelName]!enlist "normalModel"]
 freshModel:.automl.getModel[enlist[`savedModelName]!enlist "freshModel"]
 nlpModel:.automl.getModel[enlist[`savedModelName]!enlist "nlpModel"]
