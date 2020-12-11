@@ -24,7 +24,23 @@ selectModels.targetKeras:{[mdls;tts;tgt;cfg]
   mdls
   }
 
-// @kind function
+
+/// @kind function
+// @category selectModels
+// @fileoverview Remove torch models if these are unavailable
+// @param mdls {tab} Models which are to be applied to the dataset
+// @param cfg  {dict} Configuration information assigned by the user and related to the current run
+// @return {tab} Keras model removed if needed and removal highlighted
+selectModels.torchModels:{[mdls;cfg]
+  if[0<>checkimport[1];
+    cfg[`logFunc] utils.printDict`torchModels;
+    :?[mdls;enlist(<>;`lib;enlist `torch);0b;()]
+    ];
+  mdls
+  }
+
+
+/ @kind function
 // @category selectModels
 // @fileoverview Remove theano models if these are unavailable
 // @param mdls {tab} Models which are to be applied to the dataset
@@ -37,6 +53,7 @@ selectModels.theanoModels:{[mdls;cfg]
     ];
   mdls
   }
+
 
 // @kind function
 // @category selectModels

@@ -278,6 +278,7 @@ utils.printDict:(!) . flip(
   (`modelFit;"Continuing to final model fitting on testing set");
   (`hyperParam;"Continuing to hyperparameter search and final model fitting on testing set");
   (`kerasClass;"Test set does not contain examples of each class removing multi-class keras models");
+  (`torchModels;"Attempting to run Torch models without Torch installed, removing Torch models");
   (`theanoModels;"Attempting to run Theano models without Theano installed, removing Theano models");
   (`score;"Best model fitting now complete - final score on testing set = ");
   (`confMatrix;"Confusion matrix for testing set:");
@@ -292,20 +293,26 @@ utils.printDict:(!) . flip(
 //  If two elements are within a key,first element is the warning given when ignoreWarnings=2,
 //  the second is the warning given when ignoreWarnings=1
 utils.printWarnings:(!) . flip(
-  (`configExists     ;("A configuration file of this name already exists, this run will be exited";
-                       "A configuration file of this name already exists and will be overwritten"));
-  (`savePathExists   ;("The savePath chosen already exists, this run will be exited";
-                       "The savePath chosen already exists and will be overwritten"));
-  (`loggingPathExists;("The logging path chosen already exists, this run will be overwritten";
-                       "The logging path chosen already exists and will be overwritten"));
-  (`printDefault     ;"If saveOption is 0, logging or printing to screen must be enabled. Defaulting to .automl.utils.printing:1b");
-  (`pythonHashSeed   ;"For full reproducibility between q processes of the NLP word2vec implementation,",
-                      " the PYTHONHASHSEED environment variable must be set upon initialization of q. See ",
-                      "https://code.kx.com/q/ml/automl/ug/options/#seed for details.");
-  (`neuralNetWarning ;("Limiting the models being applied. No longer running neural networks or SVMs.",
-                       " Upper limit for number of targets set to: ";
-                       "It is advised to remove any neural network or SVM based models from model evaluation.",
-                       " Currently running with in a number of datapoings in excess of: "))
+  (`configExists;("A configuration file of this name already exists, this run ",
+    "will be exited";
+    "A configuration file of this name already exists and will be overwritten"));
+  (`savePathExists;("The savePath chosen already exists, this run will be",
+     " exited";
+     "The savePath chosen already exists and will be overwritten"));
+  (`loggingPathExists;("The logging path chosen already exists, this run will ",
+    "be overwritten";
+    "The logging path chosen already exists and will be overwritten"));
+  (`printDefault;"If saveOption is 0, logging or printing to screen must be ",
+     "enabled. Defaulting to .automl.utils.printing:1b");
+  (`pythonHashSeed;"For full reproducibility between q processes of the NLP ",
+    "word2vec implementation, the PYTHONHASHSEED environment variable must ",
+    "be set upon initialization of q. See ",
+    "https://code.kx.com/q/ml/automl/ug/options/#seed for details.");
+  (`neuralNetWarning;("Limiting the models being applied. No longer running ",
+    "neural networks or SVMs. Upper limit for number of targets set to: ";
+    "It is advised to remove any neural network or SVM based models from ",
+    "model evaluation. Currently running with in a number of datapoings in",
+    " excess of: "))
   )
 
 

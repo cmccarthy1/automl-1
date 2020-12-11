@@ -31,7 +31,7 @@ dataCheck.updateConfig:{[feat;cfg]
   config,:$[0<config`saveOption;dataCheck.i.pathConstruct[config];()!()];
   if[.automl.utils.logging;config:dataCheck.i.logging config];
   config[`logFunc]:.automl.utils.printFunction[config`printFile;;1;1];
-  if[all not .automl.utils[`printing`logging`ignoreWarnings],config`saveOption;
+  if[(2=utils.ignoreWarnings)&all not utils[`printing`logging],config`saveOption;
      updatePrinting[];
      config[`logFunc] utils.printWarnings`printDefault];
   // Check that no log/save path created already exists

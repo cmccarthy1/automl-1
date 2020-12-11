@@ -14,6 +14,7 @@
 selectModels.node.function:{[tts;target;mdls;cfg]
   cfg[`logFunc] utils.printDict`select;
   models:selectModels.targetKeras[mdls;tts;target;cfg];
+  models:selectModels.torchModels[mdls;cfg];
   models:selectModels.theanoModels[mdls;cfg];
   selectModels.targetLimit[models;target;cfg]
   }
