@@ -267,22 +267,24 @@ utils.dataType:`ipc`binary`csv!(`port`select;`directory`fileName;`directory`file
 // @category Utility
 // @fileoverview Dictionary with mappings for console printing to reduce clutter
 utils.printDict:(!) . flip(
-  (`describe  ;"The following is a breakdown of information for each of the relevant columns in the dataset");
+  (`describe;"The following is a breakdown of information for each of the relevant columns in the dataset");
   (`errColumns;"The following columns were removed due to type restrictions for ");
-  (`preproc   ;"Data preprocessing complete, starting feature creation");
-  (`sigFeat   ;"Feature creation and significance testing complete");
-  (`totalFeat ;"Total number of significant features being passed to the models = ");
-  (`select    ;"Starting initial model selection - allow ample time for large datasets");
-  (`scoreFunc ;"Scores for all models using ");
-  (`bestModel ;"Best scoring model = ");
-  (`modelFit  ;"Continuing to final model fitting on testing set");
+  (`preproc;"Data preprocessing complete, starting feature creation");
+  (`sigFeat;"Feature creation and significance testing complete");
+  (`totalFeat;"Total number of significant features being passed to the models = ");
+  (`select;"Starting initial model selection - allow ample time for large datasets");
+  (`scoreFunc;"Scores for all models using ");
+  (`bestModel;"Best scoring model = ");
+  (`modelFit;"Continuing to final model fitting on testing set");
   (`hyperParam;"Continuing to hyperparameter search and final model fitting on testing set");
-  (`score     ;"Best model fitting now complete - final score on testing set = ");
+  (`kerasClass;"Test set does not contain examples of each class removing multi-class keras models");
+  (`theanoModels;"Attempting to run Theano models without Theano installed, removing Theano models");
+  (`score;"Best model fitting now complete - final score on testing set = ");
   (`confMatrix;"Confusion matrix for testing set:");
-  (`graph     ;"Saving down graphs to ");
-  (`report    ;"Saving down procedure report to ");
-  (`meta      ;"Saving down model parameters to ");
-  (`model     ;"Saving down model to "))
+  (`graph;"Saving down graphs to ");
+  (`report;"Saving down procedure report to ");
+  (`meta;"Saving down model parameters to ");
+  (`model;"Saving down model to "))
 
 // @kind function
 // @category Utility
