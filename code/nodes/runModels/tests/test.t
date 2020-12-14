@@ -111,7 +111,7 @@ multiPreds:($[hasKeras;6;5],1 2 16)#192?0b
 regPreds:8 1 2 16#256?1f
 
 binaryReturn:`SVC`LogisticRegression`GaussianNB`LinearSVC`BinaryKeras
-multiReturnKeras:`MLPClassifier`KNeighborsClassifier`AdaBoostClassifier`MultiKeras`RandomForestClassifier`GradientBoostingClassifier
+multiReturnKeras:`MLPClassifier`KNeighborsClassifier`AdaBoostClassifier`MultiKeras`GradientBoostingClassifier`RandomForestClassifier
 multiReturn:`MLPClassifier`KNeighborsClassifier`AdaBoostClassifier`RandomForestClassifier`GradientBoostingClassifier
 regReturn  :`Lasso`LinearRegression`RegKeras`AdaBoostRegressor`GradientBoostingRegressor`MLPRegressor`RandomForestRegressor`KNeighborsRegressor
 
