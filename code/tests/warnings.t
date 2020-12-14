@@ -4,7 +4,6 @@
 
 .automl.updateIgnoreWarnings[1]
 .automl.updatePrinting[]
-.ml.graphDebug:1b
 
 \S 42
 
