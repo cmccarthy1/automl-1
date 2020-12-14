@@ -49,7 +49,7 @@ passingTest[.test.checkFit;(featureDataNLP   ;targetRegression;`nlp   ;`reg  ;en
 
 passingTest[.automl.newConfig;"testConfig";1b;::]
 
--1"\nTesting inputs when ignoreWarnings is 0\n";
+-1"\nTesting inputs when ignoreWarnings is 2\n";
 
 .automl.updateIgnoreWarnings[2]
 
