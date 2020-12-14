@@ -1,7 +1,5 @@
 \l automl.q
 
-.ml.graphDebug:1b
-
 .automl.loadfile`:init.q
 .automl.loadfile`:code/tests/utils.q
 

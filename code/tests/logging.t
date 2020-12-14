@@ -2,8 +2,6 @@
 .automl.loadfile`:init.q
 .automl.loadfile`:code/tests/utils.q
 
-.ml.graphDebug:1b
-
 \S 42
 
 .automl.updatePrinting[]
