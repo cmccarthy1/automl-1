@@ -63,21 +63,21 @@
       "type":"binary",
       "apply":true
     },
-    "binarykeras":{
+    "BinaryKeras":{
       "library":"keras",
       "module":"binary",
       "seed":true,
       "type":"binary",
       "apply":true
     },
-    "multikeras":{
+    "MultiKeras":{
       "library":"keras",
       "module":"multi",
       "seed":true,
       "type":"multi",
       "apply":true
     },
-    "theano":{
+    "Theano":{
       "library":"theano",
       "module":"NN",
        "seed":true,
@@ -135,7 +135,7 @@
       "type":"reg",
       "apply":true
     },
-    "regkeras":{
+    "RegKeras":{
       "library":"keras",
       "module":"reg",
       "seed":true,
