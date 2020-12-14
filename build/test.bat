@@ -8,7 +8,7 @@ if defined QLIC_KC (
 	pip install sobol-seq
 	pip install keras
 	pip install tensorflow
-        pip install torch
+	pip install torch
 	pip install theano
 	echo getting test.q from embedpy
         curl -fsSL -o test.q https://github.com/KxSystems/embedpy/raw/master/test.q
