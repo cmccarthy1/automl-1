@@ -9,10 +9,21 @@
 .automl.updatePrinting[]
 
 // Create feature and target data
-xdata     :([]100?10f;asc 100?1f;100?10)
-ydataClass:100?0b
-ydataReg  :asc 100?1f
+nGeneral:100
+nFresh  :5000
 
+featureDataNormal:([]nGeneral?1f;asc nGeneral?1f;nGeneral?`a`b`c)
+featureDataFresh :([]nFresh?nGeneral?0p;nFresh?1f;asc nFresh?1f)
+featureDataNLP   :([]nGeneral?1f;asc nGeneral?("generating";"sufficient tesing";"data"))
+
+targetRegression :desc 100?1f
+targetBinary     :asc 100?0b
+targetMulti      :desc 100?4
+
+newFreshParams:update valid:0b from .ml.fresh.params where pnum>0
+
+// Create params dictionary
+params0   :enlist[`seed]!enlist 42
 params1   :enlist[`loggingFile]!enlist"logFile"
 params2   :enlist[`loggingDir ]!enlist"logDir"
 params3   :params1,params2
@@ -20,22 +31,21 @@ paramsFail:enlist[`loggingFile]!enlist 123
 
 // Create function to check that appropriate logging file exists depending on 
 //  logOption used
-checkLogging:{[xdata;ydata;ftype;ptype;params;logOption]
-  model:.automl.fit[xdata;ydata;ftype;ptype;params];
+test.checkLogging:{[params]
+  model:.automl.fit . params;
+  config:last params;
   dict:model`modelInfo;
   date:string dict`startDate;
   time:ssr[string dict`startTime;":";"."]
-  if[logOption~4;:0Nd~dict`printFile];
-  dir:$[logOption<2;
-    .automl.path,"/outputs/",date,"/",time,"/log";
-    params`loggingDir
-    ],"/";
-   fileName:$[logOption in 0 2;
-     "logFile_",date,"_",time,".txt";
-     params[`loggingFile]
-    ];
-   logPath:dir,fileName;
-   $[count hsym`$logPath;
+  if[not .automl.utils.logging;:0Nd~dict`printFile];
+  dir:$[`loggingDir in key config;
+    config[`loggingDir],"/";
+    .automl.path,"/outputs/",date,"/",time,"/log/"];
+  fileName:$[`loggingFile in key config;
+    config`loggingFile;
+    "logFile_",date,"_",time,".txt"];
+  logPath:dir,fileName;
+  $[count hsym`$logPath;
     [system"rm -rf ",logPath;1b];
     0b]
   }
@@ -43,31 +53,32 @@ checkLogging:{[xdata;ydata;ftype;ptype;params;logOption]
 
 -1"\nTesting appropriate inputs for logging";
 
-// Test when logging is disables
-passingTest[checkLogging;(xdata;ydataClass;`normal;`class;(::);4);0b;1b]
+// Test when logging is disabled
+passingTest[test.checkLogging;(featureDataNormal;targetBinary;`normal;`class;params0);1b;1b]
 
 // Turn on logging functionality
 .automl.updateLogging[]
 
 // Test when logging is enabled
-passingTest[checkLogging;(xdata;ydataClass;`normal;`class;(::)   ;0);0b;1b]
-passingTest[checkLogging;(xdata;ydataReg  ;`normal;`reg  ;params1;1);0b;1b]
-passingTest[checkLogging;(xdata;ydataClass;`normal;`class;params2;2);0b;1b]
-passingTest[checkLogging;(xdata;ydataReg  ;`normal;`reg  ;params3;3);0b;1b]
+passingTest[test.checkLogging;(featureDataNormal;targetRegression;`normal;`reg  ;params0);1b;1b]
+passingTest[test.checkLogging;(featureDataFresh ;targetBinary    ;`fresh ;`class;params1);1b;1b]
+passingTest[test.checkLogging;(featureDataNLP   ;targetMulti     ;`nlp   ;`class;params2);1b;1b]
+passingTest[test.checkLogging;(featureDataNormal;targetBinary    ;`normal;`class;params3);1b;1b]
 
 -1"\nTesting inappropriate inputs for logging";
 
 // Create error statement
 typeError     :"loggingFile input must be a char array or symbol"
-overWriteError:"This logging path already exists, please choose another loggingFile name"
+overWriteError:"The logging path chosen already exists, this run will be exited"
 
 logPath:"logDir/logFile"
 h:hopen hsym`$logPath
 hclose h
 
-failingTest[.automl.fit;(xdata;ydataClass;`normal;`class;paramsFail);0b;typeError]
-failingTest[.automl.fit;(xdata;ydataClass;`normal;`class;params3   );0b;overWriteError]
+failingTest[.automl.fit;(featureDataFresh;targetMulti     ;`fresh;`class;paramsFail);0b;typeError]
+failingTest[.automl.fit;(featureDataNLP  ;targetRegression;`nlp  ;`reg  ;params3   );0b;overWriteError]
+
+-1"\nRemoving any directories created";
 
 // Remove any files created
-system "rm -r ",logPath;
-
+system "rm -rf ",logPath;

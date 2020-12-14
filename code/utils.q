@@ -293,14 +293,13 @@ utils.printDict:(!) . flip(
 //  If two elements are within a key,first element is the warning given when ignoreWarnings=2,
 //  the second is the warning given when ignoreWarnings=1
 utils.printWarnings:(!) . flip(
-  (`configExists;("A configuration file of this name already exists, this run ",
-    "will be exited";
+  (`configExists;("A configuration file of this name already exists";
     "A configuration file of this name already exists and will be overwritten"));
   (`savePathExists;("The savePath chosen already exists, this run will be",
      " exited";
      "The savePath chosen already exists and will be overwritten"));
   (`loggingPathExists;("The logging path chosen already exists, this run will ",
-    "be overwritten";
+    "be exited";
     "The logging path chosen already exists and will be overwritten"));
   (`printDefault;"If saveOption is 0, logging or printing to screen must be ",
      "enabled. Defaulting to .automl.utils.printing:1b");
