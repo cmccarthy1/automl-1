@@ -373,7 +373,7 @@ utils.nearestModel:{[dict]
   timeMatch:sum dict`startDate`startTime;
   datedTimed :utils.getTimes[];
   namedModels:utils.parseNamedFiles[];
-  if[(();())~(datedTimed;named);
+  if[(();())~(datedTimed;namedModels);
     '"No named or dated and timed models in outputs folder,",
     " please generate models prior to model retrieval"
     ];
