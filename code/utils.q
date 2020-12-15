@@ -260,7 +260,7 @@ utils.dataType:`ipc`binary`csv!
   (`port`select;`directory`fileName;`directory`fileName)
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Dictionary with console print statements to reduce clutter
 utils.printDict:(!) . flip(
   (`describe;"The following is a breakdown of information for each of the ",
@@ -294,7 +294,7 @@ utils.printDict:(!) . flip(
   (`model;"Saving down model to "))
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Dictionary of warning print statements that can be turned 
 //   on/off. If two elements are within a key,first element is the warning 
 //   given when ignoreWarnings=2, the second is the warning given when 
@@ -324,7 +324,7 @@ utils.printWarnings:(!) . flip(
 
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Decide how warning statements should be handles.
 //   0=No warning or action taken
 //   1=Warning given but no action taken.
@@ -360,7 +360,7 @@ utils.printFunction:{[filename;val;nline1;nline2]
   }
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Retrieve the model which is closest in time to
 //   the user specified `startDate`startTime where nearest is
 //   here defined at the closest preceding model
@@ -373,6 +373,10 @@ utils.nearestModel:{[dict]
   timeMatch:sum dict`startDate`startTime;
   datedTimed :utils.getTimes[];
   namedModels:utils.parseNamedFiles[];
+  if[(();())~(datedTimed;named);
+    '"No named or dated and timed models in outputs folder,",
+    " please generate models prior to model retrieval"
+    ];
   allTimes:raze datedTimed,key namedModels;
   binLoc:bin[allTimes;timeMatch];
   if[-1=binLoc;binLoc:binr[allTimes;timeMatch]];
@@ -384,21 +388,18 @@ utils.nearestModel:{[dict]
   }
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Retrieve the timestamp associated
 //   with all dated/timed models generated historically
 // @return {timestamp[]} The timestamps associated with
 //   each of the previously generated non named models
 utils.getTimes:{
   dateTimeFiles:key hsym`$path,"/outputs/dateTimeModels/";
-  if[not count dateTimeFiles;
-    '"No named or dated and timed models in outputs folder,",
-     " please generate models prior to model retrieval"];
   $[count dateTimeFiles;utils.parseModelTimes each dateTimeFiles;()]
   }
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Generate a timestamp for each timed file within the
 //   outputs folder
 // @param folder {symbol} name of a dated folder within the outputs directory
@@ -409,7 +410,7 @@ utils.parseModelTimes:{[folder]
   }
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Retrieve the dictionary mapping timestamp of 
 //   model generation to the name of the associated model
 // @return {dict} A mapping between the timestamp associated with start date/time
@@ -419,8 +420,8 @@ utils.parseNamedFiles:{
   }
 
 // @kind function
-// @category Utility
-// @fileoverview delete models based on user provided information 
+// @category utility
+// @fileoverview Delete models based on user provided information 
 //   surrounding the date and time of model generation
 // @param config {dict} User provided config containing, start date/time
 //   information these can be date/time types in the former case or a
@@ -443,7 +444,7 @@ utils.deleteDateTimeModel:{[config;allFiles;pathStem]
   }
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Retrieve all files/models which meet the criteria
 //   set out by the date/time information provided by the user
 // @param dateInfo {date|string} user provided string (for wildcarding)
@@ -457,7 +458,8 @@ utils.getRelevantDates:{[dateInfo;allFiles]
   relevantDates:$[-14h=type dateInfo;
       $[(`$string dateInfo)in allDates;
         dateInfo;
-        '"startDate provided was not present within the list of available dates"];
+        '"startDate provided was not present within the list of available dates"
+       ];
     10h=abs type dateInfo;
       $["*"~dateInfo;
         allDates;
@@ -470,7 +472,7 @@ utils.getRelevantDates:{[dateInfo;allFiles]
   }
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Retrieve all files/models which meet the criteria
 //   set out by the date/time information provided by the user
 // @param timeInfo {time|string} user provided string (for wildcarding)
@@ -481,14 +483,15 @@ utils.getRelevantDates:{[dateInfo;allFiles]
 //   provided by the user.
 utils.getRelevantFiles:{[timeInfo;fileList]
   relevantFiles:$[-19h=type timeInfo;
-     $[any timedString:fileList like ("*",ssr[string[timeInfo];":";"."]);
+  timeInfoStr:ssr[string[timeInfo];":";"."];
+     $[any timedString:fileList like ("*",timeInfoStr);
        fileList where timedString;
        '"startTime provided was not present within the list of available times"
        ];
     10h=abs type timeInfo;
      $["*"~timeInfo;
        fileList;
-       fileList where fileList like ("*",ssr[timeInfo;":";"."])
+       fileList where fileList like ("*",timeInfoStr)
        ];
     '"startTime provided must be an individual time or regex string"
     ];
@@ -499,7 +502,7 @@ utils.getRelevantFiles:{[timeInfo;fileList]
   }
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Delete models pased on named input, this may be a direct match
 //   or a regex matching string
 // @param config {dict} User provided config containing, a mapping from 
@@ -520,7 +523,7 @@ utils.deleteNamedModel:{[config;allFiles;pathStem]
   }
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview Retrieve all named models matching the user supplied
 //   string representation of the search
 // @param nameInfo {string} string used to compare all named models to
@@ -548,7 +551,7 @@ utils.getRelevantNames:{[nameInfo;allFiles;namedPathStem]
   }
 
 // @kind function
-// @category Utility
+// @category utility
 // @fileoverview In the case that a named model is to be deleted, in order to
 //   facilitate retrieval 'nearest' timed model a text file mapping timestamp
 //   to model name is provided. If a model is to be deleted then this timestamp

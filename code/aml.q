@@ -30,7 +30,7 @@ fit:{[graph;features;target;ftype;ptype;params]
     (ftype;ptype;.z.D;.z.T);
   // Retrieve default parameters parsed at startup and append necessary
   // information for further parameter retrieval
-  modelName:enlist[`saveModelName]!enlist`$problemDict`modelName;
+  modelName:enlist[`savedModelName]!enlist`$problemDict`modelName;
   configPath:$[type[params]in 10 -11h;
       enlist[`configPath]!enlist params;
     99h=type params;

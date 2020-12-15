@@ -45,19 +45,21 @@ passingTest[.test.checkFit;(featureDataNLP;targetMulti     ;`nlp;`class;enlist[`
 
 // Create normal, FRESH and NLP models
 
-fitNormal:.automl.fit[featureDataNormal;targetMulti     ;`normal;`class;`overWriteFiles`saveModelName!(1;"normalModel")]
-fitFresh :.automl.fit[featureDataFresh ;targetBinary    ;`fresh ;`class;`overWriteFiles`saveModelName!(1;"freshModel")]
-fitNLP   :.automl.fit[featureDataNLP   ;targetRegression;`nlp   ;`reg  ;`overWriteFiles`saveModelName!(1;"nlpModel")]
+fitNormal:.automl.fit[featureDataNormal;targetMulti     ;`normal;`class;`overWriteFiles`savedModelName!(1;"normalModel")]
+fitFresh :.automl.fit[featureDataFresh ;targetBinary    ;`fresh ;`class;`overWriteFiles`savedModelName!(1;"freshModel")]
+fitNLP   :.automl.fit[featureDataNLP   ;targetRegression;`nlp   ;`reg  ;`overWriteFiles`savedModelName!(1;"nlpModel")]
 
 passingTest[type;fitNormal.predict[featureDataNormal];1b;7h]
 passingTest[type;fitFresh.predict[featureDataFresh]  ;1b;1h]
 passingTest[type;fitNLP.predict[featureDataNLP]      ;1b;9h]
 
+-1"\nTesting appropriate inputs for getModel\n";
+
 // Retrieve saved models via `getModel` method
 
 normalModel:.automl.getModel[enlist[`savedModelName]!enlist "normalModel"]
-freshModel:.automl.getModel[enlist[`savedModelName]!enlist "freshModel"]
-nlpModel:.automl.getModel[enlist[`savedModelName]!enlist "nlpModel"]
+freshModel :.automl.getModel[enlist[`savedModelName]!enlist "freshModel"]
+nlpModel   :.automl.getModel[enlist[`savedModelName]!enlist "nlpModel"]
 
 passingTest[type;normalModel.predict[featureDataNormal];1b;7h]
 passingTest[type;freshModel.predict[featureDataFresh]  ;1b;1h]
@@ -68,10 +70,14 @@ passingTest[type;latestModel.predict[featureDataNLP];1b;9h]
 
 // Retrieve the 'normal' named model based on time .i.e. just before Fresh model 
 normalModel:.automl.getModel[`startDate`startTime!(fitFresh[`modelInfo;`startDate];fitFresh[`modelInfo;`startTime]-1)]
-passingTest[{x[`modelInfo;`saveModelName]};normalModel;1b;"normalModel"]
+passingTest[{x[`modelInfo;`savedModelName]};normalModel;1b;"normalModel"]
+
+-1"\nTesting inappropriate inputs for getModel\n";
+
+deleteError:{"Model ",x," does not exist\n"}; 
 
 .automl.deleteModels[enlist[`savedModelName]!enlist "normalModel"]
-failingTest[.automl.getModel;enlist[`savedModelName]!enlist "normalModel";1b;"Model normalModel does not exist\n"]
+failingTest[.automl.getModel;enlist[`savedModelName]!enlist "normalModel";1b;deleteError "normalModel"]
 
 .automl.deleteModels[enlist[`savedModelName]!enlist "*Model"]
-failingTest[.automl.getModel;enlist[`savedModelName]!enlist "nlpModel";1b;"Model nlpModel does not exist\n"]
+failingTest[.automl.getModel;enlist[`savedModelName]!enlist "nlpModel";1b;deleteError "nlpModel"]

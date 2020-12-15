@@ -76,7 +76,7 @@ dataCheck.i.getData:{[fileName;ptype]
 dataCheck.i.pathConstruct:{[config]
   names:`config`models;
   if[config[`saveOption]=2;names:names,`images`report];
-  pname:$[`~config`saveModelName;dataCheck.i.dateTimePath;dataCheck.i.customPath]config;
+  pname:$[`~config`savedModelName;dataCheck.i.dateTimePath;dataCheck.i.customPath]config;
   paths:pname,/:string[names],\:"/";
   dictNames:`$string[names],\:"SavePath";
   (dictNames!paths),enlist[`mainSavePath]!enlist pname
@@ -99,17 +99,12 @@ dataCheck.i.dateTimePath:{[config]
 // @param config {dict} Configuration information assigned by the user and related to the current run
 // @return {str} Path constructed based on user defined custom model name
 dataCheck.i.customPath:{[config]
-  modelName:config[`saveModelName];
+  modelName:config[`savedModelName];
   modelName:$[10h=type modelName;modelName;
    -11h=type modelName;string modelName;
    '"unsupported input type, model name must be a symbol atom or string"];
-  filePath:path,"/outputs/namedModels/",modelName,"/";
-  if[count key hsym`$filePath;
-    '"This save path already exists, please choose another model name"];
-  h:hopen hsym`$path,"/outputs/timeNameMapping.txt";
-  h .Q.s enlist[sum config`startDate`startTime]!enlist modelName;
-  hclose h;
-  filePath
+  config[`savedModelName]:modelName;
+  path,"/outputs/namedModels/",modelName,"/"
   }
 
 // @kind function
@@ -162,7 +157,12 @@ dataCheck.i.fileNameCheck:{[config]
   mainFileExists:$[0<config`saveOption;count key hsym`$config`mainSavePath;0];
   loggingExists :$[utils.logging;count key hsym`$config`printFile;0];
   dataCheck.i.delFiles[config;ignore;mainFileExists;loggingExists];
-  dataCheck.i.printWarning[config;ignore;mainFileExists;loggingExists]
+  dataCheck.i.printWarning[config;ignore;mainFileExists;loggingExists];
+  if[not`~config`savedModelName;
+    h:hopen hsym`$path,"/outputs/timeNameMapping.txt";
+    h .Q.s enlist[sum config`startDate`startTime]!enlist config`savedModelName;
+    hclose h;
+    ]
   }
  
 
