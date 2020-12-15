@@ -27,14 +27,13 @@
 //   best model produced
 fit:{[graph;features;target;ftype;ptype;params]
   runParams:`featureExtractionType`problemType`startDate`startTime!
-    (ftype;ptype;.z.D;.z.T);
+    (ftype;ptype;string .z.D;.z.T);
+  runParams[`startTime]:utils.ssrTime runParams`startTime;
   // Retrieve default parameters parsed at startup and append necessary
   // information for further parameter retrieval
   modelName:enlist[`saveModelName]!enlist`$problemDict`modelName;
-  configPath:$[type[params]in 10 -11h;
+  configPath:$[type[params]in 99 10 -11h;
       enlist[`configPath]!enlist params;
-    99h=type params;
-	  params;
     params~(::);
 	  ()!();
     '"Unsupported input type for 'params'"

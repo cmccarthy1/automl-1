@@ -23,6 +23,7 @@ p)def< checkimport(x):
       return(1)
   elif(x==4):
     try:
+      import os;os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2";
       import tensorflow;return(0)
     except:
       return(1)

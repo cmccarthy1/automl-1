@@ -4,7 +4,7 @@
 
 // Suitable feature data and configuration for testing of configuration update
 featData:([]100?1f;100?1f)
-startDateTime:`startDate`startTime!(.z.D;.z.T)
+startDateTime:`startDate`startTime!(string .z.D;.automl.utils.ssrTime .z.T)
 
 configNLPReg     :startDateTime,`featureExtractionType`problemType!`nlp`reg
 configNLPClass   :startDateTime,`featureExtractionType`problemType!`nlp`class

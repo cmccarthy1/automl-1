@@ -132,6 +132,10 @@
       "targetLimit":{
         "value":10000,
         "type" :"long"
+      },
+      "savedModelName":{
+        "value":"",
+        "type":"symbol"
       }
     },
     "fresh":{

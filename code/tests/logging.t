@@ -5,6 +5,7 @@
 \S 42
 
 .automl.updatePrinting[]
+.ml.graphDebug:1b
 
 // Create feature and target data
 nGeneral:100
@@ -33,9 +34,9 @@ test.checkLogging:{[params]
   model:.automl.fit . params;
   config:last params;
   dict:model`modelInfo;
-  date:string dict`startDate;
-  time:ssr[string dict`startTime;":";"."]
-  if[not .automl.utils.logging;:0Nd~dict`printFile];
+  date:dict`startDate;
+  time:dict`startTime;
+  if[not .automl.utils.logging;:""~dict`printFile];
   dir:$[`loggingDir in key config;
     config[`loggingDir],"/";
     .automl.path,"/outputs/",date,"/",time,"/log/"];

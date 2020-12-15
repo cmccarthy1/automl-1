@@ -88,9 +88,9 @@ dataCheck.i.pathConstruct:{[config]
 // @param config {dict} Configuration information assigned by the user and related to the current run
 // @return {str} Path constructed based on run date and time 
 dataCheck.i.dateTimePath:{[config]
-  date:string config`startDate;
-  time:string config`startTime;
-  path,"/",dataCheck.i.dateTimeStr["outputs/",date,"/run_",time,"/"]
+  date:config`startDate;
+  time:config`startTime;
+  path,"/outputs/",date,"/run_",time,"/"
   }
 
 // @kind function
@@ -127,10 +127,10 @@ dataCheck.i.logging:{[config]
     path,"/",loggingDir,"/"]
     ];
   if[`~config`loggingFile;
-    date:string config`startDate;
-    time:string config`startTime;
-    logStr:"logFile_",date,"_",time,".txt";
-    config[`loggingFile]:dataCheck.i.dateTimeStr logStr];
+    date:config`startDate;
+    time:config`startTime;
+    logStr:`$"logFile_",date,"_",time,".txt";
+    config[`loggingFile]:utils.ssrTime logStr];
   typeLoggingFile:type config[`loggingFile];
   loggingFile:$[10h=typeLoggingFile;;
     -11h=typeLoggingFile;string;
@@ -139,12 +139,6 @@ dataCheck.i.logging:{[config]
   config
   }
 
-// @kind function
-// @category dataCheckUtility
-// @fileoverview Construct date time string path in appropriate format
-// @param strPath {str} Date time path string
-// @return {str} Date and time path converted to appropriate format
-dataCheck.i.dateTimeStr:{[strPath]ssr[strPath;":";"."]}
 
 // @kind function
 // @category dataCheckUtility
