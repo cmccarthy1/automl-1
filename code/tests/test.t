@@ -27,7 +27,6 @@ passingTest[.test.checkFit;(featureDataNormal;targetBinary    ;`normal;`class;en
 
 -1"\nTesting appropriate inputs to fit function for FRESH feature extraction type\n";
 
-
 passingTest[.test.checkFit;(featureDataFresh;targetRegression;`fresh;`reg  ;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataFresh;targetBinary    ;`fresh;`class;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataFresh;targetMulti     ;`fresh;`class;::);1b;11 99 104h]
@@ -35,7 +34,6 @@ passingTest[.test.checkFit;(featureDataFresh;targetRegression;`fresh;`reg  ;enli
 passingTest[.test.checkFit;(featureDataFresh;targetMulti     ;`fresh;`class;`functions`saveOption!(`newFreshParams;1));1b;11 99 104h]
 
 -1"\nTesting appropriate inputs to fit function for NLP feature extraction type\n";
-
 
 passingTest[.test.checkFit;(featureDataNLP;targetRegression;`nlp;`reg  ;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataNLP;targetBinary    ;`nlp;`class;::);1b;11 99 104h]
@@ -64,3 +62,16 @@ nlpModel:.automl.getModel[enlist[`savedModelName]!enlist "nlpModel"]
 passingTest[type;normalModel.predict[featureDataNormal];1b;7h]
 passingTest[type;freshModel.predict[featureDataFresh]  ;1b;1h]
 passingTest[type;nlpModel.predict[featureDataNLP]      ;1b;9h]
+
+latestModel:.automl.getModel[`startDate`startTime!(.z.D;.z.t)]
+passingTest[type;latestModel.predict[featureDataNLP];1b;9h]
+
+// Retrieve the 'normal' named model based on time .i.e. just before Fresh model 
+normalModel:.automl.getModel[`startDate`startTime!(fitFresh[`modelInfo;`startDate];fitFresh[`modelInfo;`startTime]-1)]
+passingTest[{x[`modelInfo;`saveModelName]};normalModel;1b;"normalModel"]
+
+.automl.deleteModels[enlist[`savedModelName]!enlist "normalModel"]
+failingTest[.automl.getModel;enlist[`savedModelName]!enlist "normalModel";1b;"Model normalModel does not exist\n"]
+
+.automl.deleteModels[enlist[`savedModelName]!enlist "*Model"]
+failingTest[.automl.getModel;enlist[`savedModelName]!enlist "nlpModel";1b;"Model nlpModel does not exist\n"]
