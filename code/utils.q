@@ -426,16 +426,16 @@ utils.parseNamedFiles:{
 // @param config {dict} User provided config containing, start date/time
 //   information these can be date/time types in the former case or a
 //   wildcarded string
-// @param allFiles {symbol[]} list of all folders contained within the
-//   .automl.path,"/outputs/" folder
 // @param pathStem {string} the start of all paths to be constructed, this
 //   is in the general case .automl.path,"/outputs/"
 // @return {null} returns an error if attempting to delete folders which do
 //   not have a match
-utils.deleteDateTimeModel:{[config;allFiles;pathStem]
+utils.deleteDateTimeModel:{[config;pathStem]
   dateInfo:config`startDate;
   timeInfo:config`startTime;
-  relevantDates:utils.getRelevantDates[dateInfo;allFiles];
+  pathStem,:"dateTimeModels/";
+  allDates:key hsym`$pathStem;
+  relevantDates:utils.getRelevantDates[dateInfo;allDates];
   relevantDates:string $[1=count relevantDates;enlist;]relevantDates;
   datePaths:(pathStem,/:relevantDates),\:"/";
   fileList:raze{x,/:string key hsym`$x}each datePaths;
@@ -449,11 +449,10 @@ utils.deleteDateTimeModel:{[config;allFiles;pathStem]
 //   set out by the date/time information provided by the user
 // @param dateInfo {date|string} user provided string (for wildcarding)
 //   or individual date
-// @param allFiles {symbol[]} list of all folders contained within the 
-//   .automl.path,"/outputs/" folder
+// @param allDates {symbol[]} list of all folders contained within the 
+//   .automl.path,"/outputs/dateTimeModels" folder
 // @return all dates matching the user provided criteria
-utils.getRelevantDates:{[dateInfo;allFiles]
-  allDates:allFiles except `namedModels`timeNameMapping.txt;
+utils.getRelevantDates:{[dateInfo;allDates]
   if[0=count allDates;'"No dated models available"];
   relevantDates:$[-14h=type dateInfo;
       $[(`$string dateInfo)in allDates;
@@ -483,15 +482,14 @@ utils.getRelevantDates:{[dateInfo;allFiles]
 //   provided by the user.
 utils.getRelevantFiles:{[timeInfo;fileList]
   relevantFiles:$[-19h=type timeInfo;
-  timeInfoStr:ssr[string[timeInfo];":";"."];
-     $[any timedString:fileList like ("*",timeInfoStr);
+     $[any timedString:fileList like ("*",ssr[string[timeInfo];":";"."]);
        fileList where timedString;
        '"startTime provided was not present within the list of available times"
        ];
     10h=abs type timeInfo;
      $["*"~timeInfo;
        fileList;
-       fileList where fileList like ("*",timeInfoStr)
+       fileList where fileList like ("*",ssr[timeInfo;":";"."])
        ];
     '"startTime provided must be an individual time or regex string"
     ];
@@ -513,10 +511,10 @@ utils.getRelevantFiles:{[timeInfo;fileList]
 //   is in the general case .automl.path,"/outputs/"
 // @return {null} returns an error if attempting to delete folders which do
 //   not have a match
-utils.deleteNamedModel:{[config;allFiles;pathStem]
+utils.deleteNamedModel:{[config;pathStem]
   nameInfo:config[`savedModelName];
   namedPathStem:pathStem,"namedModels/";
-  relevantNames:utils.getRelevantNames[nameInfo;allFiles;namedPathStem];
+  relevantNames:utils.getRelevantNames[nameInfo;namedPathStem];
   namedPaths:namedPathStem,/:string relevantNames;
   utils.deleteFromNameMapping[relevantNames;pathStem];
   {system "rm -r ",x}each namedPaths
@@ -528,13 +526,11 @@ utils.deleteNamedModel:{[config;allFiles;pathStem]
 //   string representation of the search
 // @param nameInfo {string} string used to compare all named models to
 //   during a search
-// @param allFiles {symbol[]} list of all folders contained within the
-//   .automl.path,"/outputs/" folder
 // @param namedPathStem {string} the start of all paths to be constructed,
 //   in this case .automl.path,"/outputs/namedModels"
 // @return {symbol[]} the names of all named models which match the user
 //   provided string pattern
-utils.getRelevantNames:{[nameInfo;allFiles;namedPathStem]
+utils.getRelevantNames:{[nameInfo;namedPathStem]
   allNamedModels:key hsym`$namedPathStem;
   if[0=count allNamedModels;'"No named models available"];
   relevantModels:$[10h=abs type nameInfo;

@@ -84,13 +84,12 @@ getModel:{[modelDetails]
 // @return {null} does not return any output unless as a result of an error
 deleteModels:{[config]
   pathStem:raze path,"/outputs/";
-  allFiles:key hsym`$pathStem;
   configKey:key config;
   if[all `startDate`startTime in configKey;
-    utils.deleteDateTimeModel[config;allFiles;pathStem,"dateTimeModels/"]
+    utils.deleteDateTimeModel[config;pathStem]
     ];
   if[`savedModelName in configKey;
-    utils.deleteNamedModel[config;allFiles;pathStem]
+    utils.deleteNamedModel[config;pathStem]
     ];
   }
 
