@@ -90,7 +90,7 @@ dataCheck.i.pathConstruct:{[config]
 dataCheck.i.dateTimePath:{[config]
   date:string config`startDate;
   time:string config`startTime;
-  path,"/",dataCheck.i.dateTimeStr["outputs/",date,"/run_",time,"/"]
+  path,"/",dataCheck.i.dateTimeStr["outputs/dateTimeModels/",date,"/run_",time,"/"]
   }
 
 // @kind function
@@ -104,6 +104,11 @@ dataCheck.i.customPath:{[config]
    -11h=type modelName;string modelName;
    '"unsupported input type, model name must be a symbol atom or string"];
   filePath:path,"/outputs/namedModels/",modelName,"/";
+  if[count key hsym`$filePath;
+    '"This save path already exists, please choose another model name"];
+  h:hopen hsym`$path,"/outputs/timeNameMapping.txt";
+  h .Q.s enlist[sum config`startDate`startTime]!enlist modelName;
+  hclose h;
   filePath
   }
 
