@@ -359,8 +359,6 @@ utils.printFunction:{[filename;val;nline1;nline2]
   if[utils.printing;-1 printString];
   }
 
-
-
 // @kind function
 // @category utility
 // @fileoverview Retrieve the model which is closest in time to

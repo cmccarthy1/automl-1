@@ -213,5 +213,3 @@ dataCheck.i.printWarning:{[config;ignore;mainFileExists;loggingExists]
 dataCheck.i.warningOption:{[config;ignore]
   $[ignore=2;{'x};ignore=1;config`logFunc;]
   }
-
-

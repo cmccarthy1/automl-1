@@ -36,7 +36,7 @@ test.checkLogging:{[params]
   dict:model`modelInfo;
   date:string dict`startDate;
   time:ssr[string dict`startTime;":";"."];
-  if[not .automl.utils.logging;0Nd~dict`printFile];
+  if[not .automl.utils.logging;:0Nd~dict`printFile];
   dir:$[`loggingDir in key config;
     config[`loggingDir],"/";
     .automl.path,"/outputs/",date,"/",time,"/log/"];

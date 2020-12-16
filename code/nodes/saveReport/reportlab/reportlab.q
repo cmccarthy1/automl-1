@@ -28,7 +28,7 @@ saveReport.reportlabGenerate:{[params;filePath]
   f:saveReport.i.text[pdf;f;40;"This report outlines the results for a ",ptype,
     " problem achieved through running kdb+/q AutoML.";"Helvetica";11];
   f:saveReport.i.text[pdf;f;30;"This run started on ",string[config[`startDate]],
-    " at ",string[config[`startTime]],".";"Helvetica";11];
+    " at ",string[config`startTime],".";"Helvetica";11];
 
   // Input data
   f:saveReport.i.text[pdf;f;30;"Description of Input Data";"Helvetica-Bold";13];
