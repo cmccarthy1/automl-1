@@ -75,4 +75,4 @@ failingTest[.automl.fit;(featureDataNormal;targetRegression;`normal;`reg  ;param
 -1"\nRemoving any directories created";
 
 // Remove any files created
-system "rm -rf ",logPath;
+system "rm -rf logDir";
