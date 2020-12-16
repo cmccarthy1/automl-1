@@ -88,9 +88,10 @@ dataCheck.i.pathConstruct:{[config]
 // @param config {dict} Configuration information assigned by the user and related to the current run
 // @return {str} Path constructed based on run date and time 
 dataCheck.i.dateTimePath:{[config]
-  date:config`startDate;
-  time:config`startTime;
-  path,"/outputs/dateTimeModels/",date,"/run_",time,"/"
+  date:string config`startDate;
+  time:string config`startTime;
+  dirString:"outputs/dateTimeModels/",date,"/run_",time,"/";
+  path,"/",dataCheck.i.dateTimeStr[dirString]
   }
 
 // @kind function
@@ -127,10 +128,11 @@ dataCheck.i.logging:{[config]
     path,"/",loggingDir,"/"]
     ];
   if[`~config`loggingFile;
-    date:config`startDate;
-    time:config`startTime;
-    logStr:`$"logFile_",date,"_",time,".txt";
-    config[`loggingFile]:utils.ssrTime logStr];
+    date:string config`startDate;
+    time:string config`startTime;
+    logStr:"logFile_",date,"_",time,".txt";
+    config[`loggingFile]:dataCheck.i.dateTimeStr logStr
+    ];
   typeLoggingFile:type config[`loggingFile];
   loggingFile:$[10h=typeLoggingFile;;
     -11h=typeLoggingFile;string;
@@ -138,6 +140,13 @@ dataCheck.i.logging:{[config]
   config[`printFile]:printDir,loggingFile;
   config
   }
+
+// @kind function	
+// @category dataCheckUtility	
+// @fileoverview Construct date time string path in appropriate format	
+// @param strPath {str} Date time path string	
+// @return {str} Date and time path converted to appropriate format	
+dataCheck.i.dateTimeStr:{[strPath]ssr[strPath;":";"."]}
 
 
 // @kind function
@@ -154,7 +163,7 @@ dataCheck.i.fileNameCheck:{[config]
   dataCheck.i.printWarning[config;ignore;mainFileExists;loggingExists];
   if[not`~config`savedModelName;
     h:hopen hsym`$path,"/outputs/timeNameMapping.txt";
-    h .Q.s enlist[dataCheck.i.sumDateTime config]!enlist config`savedModelName;
+    h .Q.s enlist[sum config`startDate`startTime]!enlist config`savedModelName;
     hclose h;
     ]
   }
@@ -203,18 +212,6 @@ dataCheck.i.printWarning:{[config;ignore;mainFileExists;loggingExists]
 // @return {err;str} Print warning to screen/log file or error out
 dataCheck.i.warningOption:{[config;ignore]
   $[ignore=2;{'x};ignore=1;config`logFunc;]
-  }
-
-
-// @kind function
-// @category dataCheckUtility
-// @fileoverview Sum start date and start time together
-// @param config {dict} Configuration information assigned by the user and related to the current run
-// @return {datetime} Start date and start time summed together
-dataCheck.i.sumDateTime:{[config]
-  date:"P"$config`startDate;
-  time:"T"$ssr[config`startTime;".";":"];
-  sum date,time
   }
 
 

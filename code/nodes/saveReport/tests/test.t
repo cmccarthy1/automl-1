@@ -10,7 +10,7 @@ system"mkdir",$[.z.o like "w*";" ";" -p "],savePath;
 
 // Utilities
 
-start:`startDate`startTime!(string .z.D;.automl.utils.ssrTime .z.T)
+start:`startDate`startTime!(.z.D;.z.T)
 
 genCfg:{[start;feat;ftype;ptype]
   out:"/outputs/testing/";

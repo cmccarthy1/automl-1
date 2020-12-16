@@ -69,8 +69,7 @@ latestModel:.automl.getModel[`startDate`startTime!(.z.D;.z.t)]
 passingTest[type;latestModel.predict[featureDataNLP];1b;9h]
 
 // Retrieve the 'normal' named model based on time .i.e. just before Fresh model
-modelTime  :("T"$ssr[fitFresh[`modelInfo;`startTime];".";":"])-1
-normalModel:.automl.getModel[`startDate`startTime!(fitFresh[`modelInfo;`startDate];modelTime]
+normalModel:.automl.getModel[`startDate`startTime!(fitFresh[`modelInfo;`startDate];fitFresh[`modelInfo;`startTime]-1)]
 passingTest[{x[`modelInfo;`savedModelName]};normalModel;1b;"normalModel"]
 
 -1"\nTesting inappropriate inputs for getModel\n";

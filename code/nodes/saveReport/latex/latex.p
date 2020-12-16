@@ -45,17 +45,18 @@ def python_latex(dict,paths,dscrb,score,grid,exclude):
         ptype="classification"
   else:
         ptype="regression"
+
   geometry_options = {"margin": "2.5cm"}
   doc = Document(filepath, geometry_options=geometry_options)
   doc.packages.append(Package('float'))
   doc.preamble.append(Command('title', 'kdb+/q Automated Machine Learning - Generated Report'))
   doc.preamble.append(Command('author', 'KxSystems'))
-  doc.preamble.append(Command('date', 'Date: ' + dict['date']))
+  doc.preamble.append(Command('date', 'Date: ' + configDict['startDate']))
   doc.append(NoEscape(r'\maketitle'))
   with doc.create(Section('Introduction')):
     doc.append('This report outlines the results for a ' + ptype + ' problem ') 
     doc.append('achieved through running kdb+/q AutoML.\n')
-    doc.append('This run started on ' + dict['date'] + ' at ' + dict['time'])
+    doc.append('This run started on ' + configDict['startDate'] + ' at ' + configDict['startTime'])
   
   with doc.create(Section('Description of input data')):
     doc.append('The following is a breakdown of information for each of the relevant columns in the dataset:\n\n')

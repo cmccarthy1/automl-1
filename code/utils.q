@@ -359,12 +359,6 @@ utils.printFunction:{[filename;val;nline1;nline2]
   if[utils.printing;-1 printString];
   }
 
-// @kind function
-// @category utility
-// @fileoverview Construct date time string in appropriate format
-// @param time {time} Time of run
-// @return {str} Time converted to appropriate format
-utils.ssrTime:{[time]ssr[string time;":";"."]}
 
 
 // @kind function

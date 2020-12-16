@@ -7,7 +7,7 @@
 
 // Suitable feature data and configuration for testing of configuration update
 featData:([]100?1f;100?1f)
-startDateTime:`startDate`startTime!(string .z.D;.automl.utils.ssrTime .z.T)
+startDateTime:`startDate`startTime!(.z.D;.z.T)
 
 // Retrieve default values defined at startup by .automl.paramDict
 modelName:enlist[`savedModelName]!enlist`

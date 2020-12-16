@@ -27,8 +27,7 @@
 //   best model produced
 fit:{[graph;features;target;ftype;ptype;params]
   runParams:`featureExtractionType`problemType`startDate`startTime!
-    (ftype;ptype;string .z.D;.z.T);
-  runParams[`startTime]:utils.ssrTime runParams`startTime;
+    (ftype;ptype;.z.D;.z.T);
   // Retrieve default parameters parsed at startup and append necessary
   // information for further parameter retrieval
   modelName:enlist[`savedModelName]!enlist`$problemDict`modelName;

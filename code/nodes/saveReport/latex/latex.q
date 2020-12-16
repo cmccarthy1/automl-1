@@ -14,13 +14,11 @@ saveReport.latexGenerate:{[params;filePath]
   dataDescribe:params`dataDescription;
   hyperParams :params`hyperParams;
   scoreDict   :params[`modelMetaData]`modelScores;
-  configDict  :params`config;
   describeTab :saveReport.i.descriptionTab dataDescribe;
   scoreTab    :saveReport.i.scoringTab scoreDict;
   gridTab     :saveReport.i.gridSearch hyperParams;
   pathDict:params[`savedPlots],`fpath`path!(filePath;.automl.path);
-  dateTimeDict:`date`time!configDict`startDate`startTime;
-  params:(string each params),dateTimeDict;
+  params:string each params;
   saveReport.i.latexReportGen[params;pathDict;describeTab;scoreTab;gridTab;utils.excludeList];
   }
 
