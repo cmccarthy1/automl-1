@@ -23,14 +23,12 @@ passingTest[.test.checkFit;(featureDataNormal;targetRegression;`normal;`reg  ;::
 passingTest[.test.checkFit;(featureDataNormal;targetBinary    ;`normal;`class;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataNormal;targetMulti     ;`normal;`class;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataNormal;targetRegression;`normal;`reg  ;`seed`saveOption!42 0);1b;11 101 104h]
-passingTest[.test.checkFit;(featureDataNormal;targetBinary    ;`normal;`class;enlist[`targetLimit]!enlist 99);1b;11 99 104h]
 
 -1"\nTesting appropriate inputs to fit function for FRESH feature extraction type\n";
 
 passingTest[.test.checkFit;(featureDataFresh;targetRegression;`fresh;`reg  ;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataFresh;targetBinary    ;`fresh;`class;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataFresh;targetMulti     ;`fresh;`class;::);1b;11 99 104h]
-passingTest[.test.checkFit;(featureDataFresh;targetRegression;`fresh;`reg  ;enlist[`aggregationColumns]!enlist`x);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataFresh;targetMulti     ;`fresh;`class;`functions`saveOption!(`newFreshParams;1));1b;11 99 104h]
 
 -1"\nTesting appropriate inputs to fit function for NLP feature extraction type\n";
@@ -38,8 +36,7 @@ passingTest[.test.checkFit;(featureDataFresh;targetMulti     ;`fresh;`class;`fun
 passingTest[.test.checkFit;(featureDataNLP;targetRegression;`nlp;`reg  ;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataNLP;targetBinary    ;`nlp;`class;::);1b;11 99 104h]
 passingTest[.test.checkFit;(featureDataNLP;targetMulti     ;`nlp;`class;::);1b;11 99 104h]
-passingTest[.test.checkFit;(featureDataNLP;targetBinary    ;`nlp;`class;enlist[`crossValidationFunction]!enlist`.ml.xv.kfsplit);1b;11 99 104h]
-passingTest[.test.checkFit;(featureDataNLP;targetMulti     ;`nlp;`class;enlist[`gridSearchArgument]!enlist 2);1b;11 99 104h]
+passingTest[.test.checkFit;(featureDataNLP;targetBinary    ;`nlp;`class;enlist[`gridSearchArgument]!enlist 2);1b;11 99 104h]
 
 -1"\nTesting appropriate inputs for predict function\n";
 
